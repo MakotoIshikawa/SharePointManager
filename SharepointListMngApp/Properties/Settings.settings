@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SharepointListMngApp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="URL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://mscenter.sharepoint.com/eigyou/demo/</Value>
+    </Setting>
+    <Setting Name="User" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">aoshima@mscenter.onmicrosoft.com</Value>
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">P@ssword!</Value>
+    </Setting>
+    <Setting Name="ListName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">カスタムリスト-日報</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

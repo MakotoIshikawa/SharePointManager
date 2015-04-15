@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionsLibrary", "ExtensionsLibrary\ExtensionsLibrary.csproj", "{D37920D6-23C2-42A2-A593-32F8687FD320}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectAnalysisProject", "ObjectAnalysisProject\ObjectAnalysisProject.csproj", "{BE1BB940-F59E-4440-ADD0-603BD9915A02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject1\UnitTestProject.csproj", "{B75D485B-FBE7-4CDF-A270-3496FA9EFB90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointInfoManager", "SharePointInfoManager\SharePointInfoManager.csproj", "{C5DBEDF8-F96A-4C85-83F2-71F462EFB15F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharepointListMngApp", "SharepointListMngApp\SharepointListMngApp.csproj", "{88D47241-ACCD-48A7-8B71-B12A15707DA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointGroupMngApp", "SharePointGroupMngApp\SharePointGroupMngApp.csproj", "{43D6EAA2-B7CD-4BE4-920B-DD7AB4CEA142}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermStoreMngApp", "TermStoreMngApp\TermStoreMngApp.csproj", "{EDC0C2F6-E954-4014-BA4A-6090F33A4124}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D37920D6-23C2-42A2-A593-32F8687FD320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D37920D6-23C2-42A2-A593-32F8687FD320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D37920D6-23C2-42A2-A593-32F8687FD320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D37920D6-23C2-42A2-A593-32F8687FD320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE1BB940-F59E-4440-ADD0-603BD9915A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE1BB940-F59E-4440-ADD0-603BD9915A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE1BB940-F59E-4440-ADD0-603BD9915A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE1BB940-F59E-4440-ADD0-603BD9915A02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B75D485B-FBE7-4CDF-A270-3496FA9EFB90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75D485B-FBE7-4CDF-A270-3496FA9EFB90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75D485B-FBE7-4CDF-A270-3496FA9EFB90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75D485B-FBE7-4CDF-A270-3496FA9EFB90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5DBEDF8-F96A-4C85-83F2-71F462EFB15F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5DBEDF8-F96A-4C85-83F2-71F462EFB15F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5DBEDF8-F96A-4C85-83F2-71F462EFB15F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5DBEDF8-F96A-4C85-83F2-71F462EFB15F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88D47241-ACCD-48A7-8B71-B12A15707DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88D47241-ACCD-48A7-8B71-B12A15707DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88D47241-ACCD-48A7-8B71-B12A15707DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88D47241-ACCD-48A7-8B71-B12A15707DA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43D6EAA2-B7CD-4BE4-920B-DD7AB4CEA142}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43D6EAA2-B7CD-4BE4-920B-DD7AB4CEA142}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43D6EAA2-B7CD-4BE4-920B-DD7AB4CEA142}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43D6EAA2-B7CD-4BE4-920B-DD7AB4CEA142}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDC0C2F6-E954-4014-BA4A-6090F33A4124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDC0C2F6-E954-4014-BA4A-6090F33A4124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDC0C2F6-E954-4014-BA4A-6090F33A4124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDC0C2F6-E954-4014-BA4A-6090F33A4124}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
