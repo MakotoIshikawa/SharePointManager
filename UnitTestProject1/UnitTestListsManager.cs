@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharePointInfoManager.Manager.Lists;
-using SharePointInfoManager.Manager.Lists.Xml;
+using SharePointManager.Manager.Lists;
+using SharePointManager.Manager.Lists.Xml;
+using ExtensionsLibrary.Extensions;
 
 namespace UnitTestProject {
 	[TestClass]
@@ -145,15 +146,18 @@ namespace UnitTestProject {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
-			var file = new FileInfo(@"C:\Users\ishikawm\Documents\dummy256MB.file");
 #if false
+			var file = new FileInfo(@"C:\Users\ishikawm\Documents\dummy256MB.file");
 			using (var f = file.Open(FileMode.Open)) {
 				m.UpdateListItem(1, i => {
 					i.AddAttachmentFile(f);
 				});
 			}
 #else
-			m.AddAttachmentFile(1, file);
+			var file1 = new FileInfo(@"C:\Users\ishikawm\Documents\L.txt");
+			var file2 = new FileInfo(@"C:\Users\ishikawm\Documents\R.txt");
+			//var file3 = new FileInfo(@"C:\Users\ishikawm\Documents\dummy200MB.file");
+			m.AddAttachmentFile(28, file1, file2);
 #endif
 
 			var ret = m.Titles;
@@ -205,11 +209,17 @@ namespace UnitTestProject {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
-			var ret1 = m.Load(cn => {
-				var list = cn.Web.Lists.GetByTitle(title);
-#if true
-				var query = CreateAllItemsQuery(
-					100
+			{
+				var row = m.GetAllItems(title, 100, "ID", "Title");
+
+				var expected = "お試し";
+				var actual = row[1]["Title"];
+				Assert.AreEqual(expected, actual);
+			}
+			{
+				int limit = 100;
+				var row = m.GetItems(title
+					, limit
 					, xml => {
 						xml.AddQueryItems<QueryItemsAnd>(o => {
 							//o.AddOperatorItem<QueryOperatorIsNotNull>("Place");
@@ -227,16 +237,10 @@ namespace UnitTestProject {
 					, "Field_Note"
 					, "Place"
 				);
-
-				var items = list.GetItems(query);
-#else
-				var query = CamlQuery.CreateAllItemsQuery(limit);
-				var items = list.GetItems(query);
-#endif
-
-				return items;
-			}).ToDictionary(i => i.Id, i => i.FieldValues);
-
+				var expected = "お試し";
+				var actual = row[1]["Title"];
+				Assert.AreEqual(expected, actual);
+			}
 			var ret2 = m.Load(cn => {
 				var list = cn.Web.Lists.GetByTitle(title);
 				var query = CamlQuery.CreateAllItemsQuery(100);
@@ -255,19 +259,6 @@ namespace UnitTestProject {
 			Assert.IsTrue(ret.Any(s => s == title));
 		}
 
-		private static CamlQuery CreateAllItemsQuery(int limit, Action<XmlView> action, params string[] viewFields) {
-			var xml = new XmlView(limit, viewFields);
-
-			if (action != null) {
-				action(xml);
-			}
-
-			var query = new CamlQuery() {
-				ViewXml = xml.ToString(),
-			};
-
-			return query;
-		}
 
 		[TestMethod]
 		[Owner("リスト管理")]

@@ -1,6 +1,6 @@
 ﻿using Microsoft.SharePoint.Client;
 
-namespace SharePointInfoManager.Extensions {
+namespace SharePointManager.Extensions {
 	/// <summary>
 	/// GroupCollection を拡張するメソッドを提供します。
 	/// </summary>

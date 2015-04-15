@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
 
-namespace SharePointInfoManager.Manager.Lists.Xml {
+namespace SharePointManager.Manager.Lists.Xml {
 	/// <summary>
 	/// CAML Query 用のXML構造です。
 	/// </summary>

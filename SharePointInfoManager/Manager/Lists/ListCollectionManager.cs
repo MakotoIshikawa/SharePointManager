@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.SharePoint.Client;
 using SPC = Microsoft.SharePoint.Client;
 
-namespace SharePointInfoManager.Manager.Lists {
+namespace SharePointManager.Manager.Lists {
 	/// <summary>
 	/// SharePoint のリストコレクションの管理クラスです。
 	/// </summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SharePointInfoManager.Manager;
+using SharePointManager.Manager;
 using SPC = Microsoft.SharePoint.Client;
 
-namespace SharePointInfoManager.Interface {
+namespace SharePointManager.Interface {
 	/// <summary>
 	/// クライアント側オブジェクトモデル
 	/// </summary>

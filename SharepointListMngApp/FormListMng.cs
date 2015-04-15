@@ -4,8 +4,8 @@ using System.Linq;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
-using SharePointInfoManager.Extensions;
-using SharePointInfoManager.Manager.Lists;
+using SharePointManager.Extensions;
+using SharePointManager.Manager.Lists;
 
 namespace SharepointListMngApp {
 	/// <summary>

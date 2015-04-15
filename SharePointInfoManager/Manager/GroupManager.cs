@@ -5,10 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
-using SharePointInfoManager.Extensions;
+using SharePointManager.Extensions;
 using SPC = Microsoft.SharePoint.Client;
 
-namespace SharePointInfoManager.Manager {
+namespace SharePointManager.Manager {
 	/// <summary>
 	/// SharePoint のグループの管理クラスです。
 	/// </summary>

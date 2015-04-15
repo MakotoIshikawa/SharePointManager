@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
 
-namespace SharePointInfoManager.Manager.Lists.Xml {
+namespace SharePointManager.Manager.Lists.Xml {
 	/// <summary></summary>
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("Field", Namespace = "", IsNullable = false)]

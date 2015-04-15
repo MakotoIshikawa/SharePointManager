@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using Microsoft.SharePoint.Client;
-using SharePointInfoManager.Extensions;
-using SharePointInfoManager.Interface;
+using SharePointManager.Extensions;
+using SharePointManager.Interface;
 
-namespace SharePointInfoManager.Manager {
+namespace SharePointManager.Manager {
 	/// <summary>
 	/// 情報管理抽象クラス
 	/// </summary>
@@ -165,15 +165,44 @@ namespace SharePointInfoManager.Manager {
 		/// <param name="action">処理を実行する関数</param>
 		/// <remarks>例外をキャッチしません。</remarks>
 		protected static void Execute(string url, string username, string password, Action<ClientContext> action) {
+			ReferToContext(url, username, password, cn => {
+				action(cn);
+				cn.ExecuteQuery();
+			});
+		}
+
+		#endregion
+
+		#region ReferToContext
+
+		/// <summary>
+		/// ClientContext を参照します。
+		/// </summary>
+		/// <param name="action">ClientContext に対して処理を実行する関数</param>
+		/// <remarks>ClientContext に対して ExecuteQuery は実行されません。
+		/// action の処理の中で明示的に ExecuteQuery を実行して下さい。</remarks>
+		public void ReferToContext(Action<ClientContext> action) {
+			ReferToContext(this.Url, this.UserName, this.Password, action);
+		}
+
+		/// <summary>
+		/// ClientContext を参照します。
+		/// </summary>
+		/// <param name="url">サイトURL</param>
+		/// <param name="username">ユーザ名</param>
+		/// <param name="password">パスワード</param>
+		/// <param name="action">ClientContext に対して処理を実行する関数</param>
+		/// <remarks>ClientContext に対して ExecuteQuery は実行されません。
+		/// action の処理の中で明示的に ExecuteQuery を実行して下さい。</remarks>
+		protected static void ReferToContext(string url, string username, string password, Action<ClientContext> action) {
 			if (action == null) {
 				throw new ArgumentNullException("action");
 			}
 
-			using (var context = new ClientContext(url) {
+			using (var cn = new ClientContext(url) {
 				Credentials = new SharePointOnlineCredentials(username, new SecureString().SetString(password)),
 			}) {
-				action(context);
-				context.ExecuteQuery();
+				action(cn);
 			}
 		}
 

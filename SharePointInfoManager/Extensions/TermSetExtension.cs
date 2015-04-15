@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.SharePoint.Client.Taxonomy;
 
-namespace SharePointInfoManager.Extensions {
+namespace SharePointManager.Extensions {
 	/// <summary>
 	/// TermSet を拡張するメソッドを提供します。
 	/// </summary>

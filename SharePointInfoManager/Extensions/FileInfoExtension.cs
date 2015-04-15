@@ -2,7 +2,7 @@
 using System.Data.Odbc;
 using System.IO;
 
-namespace SharePointInfoManager.Extensions {
+namespace SharePointManager.Extensions {
 	/// <summary>
 	/// FileInfo を拡張するメソッドを提供します。
 	/// </summary>

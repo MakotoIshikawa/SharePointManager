@@ -4,11 +4,13 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.SharePoint.Client;
-using SharePointInfoManager.Manager.Lists.Xml;
-using SPC = Microsoft.SharePoint.Client;
+using SharePointManager.Manager.Lists.Xml;
+using SP = Microsoft.SharePoint.Client;
+using ExtensionsLibrary.Extensions;
 
-namespace SharePointInfoManager.Manager.Lists {
+namespace SharePointManager.Manager.Lists {
 	/// <summary>
 	/// SharePoint のリストの管理クラスです。
 	/// </summary>
@@ -70,7 +72,7 @@ namespace SharePointInfoManager.Manager.Lists {
 		/// フィールド情報の列挙を取得します。
 		/// </summary>
 		/// <returns>フィールド情報の列挙を返します。</returns>
-		protected IEnumerable<SPC.Field> GetFields() {
+		protected IEnumerable<SP.Field> GetFields() {
 			return this.GetFields(RetrievalsOfField);
 		}
 
@@ -79,7 +81,7 @@ namespace SharePointInfoManager.Manager.Lists {
 		/// </summary>
 		/// <param name="retrievals">データを取得するプロパティ</param>
 		/// <returns>フィールド情報の列挙を返します。</returns>
-		public IEnumerable<SPC.Field> GetFields(params Expression<Func<SPC.Field, object>>[] retrievals) {
+		public IEnumerable<SP.Field> GetFields(params Expression<Func<SP.Field, object>>[] retrievals) {
 			return this.Load(cn => {
 				var fs = cn.Web.Lists.GetByTitle(this.ListName).Fields;
 				return fs.Include(retrievals);
@@ -311,33 +313,114 @@ namespace SharePointInfoManager.Manager.Lists {
 		/// 添付ファイル追加
 		/// </summary>
 		/// <param name="id">リストアイテムID</param>
-		/// <param name="file">ファイル情報</param>
+		/// <param name="files">ファイル情報配列</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddAttachmentFile(int id, FileInfo file) {
-			return AddAttachmentFile(file, l => l.GetItemById(id));
+		public ListManager AddAttachmentFile(int id, params FileInfo[] files) {
+			return AddAttachmentFile(l => l.GetItemById(id), files);
 		}
 
 		/// <summary>
 		/// 添付ファイル追加
 		/// </summary>
-		/// <param name="file">ファイル情報</param>
 		/// <param name="getItem">リストアイテム取得メソッド</param>
-		public ListManager AddAttachmentFile(FileInfo file, Func<SPC.List, SPC.ListItem> getItem) {
+		/// <param name="files">ファイル情報配列</param>
+		/// <returns>ListManager</returns>
+		public ListManager AddAttachmentFile(Func<SP.List, SP.ListItem> getItem, params FileInfo[] files) {
 			var title = this.ListName;
-			this.Execute(cn => {
-				using (var f = file.Open(FileMode.Open)) {
-					var l = cn.Web.Lists.GetByTitle(title);
-					var i = getItem(l);
-					i.AddAttachmentFile(f);
+			this.ReferToContext(cn => {
+				var l = cn.Web.Lists.GetByTitle(title);
+				var i = getItem(l);
 
-					cn.ExecuteQuery();
-				}
+				// リストアイテム取得確認
+				cn.ExecuteQuery();
+
+				files.Where(f => f.Exists).ToList()
+				.ForEach(f => {
+					using (var fs = f.Open(FileMode.Open)) {
+						i.AddAttachmentFile(fs);
+						cn.ExecuteQuery();
+					}
+				});
 			});
 
 			return this;
 		}
 
 		#endregion
+
+		#endregion
+
+		#region リストアイテム情報取得
+
+		/// <summary>
+		/// 全てのリストアイテムを取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <param name="limit">取得するアイテム数の上限値</param>
+		/// <param name="viewFields">取得するフィールド名</param>
+		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
+		public Dictionary<int, Dictionary<string, object>> GetAllItems(string listName, int limit, params string[] viewFields) {
+			return this.GetItems(listName, limit, viewFields, (l, f) => CamlQuery.CreateAllItemsQuery(l, f));
+		}
+
+		/// <summary>
+		/// 条件を指定してリストアイテムを取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <param name="limit">取得するアイテム数の上限値</param>
+		/// <param name="setQueryParameters"></param>
+		/// <param name="viewFields">取得するフィールド名</param>
+		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
+		public Dictionary<int, Dictionary<string, object>> GetItems(string listName, int limit, Action<XmlView> setQueryParameters, params string[] viewFields) {
+			return this.GetItems(listName, limit, viewFields, (l, f) => ListManager.CreateQuery(l, setQueryParameters, f));
+		}
+
+		/// <summary>
+		/// リストアイテムを取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <param name="limit">取得するアイテム数の上限値</param>
+		/// <param name="viewFields"></param>
+		/// <param name="func"></param>
+		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
+		protected Dictionary<int, Dictionary<string, object>> GetItems(string listName, int limit, string[] viewFields, Func<int, string[], CamlQuery> func) {
+			var items = this.Load(cn => {
+				var list = cn.Web.Lists.GetByTitle(listName);
+				var query = func(limit, viewFields);
+				return list.GetItems(query);
+			});
+
+			return (
+				from i in items
+				select new {
+					ID = i.Id,
+					Row = !viewFields.Any(f => !f.IsEmpty()) ? i.FieldValues : (
+						from v in i.FieldValues
+						join f in viewFields on v.Key equals f
+						select v
+					).ToDictionary(),
+				}
+			).ToDictionary(i => i.ID, i => i.Row);
+		}
+
+		/// <summary>
+		/// CamlQuery のインスタンスを作成します。
+		/// </summary>
+		/// <param name="limit">取得するアイテム数の上限値</param>
+		/// <param name="setQueryParameters">クエリパラメータ設定メソッド</param>
+		/// <param name="viewFields">取得するフィールド名</param>
+		/// <returns>作成した CamlQuery を返します。</returns>
+		protected static CamlQuery CreateQuery(int limit, Action<XmlView> setQueryParameters, params string[] viewFields) {
+			var xml = new XmlView(limit, viewFields);
+
+			if (setQueryParameters != null) {
+				setQueryParameters(xml);
+			}
+
+			return new CamlQuery() {
+				ViewXml = xml.ToString(),
+			};
+		}
 
 		#endregion
 
@@ -349,7 +432,7 @@ namespace SharePointInfoManager.Manager.Lists {
 		public string ListName { get; protected set; }
 
 		/// <summary>フィールド一覧</summary>
-		public List<SPC.Field> Fields { get; protected set; }
+		public List<SP.Field> Fields { get; protected set; }
 
 		/// <summary>アイテム数</summary>
 		public int ItemCount { get; protected set; }
@@ -403,7 +486,7 @@ namespace SharePointInfoManager.Manager.Lists {
 		/// <param name="this">SharePoint リスト</param>
 		/// <param name="row"></param>
 		/// <returns></returns>
-		public static ListItem AddRow(this SPC.List @this, Dictionary<string, object> row) {
+		public static ListItem AddRow(this SP.List @this, Dictionary<string, object> row) {
 			var item = @this.AddItem(new ListItemCreationInformation());
 			foreach (var i in row) {
 #if true
@@ -434,7 +517,7 @@ namespace SharePointInfoManager.Manager.Lists {
 		/// <param name="this">リストアイテム</param>
 		/// <param name="fs">FileStream</param>
 		/// <returns>リストアイテムを返します。</returns>
-		public static SPC.ListItem AddAttachmentFile(this SPC.ListItem @this, FileStream fs) {
+		public static SP.ListItem AddAttachmentFile(this SP.ListItem @this, FileStream fs) {
 			var af = new AttachmentCreationInformation() {
 				ContentStream = fs,
 				FileName = fs.Name,

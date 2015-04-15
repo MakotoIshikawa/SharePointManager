@@ -2,10 +2,10 @@
 using System.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
-using SharePointInfoManager.Extensions;
-using SharePointInfoManager.Manager;
+using SharePointManager.Extensions;
+using SharePointManager.Manager;
 
-namespace SharePointInfoManager.Manager.TermStore {
+namespace SharePointManager.Manager.TermStore {
 	/// <summary>
 	/// 用語セットの管理クラスです。
 	/// </summary>

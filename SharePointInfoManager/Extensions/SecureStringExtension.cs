@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace SharePointInfoManager.Extensions {
+namespace SharePointManager.Extensions {
 	/// <summary>
 	/// SecureString を拡張するメソッドを提供します。
 	/// </summary>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharePointInfoManager.Manager.TermStore {
+namespace SharePointManager.Manager.TermStore {
 	/// <summary>
 	/// 用語セット情報クラス
 	/// </summary>

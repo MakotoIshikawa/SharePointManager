@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
-using SharePointInfoManager.Manager.TermStore;
+using SharePointManager.Manager.TermStore;
 
-namespace SharePointInfoManager.Extensions {
+namespace SharePointManager.Extensions {
 	/// <summary>
 	/// ClientContext を拡張するメソッドを提供します。
 	/// </summary>
