@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharePointInfoManager.Manager.Lists;
 using SharePointInfoManager.Manager.Lists.Xml;
 
-namespace UnitTestProject1 {
+namespace UnitTestProject {
 	[TestClass]
 	public class UnitTestListsManager {
 #if false

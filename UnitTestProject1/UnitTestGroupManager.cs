@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharePointInfoManager.Manager;
-using SPC = Microsoft.SharePoint.Client;
 
-namespace UnitTestProject1 {
+namespace UnitTestProject {
 	[TestClass]
 	public class UnitTestGroupManager {
 #if false
