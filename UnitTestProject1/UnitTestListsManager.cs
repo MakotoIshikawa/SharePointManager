@@ -137,6 +137,38 @@ namespace UnitTestProject {
 
 		[TestMethod]
 		[Owner("リスト管理")]
+		[TestCategory("変換")]
+		public void 行データ変換() {
+			var title = "カスタムリスト-テスト";
+
+			var m = new ListManager(url, username, password, title);
+			m.ThrowException += (sender, e) => {
+				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
+			};
+
+			var num = m.ItemCount + 1;
+			var row = new Dictionary<string, object>();
+			row["Title"] = "見出し" + num.ToString("000");
+			row["タイトル"] = "Item" + num.ToString("000");
+			row["Field_Text"] = num.ToString();
+			row["Field_Number"] = num;
+			row["Field_DateTime"] = DateTime.Now;
+			row["Field_Note"] = @"<div>1行目</div><div>2行目</div><div>3行目</div>";
+			row["場所"] = "場所" + num.ToString("000");
+			row["サイトURL"] = @"/Shared Documents/ツール実施手順.txt";
+			row["Created"] = DateTime.Now;
+			row["登録日時"] = DateTime.MinValue;
+
+			var ns = m.GetInternalNames(row.Keys).ToList();
+			var items = m.ConvertRowData(row);
+
+			var expected = row.Count;
+			var actual = items.Count;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
+		[Owner("リスト管理")]
 		[TestCategory("更新")]
 		public void ファイル添付() {
 			var title = "カスタムリスト-テスト";
@@ -210,7 +242,7 @@ namespace UnitTestProject {
 			};
 
 			{
-				var row = m.GetAllItems(title, 100, "ID", "Title");
+				var row = m.GetAllItems(title, 100);
 
 				var expected = "お試し";
 				var actual = row[1]["Title"];

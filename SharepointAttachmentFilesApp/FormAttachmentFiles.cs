@@ -8,17 +8,17 @@ using SharePointManager.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 
-namespace SharepointListMngApp {
+namespace SharepointAttachmentFilesApp {
 	/// <summary>
 	/// フォーム
 	/// </summary>
-	public partial class FormListMng : Form {
+	public partial class FormAttachmentFiles : Form {
 		#region コンストラクタ
 
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		public FormListMng() {
+		public FormAttachmentFiles() {
 			this.InitializeComponent();
 #if true
 			this.textBoxUrl.Text = Properties.Settings.Default.URL;
@@ -50,12 +50,11 @@ namespace SharepointListMngApp {
 				var username = this.textBoxUser.Text;
 				var password = this.textBoxPassword.Text;
 				var listName = this.textBoxListName.Text;
-
+#if false
 				var lm = new ListManager(url, username, password, listName);
 				lm.ThrowException += (s, ea) => {
 					throw new Exception(ea.ErrorMessage);
 				};
-
 				var tbl = this.gridCsv.ToDataTable();
 				var ls = tbl.ToDictionaryList();
 				ls.ForEach(r => {
@@ -64,6 +63,13 @@ namespace SharepointListMngApp {
 
 				var msg = "[" + listName + "] にアイテムを登録しました。";
 				MessageBox.Show(msg);
+#else	// TODO:ファイル添付処理実装
+				var row = this.gridDirectories.SelectedRows[0];
+				var fullPath = row.Cells["FullName"].Value.ToString();
+				var srt = new DirectoryInfo(fullPath).EnumerateFiles()
+				.Select(f => f.FullName).Join(", ");
+				MessageBox.Show(string.Format("ファイル添付(仮): {0}", srt));
+#endif
 			} catch (Exception ex) {
 				MessageBox.Show(ex.ToString());
 			} finally {
@@ -77,9 +83,10 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonReference_Click(object sender, EventArgs e) {
-			switch (this.openFileDialog.ShowDialog()) {
+			var dlg = this.folderBrowserDialog;
+			switch (dlg.ShowDialog()) {
 			case DialogResult.OK:
-				this.textBoxFilePath.Text = openFileDialog.FileName;
+				this.textBoxFilePath.Text = dlg.SelectedPath;
 				break;
 			default:
 				break;
@@ -98,13 +105,13 @@ namespace SharepointListMngApp {
 			}
 
 			try {
-				var file = new FileInfo(tb.Text);
-				this.buttonRun.Enabled = file.Exists;
+				var directory = new DirectoryInfo(tb.Text);
+				this.buttonRun.Enabled = directory.Exists;
 
-				var table = file.LoadCsvData();
-				this.gridCsv.DataSource = table;
+				var table = directory.EnumerateDirectories().ToDataTable();
+				this.gridDirectories.DataSource = table;
 			} catch (Exception ex) {
-				this.gridCsv.DataSource = null;
+				this.gridDirectories.DataSource = null;
 
 				MessageBox.Show(ex.Message);
 			}
@@ -116,15 +123,16 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragEnter(object sender, DragEventArgs e) {
-			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+			var format = DataFormats.FileDrop;
+			if (!e.Data.GetDataPresent(format)) {
 				return;
 			}
 
 			// ドラッグ中のファイルやディレクトリの取得
-			var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+			var drags = (string[])e.Data.GetData(format);
 
-			foreach (var f in drags.Select(v => new FileInfo(v))) {
-				if (!f.Exists) {
+			foreach (var d in drags.Select(v => new DirectoryInfo(v))) {
+				if (!d.Exists) {
 					return;
 				}
 			}
@@ -138,8 +146,9 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
-			// ドラッグ＆ドロップされたファイル
-			var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+			var format = DataFormats.FileDrop;
+			// ドラッグ＆ドロップされたファイルやディレクトリ
+			var files = (string[])e.Data.GetData(format);
 
 			this.textBoxFilePath.Text = files.FirstOrDefault();
 		}

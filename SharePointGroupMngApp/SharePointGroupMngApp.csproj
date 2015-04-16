@@ -85,9 +85,9 @@
       <Project>{be1bb940-f59e-4440-add0-603bd9915a02}</Project>
       <Name>ObjectAnalysisProject</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SharePointInfoManager\SharePointInfoManager.csproj">
+    <ProjectReference Include="..\SharePointInfoManager\SharePointManager.csproj">
       <Project>{c5dbedf8-f96a-4c85-83f2-71f462efb15f}</Project>
-      <Name>SharePointInfoManager</Name>
+      <Name>SharePointManager</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

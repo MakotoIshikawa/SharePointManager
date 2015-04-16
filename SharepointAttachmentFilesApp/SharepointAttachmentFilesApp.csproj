@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EDC0C2F6-E954-4014-BA4A-6090F33A4124}</ProjectGuid>
+    <ProjectGuid>{75BC8638-C10F-44A8-8DB5-F84259589A66}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TermStoreMngApp</RootNamespace>
-    <AssemblyName>TermStoreMngApp</AssemblyName>
+    <RootNamespace>SharepointAttachmentFilesApp</RootNamespace>
+    <AssemblyName>SharepointAttachmentFilesApp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,7 +34,6 @@
   <ItemGroup>
     <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,16 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormTermStoreInfo.cs">
+    <Compile Include="FormAttachmentFiles.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormTermStoreInfo.Designer.cs">
-      <DependentUpon>FormTermStoreInfo.cs</DependentUpon>
+    <Compile Include="FormAttachmentFiles.Designer.cs">
+      <DependentUpon>FormAttachmentFiles.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FormTermStoreInfo.resx">
-      <DependentUpon>FormTermStoreInfo.cs</DependentUpon>
+    <EmbeddedResource Include="FormAttachmentFiles.resx">
+      <DependentUpon>FormAttachmentFiles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

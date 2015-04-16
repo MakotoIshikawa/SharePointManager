@@ -6,12 +6,12 @@ namespace ExtensionsLibrary {
 	/// オブジェクトが等しいかどうかの比較をサポートするメソッドを定義します
 	/// </summary>
 	/// <typeparam name="T">オブジェクトの型</typeparam>
-	/// <typeparam name="TKey">比較する値の型</typeparam>
-	public class CompareSelector<T, TKey> : IEqualityComparer<T>
-		where TKey : IComparable {
+	/// <typeparam name="TComparable">比較する値の型</typeparam>
+	public class CompareSelector<T, TComparable> : IEqualityComparer<T>
+		where TComparable : IComparable {
 		#region フィールド
 
-		private Func<T, TKey> _selector;
+		private Func<T, TComparable> _selector;
 
 		#endregion
 
@@ -21,7 +21,7 @@ namespace ExtensionsLibrary {
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="selector">比較する値を返すメソッド</param>
-		public CompareSelector(Func<T, TKey> selector) {
+		public CompareSelector(Func<T, TComparable> selector) {
 			this._selector = selector;
 		}
 

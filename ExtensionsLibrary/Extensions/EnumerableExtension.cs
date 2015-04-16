@@ -140,19 +140,39 @@ namespace ExtensionsLibrary.Extensions {
 		/// <summary>
 		/// シーケンスから一意の要素を返します。
 		/// </summary>
-		/// <typeparam name="T">コレクション要素の型</typeparam>
-		/// <typeparam name="TKey">比較する値の型</typeparam>
+		/// <typeparam name="TSource">コレクション要素の型</typeparam>
+		/// <typeparam name="TComparable">比較する値の型</typeparam>
 		/// <param name="source">重複する要素を削除する対象となるシーケンス</param>
-		/// <param name="selector">比較する値を返すメソッド</param>
+		/// <param name="compareSelector">比較する値を返すメソッド</param>
 		/// <returns>ソース シーケンスの一意の要素を格納するコレクション</returns>
-		public static IEnumerable<T> Distinct<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector)
-			where TKey : IComparable {
-			return source.Distinct(new CompareSelector<T, TKey>(selector));
+		public static IEnumerable<TSource> Distinct<TSource, TComparable>(this IEnumerable<TSource> source, Func<TSource, TComparable> compareSelector) where TComparable : IComparable {
+			return source.Distinct(new CompareSelector<TSource, TComparable>(compareSelector));
 		}
 
 		#endregion
 
 		#region ToDictionary (オーバーロード +6)
+
+		/// <summary>
+		/// 指定されたキー セレクター関数、比較関数、および要素セレクター関数に従って、
+		/// IEnumerable(T) から Dictionary(TKey,TValue) を作成します。
+		/// </summary>
+		/// <typeparam name="TSource">source の要素の型。</typeparam>
+		/// <typeparam name="TKey">keySelector によって返されるキーの型。</typeparam>
+		/// <typeparam name="TElement">elementSelector によって返される値の型。</typeparam>
+		/// <typeparam name="TComparable">キーを比較する型。</typeparam>
+		/// <param name="source">Dictionary(TKey,TValue) の作成元の IEnumerable(T)。</param>
+		/// <param name="keySelector">各要素からキーを抽出する関数。</param>
+		/// <param name="elementSelector">各要素から結果の要素値を生成する変換関数。</param>
+		/// <param name="compareSelector">比較する値を返す関数。</param>
+		/// <returns>入力シーケンスから選択された TElement 型の値を格納する Dictionary(TKey,TValue)。</returns>
+		/// <exception cref="ArgumentNullException">
+		/// source、keySelector、または elementSelector が null です。
+		/// または keySelector が null のキーを生成しています。</exception>
+		public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement, TComparable>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, TComparable> compareSelector) where TComparable : IComparable {
+			var cmp = new CompareSelector<TKey, TComparable>(compareSelector);
+			return source.ToDictionary(keySelector, elementSelector, cmp);
+		}
 
 		/// <summary>
 		/// 指定されたキー セレクター関数に従って、
