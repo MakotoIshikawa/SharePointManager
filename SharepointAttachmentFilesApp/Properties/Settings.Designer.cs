@@ -67,5 +67,14 @@ namespace SharepointAttachmentFilesApp.Properties {
                 return ((int)(this["LogRowLimit"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("UniqueKey")]
+        public string UniqueKey {
+            get {
+                return ((string)(this["UniqueKey"]));
+            }
+        }
     }
 }

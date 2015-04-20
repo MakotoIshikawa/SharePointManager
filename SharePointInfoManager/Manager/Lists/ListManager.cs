@@ -432,7 +432,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>作成した CamlQuery を返します。</returns>
-		private static CamlQuery CreateQuery(Action<XmlView> setQueryParameters, int limit, IEnumerable<string> viewFields) {
+		public static CamlQuery CreateQuery(Action<XmlView> setQueryParameters, int limit, IEnumerable<string> viewFields) {
 			var xml = new XmlView(limit, viewFields);
 
 			if (setQueryParameters != null) {
@@ -490,6 +490,15 @@ namespace SharePointManager.Manager.Lists {
 				var items = cn.Web.Lists.GetListAllItems(listName);
 				return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
 			});
+		}
+
+		public int GetID(string key, string val) {
+			var listName = this.ListName;
+			var row = this.GetItemsValues(listName, xml => {
+				xml.AddQueryItem<QueryOperatorEq>(key, "Text", val);
+			}, 1, key);
+			var id = row.First().Key;
+			return id;
 		}
 
 		#endregion

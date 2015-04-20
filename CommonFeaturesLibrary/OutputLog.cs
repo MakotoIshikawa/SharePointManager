@@ -4,105 +4,77 @@ using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
 
 namespace CommonFeaturesLibrary {
-	/// ---------------------------------------------------------------------------------------
 	/// <summary>
-	/// ログ出力クラス</summary>
-	/// ---------------------------------------------------------------------------------------
+	/// ログ出力クラス
+	/// </summary>
 	public class OutputLog {
-		/// <summary>
-		/// ファイルパス</summary>
-		private String m_filePath;
+		#region フィールド
 
-		/// ---------------------------------------------------------------------------------------
+		/// <summary>ファイル情報</summary>
+		private FileInfo m_fileInfo;
+
+		#endregion
+
+		#region コンストラクタ
+
 		/// <summary>
-		/// コンストラクタ</summary>
+		/// コンストラクタ
+		/// </summary>
 		/// <remarks>
 		/// オブジェクトを生成します。</remarks>
-		/// ---------------------------------------------------------------------------------------
 		public OutputLog()
 			: this(GetAppLogFilePath()) {
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
-		/// コンストラクタ</summary>
+		/// コンストラクタ
+		/// </summary>
 		/// <param name="filePath">ファイルパス</param>
 		/// <remarks>
 		/// オブジェクトを生成します。</remarks>
-		/// ---------------------------------------------------------------------------------------
 		public OutputLog(String filePath) {
-			this.m_filePath = filePath;
-		}
-
-		/// ---------------------------------------------------------------------------------------
-		/// <summary>
-		/// デストラクタ</summary>
-		/// <remarks>
-		/// オブジェクトの消去
-		/// 使用中のリソースをすべてクリーンアップします</remarks>
-		/// ---------------------------------------------------------------------------------------
-		~OutputLog() {
-		}
-
-		#region	ログ書込
-
-		/// ---------------------------------------------------------------------------------------
-		/// <summary>
-		/// ログ書込</summary>
-		/// <param name="message">メッセージ</param>
-		/// <remarks>
-		/// ログファイルにログを書き込む</remarks>
-		/// ---------------------------------------------------------------------------------------
-		public void WriteLog(String message) {
-			lock (this.m_filePath) {
-				var fgm = new FileGenMgt(this.m_filePath, (long)message.Length, 5);
-				OutputLog.WriteLog(this.m_filePath, message);
-			}
-		}
-
-		/// ---------------------------------------------------------------------------------------
-		/// <summary>
-		/// ログ書込</summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <param name="message">メッセージ</param>
-		/// <remarks>
-		/// ログファイルにログを書き込む</remarks>
-		/// ---------------------------------------------------------------------------------------
-		private static void WriteLog(String filePath, String message) {
-			using (var sw = new StreamWriter(filePath, true)) {
-				sw.WriteLine(message.GetTimeLog());
-
-				sw.Close();
-			}
+			this.m_fileInfo = new FileInfo(filePath);
 		}
 
 		#endregion
 
-		#region	アプリログファイルパス取得
+		#region	ログ書込
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
-		/// アプリログファイルパス取得</summary>
+		/// ログ書込</summary>
+		/// <param name="message">メッセージ</param>
 		/// <remarks>
-		/// アプリログファイルパスを取得する</remarks>
-		/// ---------------------------------------------------------------------------------------
-		private static String GetAppLogFilePath() {
-			return Path.ChangeExtension(Application.ExecutablePath, ".log");
+		/// ログファイルにログを書き込む</remarks>
+		public void WriteLog(String message) {
+			lock (this.m_fileInfo) {
+				var fileName = this.m_fileInfo.FullName;
+				this.m_fileInfo.CheckCapacity((long)message.Length);
+				this.m_fileInfo.WriteLine(message.GetTimeLog());
+			}
 		}
 
 		#endregion
 
 		#region	ファイル内容クリア
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
-		/// ファイル内容クリア</summary>
+		/// ログファイルの内容をクリアします。
+		/// </summary>
+		public void LogClear() {
+			this.m_fileInfo.Clear();
+		}
+
+		#endregion
+
+		#region	アプリログファイルパス取得
+
+		/// <summary>
+		/// アプリログファイルパス取得
+		/// </summary>
 		/// <remarks>
-		/// ファイル内容をクリアする</remarks>
-		/// ---------------------------------------------------------------------------------------
-		public void FileClear() {
-			using (var sw = new StreamWriter(this.m_filePath, false)) {
-			}
+		/// アプリログファイルパスを取得する</remarks>
+		private static String GetAppLogFilePath() {
+			return Path.ChangeExtension(Application.ExecutablePath, ".log");
 		}
 
 		#endregion

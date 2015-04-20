@@ -8,14 +8,19 @@ using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
+using SharePointManager.Manager.Lists.Xml;
 
 namespace SharepointAttachmentFilesApp {
 	/// <summary>
 	/// フォーム
 	/// </summary>
 	public partial class FormAttachmentFiles : Form {
+		#region フィールド
+
 		/// <summary>ログ出力</summary>
-		OutputLog m_Log = new OutputLog();
+		private OutputLog _log = new OutputLog();
+
+		#endregion
 
 		#region コンストラクタ
 
@@ -31,6 +36,7 @@ namespace SharepointAttachmentFilesApp {
 			this.textBoxListName.Text = Properties.Settings.Default.ListName;
 
 			this.LogRowLimit = Properties.Settings.Default.LogRowLimit;
+			this.UniqueKey = Properties.Settings.Default.UniqueKey;
 #endif
 		}
 
@@ -40,6 +46,9 @@ namespace SharepointAttachmentFilesApp {
 
 		/// <summary>表示ログ最大行数</summary>
 		public int LogRowLimit { get; protected set; }
+
+		/// <summary>固有キー</summary>
+		public string UniqueKey { get; protected set; }
 
 		#endregion
 
@@ -63,29 +72,28 @@ namespace SharepointAttachmentFilesApp {
 				var username = this.textBoxUser.Text;
 				var password = this.textBoxPassword.Text;
 				var listName = this.textBoxListName.Text;
-#if false
-				var lm = new ListManager(url, username, password, listName);
-				lm.ThrowException += (s, ea) => {
+
+				var m = new ListManager(url, username, password, listName);
+				m.ThrowException += (s, ea) => {
 					throw new Exception(ea.ErrorMessage);
 				};
-				var tbl = this.gridCsv.ToDataTable();
-				var ls = tbl.ToDictionaryList();
-				ls.ForEach(r => {
-					lm.AddListItem(r);
-				});
 
-				var msg = "[" + listName + "] にアイテムを登録しました。";
-				this.WriteLineMessage(msg);
-#else	// TODO:ファイル添付処理実装
-				var row = this.gridDirectories.SelectedRows[0];
-				var fullPath = row.Cells["FullName"].Value.ToString();
+				var key = this.UniqueKey;
+				foreach (var row in this.gridDirectories.SelectedRows.Cast<DataGridViewRow>()) {
+					var fullPath = row.Cells["FullName"].Value.ToString();
 
-				var files = new DirectoryInfo(fullPath).EnumerateFiles();
-				files.Select(f => f.FullName).ToList()
-				.ForEach(f => {
-					this.WriteLineMessage(string.Format("ファイル添付: {0}", f));
-				});
-#endif
+					var dir = new DirectoryInfo(fullPath);
+					this.WriteLineMessage("ファイルを添付します。 : " + dir.FullName);
+					var files = dir.EnumerateFiles();
+
+					var id = m.GetID(key, dir.Name);
+					m.AddAttachmentFile(id, files);
+
+					files.Select(f => f.Name).ToList()
+					.ForEach(f => {
+						this.WriteLineMessage(string.Format("ファイル名 : {0}", f));
+					});
+				}
 			} catch (Exception ex) {
 				this.WriteLineMessage(ex.ToString());
 			} finally {
@@ -197,7 +205,8 @@ namespace SharepointAttachmentFilesApp {
 		#region メソッド
 
 		/// <summary>
-		/// メッセージ書込</summary>
+		/// メッセージ書込
+		/// </summary>
 		/// <param name="message">メッセージ</param>
 		/// <remarks>
 		/// ユーザインターフェイスにメッセージを書き込む</remarks>
@@ -207,10 +216,10 @@ namespace SharepointAttachmentFilesApp {
 				var msg = message.GetTimeLog();
 
 				// リストにログ追加
-				this.AddListBox(msg);
+				this.listBoxMessage.AddMessage(msg, this.LogRowLimit);
 
 				// ログファイルに出力
-				this.m_Log.WriteLog(message);
+				this._log.WriteLog(message);
 #if true
 				// バルーン表示
 				if (this.notifyIcon1.Visible) {
@@ -218,34 +227,11 @@ namespace SharepointAttachmentFilesApp {
 				}
 #endif
 			} catch (Exception ex) {
-				this.m_Log.WriteLog(ex.ToString());
+				this._log.WriteLog(ex.ToString());
 			}
-		}
-
-		/// <summary>
-		/// メッセージ追加
-		/// </summary>
-		/// <param name="message">メッセージ</param>
-		/// <remarks>
-		/// リストボックスにメッセージを書き込む</remarks>
-		private void AddListBox(string message) {
-			if (this.listBoxMessage.Visible == false) {
-				// 非表示であれば何もしない
-				return;
-			}
-
-			this.listBoxMessage.Items.Add(message);
-
-			if (this.listBoxMessage.Items.Count > this.LogRowLimit) {
-				// 表示ログ最大行数を超えていたら先頭行を削除
-				this.listBoxMessage.Items.RemoveAt(0);
-			}
-
-			// 追加された行を選択します
-			var index = this.listBoxMessage.Items.Count - 1;
-			this.listBoxMessage.SelectedIndex = index;
 		}
 
 		#endregion
 	}
+
 }

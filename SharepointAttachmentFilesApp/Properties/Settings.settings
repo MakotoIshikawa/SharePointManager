@@ -17,5 +17,8 @@
     <Setting Name="LogRowLimit" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">1000</Value>
     </Setting>
+    <Setting Name="UniqueKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">UniqueKey</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

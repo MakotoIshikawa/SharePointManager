@@ -52,6 +52,7 @@
     <Compile Include="FormAttachmentFiles.Designer.cs">
       <DependentUpon>FormAttachmentFiles.cs</DependentUpon>
     </Compile>
+    <Compile Include="ListBoxExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormAttachmentFiles.resx">

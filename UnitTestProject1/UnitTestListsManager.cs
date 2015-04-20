@@ -265,6 +265,15 @@ namespace UnitTestProject {
 				var actual = row[1]["Title"];
 				Assert.AreEqual(expected, actual);
 			}
+			{
+				var key = "UniqueKey";
+				var val = "201504161100";
+				var id = m.GetID(key, val);
+
+				var expected = 1;
+				var actual = id;
+				Assert.AreEqual(expected, actual);
+			}
 
 			var retrievals = new Expression<Func<ListItem, object>>[] {
 				i => i.Id
@@ -296,6 +305,17 @@ namespace UnitTestProject {
 			var ret = xml.ToString();
 
 			Assert.IsNotNull(ret);
+		}
+
+		[TestMethod]
+		[Owner("その他")]
+		[TestCategory("変更")]
+		public void ファイル名変更() {
+			var file = new FileInfo(@"C:\Users\ishikawm\Documents\L.txt");
+			var fname0 = file.GetVersionName(0);
+			var fname1 = file.GetVersionName(1);
+
+			Assert.IsNotNull(fname0);
 		}
 	}
 }
