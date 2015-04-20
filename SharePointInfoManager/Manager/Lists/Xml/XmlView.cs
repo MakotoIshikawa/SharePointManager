@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
+using Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager.Lists.Xml {
 	/// <summary>
@@ -22,7 +23,7 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// </summary>
 		/// <param name="rowLimit">最大行数</param>
 		/// <param name="viewFields">参照フィールド名配列</param>
-		public XmlView(int rowLimit, params string[] viewFields) {
+		public XmlView(int rowLimit, IEnumerable<string> viewFields) {
 			if (rowLimit != 0) {
 				this.RowLimit = rowLimit;
 			}
@@ -49,6 +50,13 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 		#region メソッド
 
+		public CamlQuery CreateQuery() {
+			var xmlstr = this.ToString();
+			return new CamlQuery() {
+				ViewXml = xmlstr.IsEmpty() ? null : xmlstr,
+			};
+		}
+
 		/// <summary>
 		/// 参照フィールド追加
 		/// </summary>
@@ -65,7 +73,7 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// 参照フィールド追加
 		/// </summary>
 		/// <param name="viewFields">参照フィールド名配列</param>
-		public void AddFields(params string[] viewFields) {
+		public void AddFields(IEnumerable<string> viewFields) {
 			foreach (var name in viewFields) {
 				this.AddField(name);
 			}

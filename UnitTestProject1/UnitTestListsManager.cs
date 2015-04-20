@@ -7,6 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
 using ExtensionsLibrary.Extensions;
+using SharePointManager.Manager.Extensions;
+using System.Linq.Expressions;
 
 namespace UnitTestProject {
 	[TestClass]
@@ -189,7 +191,7 @@ namespace UnitTestProject {
 			var file1 = new FileInfo(@"C:\Users\ishikawm\Documents\L.txt");
 			var file2 = new FileInfo(@"C:\Users\ishikawm\Documents\R.txt");
 			//var file3 = new FileInfo(@"C:\Users\ishikawm\Documents\dummy200MB.file");
-			m.AddAttachmentFile(28, file1, file2);
+			m.AddAttachmentFile(28, new[] { file1, file2 });
 #endif
 
 			var ret = m.Titles;
@@ -242,7 +244,7 @@ namespace UnitTestProject {
 			};
 
 			{
-				var row = m.GetAllItems(title, 100);
+				var row = m.GetAllItemsValues(title, 1000);
 
 				var expected = "お試し";
 				var actual = row[1]["Title"];
@@ -250,47 +252,37 @@ namespace UnitTestProject {
 			}
 			{
 				int limit = 100;
-				var row = m.GetItems(title
-					, limit
-					, xml => {
-						xml.AddQueryItems<QueryItemsAnd>(o => {
-							//o.AddOperatorItem<QueryOperatorIsNotNull>("Place");
-							o.AddOperatorItem<QueryOperatorGeq>("ID", "Number", "1");
-							o.AddOperatorItem<QueryOperatorLt>("ID", "Number", "25");
-							//o.AddOperatorItem<QueryOperatorEq>("ID", "Number", "1");
-						});
-						//xml.AddQueryItem<QueryOperatorEq>("Title", "Text", "アイテム1");
-					}
-					, "ID"
-					, "Title"
-					, "Field_Text"
-					, "Field_Number"
-					, "Field_DateTime"
-					, "Field_Note"
-					, "Place"
-				);
+				var row = m.GetItemsValues(title, xml => {
+					xml.AddQueryItems<QueryItemsAnd>(o => {
+						//o.AddOperatorItem<QueryOperatorIsNotNull>("Place");
+						o.AddOperatorItem<QueryOperatorGeq>("ID", "Number", "1");
+						o.AddOperatorItem<QueryOperatorLt>("ID", "Number", "25");
+						//o.AddOperatorItem<QueryOperatorEq>("ID", "Number", "1");
+					});
+					//xml.AddQueryItem<QueryOperatorEq>("Title", "Text", "アイテム1");
+				}, limit, "ID", "Title", "Field_Text", "Field_Number", "Field_DateTime", "Field_Note", "Place");
 				var expected = "お試し";
 				var actual = row[1]["Title"];
 				Assert.AreEqual(expected, actual);
 			}
-			var ret2 = m.Load(cn => {
-				var list = cn.Web.Lists.GetByTitle(title);
-				var query = CamlQuery.CreateAllItemsQuery(100);
-				var items = list.GetItems(query);
 
-				return items.Include(
-					i => i.Id
-					, i => i.AttachmentFiles.Include(
-						f => f.FileName
-						, f => f.ServerRelativeUrl
-					)
-				);
-			}).ToDictionary(i => i.Id, i => i.AttachmentFiles);
-
-			var ret = m.Titles;
-			Assert.IsTrue(ret.Any(s => s == title));
+			var retrievals = new Expression<Func<ListItem, object>>[] {
+				i => i.Id
+				, i => i.AttachmentFiles.Include(
+					f => f.FileName
+					, f => f.ServerRelativeUrl
+				)
+			};
+			{
+				var id = 1;
+				var index = 0;
+				var ret1 = m.GetAttachmentFiles(title, id).ToList();
+				var ret2 = m.GetAttachmentFilesDictionary(title);
+				var expected = ret1[index].FileName;
+				var actual = ret2[id][index].FileName;
+				Assert.AreEqual(expected, actual);
+			}
 		}
-
 
 		[TestMethod]
 		[Owner("リスト管理")]

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
@@ -13,6 +14,9 @@ namespace SharepointAttachmentFilesApp {
 	/// フォーム
 	/// </summary>
 	public partial class FormAttachmentFiles : Form {
+		/// <summary>ログ出力</summary>
+		OutputLog m_Log = new OutputLog();
+
 		#region コンストラクタ
 
 		/// <summary>
@@ -25,8 +29,17 @@ namespace SharepointAttachmentFilesApp {
 			this.textBoxUser.Text = Properties.Settings.Default.User;
 			this.textBoxPassword.Text = Properties.Settings.Default.Password;
 			this.textBoxListName.Text = Properties.Settings.Default.ListName;
+
+			this.LogRowLimit = Properties.Settings.Default.LogRowLimit;
 #endif
 		}
+
+		#endregion
+
+		#region プロパティ
+
+		/// <summary>表示ログ最大行数</summary>
+		public int LogRowLimit { get; protected set; }
 
 		#endregion
 
@@ -39,7 +52,7 @@ namespace SharepointAttachmentFilesApp {
 		/// <param name="e">イベントデータ</param>
 		private void buttonRun_Click(object sender, EventArgs e) {
 			if (this.textBoxListName.Text.IsEmpty()) {
-				MessageBox.Show("リスト名を入力して下さい。");
+				this.WriteLineMessage("リスト名を入力して下さい。");
 				return;
 			}
 
@@ -62,16 +75,19 @@ namespace SharepointAttachmentFilesApp {
 				});
 
 				var msg = "[" + listName + "] にアイテムを登録しました。";
-				MessageBox.Show(msg);
+				this.WriteLineMessage(msg);
 #else	// TODO:ファイル添付処理実装
 				var row = this.gridDirectories.SelectedRows[0];
 				var fullPath = row.Cells["FullName"].Value.ToString();
-				var srt = new DirectoryInfo(fullPath).EnumerateFiles()
-				.Select(f => f.FullName).Join(", ");
-				MessageBox.Show(string.Format("ファイル添付(仮): {0}", srt));
+
+				var files = new DirectoryInfo(fullPath).EnumerateFiles();
+				files.Select(f => f.FullName).ToList()
+				.ForEach(f => {
+					this.WriteLineMessage(string.Format("ファイル添付: {0}", f));
+				});
 #endif
 			} catch (Exception ex) {
-				MessageBox.Show(ex.ToString());
+				this.WriteLineMessage(ex.ToString());
 			} finally {
 				this.Enabled = true;
 			}
@@ -113,7 +129,7 @@ namespace SharepointAttachmentFilesApp {
 			} catch (Exception ex) {
 				this.gridDirectories.DataSource = null;
 
-				MessageBox.Show(ex.Message);
+				this.WriteLineMessage(ex.Message);
 			}
 		}
 
@@ -153,9 +169,82 @@ namespace SharepointAttachmentFilesApp {
 			this.textBoxFilePath.Text = files.FirstOrDefault();
 		}
 
+		/// <summary>
+		/// ダブルクリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		/// <remarks>
+		/// ダブルクリックされたときに発生します。</remarks>
+		private void listBoxMessage_DoubleClick(object sender, EventArgs e) {
+			var ret = MessageBox.Show("ログをクリアしますか？", "確認"
+				, MessageBoxButtons.YesNo
+				, MessageBoxIcon.Question
+				, MessageBoxDefaultButton.Button2
+			);
+
+			switch (ret) {
+			case DialogResult.Yes:
+				this.listBoxMessage.Items.Clear();
+				break;
+			default:
+				break;
+			}
+		}
+
 		#endregion
 
 		#region メソッド
+
+		/// <summary>
+		/// メッセージ書込</summary>
+		/// <param name="message">メッセージ</param>
+		/// <remarks>
+		/// ユーザインターフェイスにメッセージを書き込む</remarks>
+		private void WriteLineMessage(string message) {
+			try {
+				// 時刻ログ取得
+				var msg = message.GetTimeLog();
+
+				// リストにログ追加
+				this.AddListBox(msg);
+
+				// ログファイルに出力
+				this.m_Log.WriteLog(message);
+#if true
+				// バルーン表示
+				if (this.notifyIcon1.Visible) {
+					this.notifyIcon1.ShowBalloonTip(500, "情報", msg, ToolTipIcon.Info);
+				}
+#endif
+			} catch (Exception ex) {
+				this.m_Log.WriteLog(ex.ToString());
+			}
+		}
+
+		/// <summary>
+		/// メッセージ追加
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		/// <remarks>
+		/// リストボックスにメッセージを書き込む</remarks>
+		private void AddListBox(string message) {
+			if (this.listBoxMessage.Visible == false) {
+				// 非表示であれば何もしない
+				return;
+			}
+
+			this.listBoxMessage.Items.Add(message);
+
+			if (this.listBoxMessage.Items.Count > this.LogRowLimit) {
+				// 表示ログ最大行数を超えていたら先頭行を削除
+				this.listBoxMessage.Items.RemoveAt(0);
+			}
+
+			// 追加された行を選択します
+			var index = this.listBoxMessage.Items.Count - 1;
+			this.listBoxMessage.SelectedIndex = index;
+		}
 
 		#endregion
 	}

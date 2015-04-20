@@ -182,5 +182,34 @@ namespace SharePointManager.Manager.Extensions {
 
 			return fi != null ? fi.InternalName : String.Empty;
 		}
+
+
+		#region リストアイテム取得
+
+		public static ListItemCollection GetListItems(this ListCollection @this, string listName, CamlQuery query) {
+			var list = @this.GetByTitle(listName);
+			return list.GetItems(query);
+		}
+
+		#region GetListAllItems
+
+		public static ListItemCollection GetListAllItems(this ListCollection @this, string listName) {
+			var query = CamlQuery.CreateAllItemsQuery();
+			return @this.GetListItems(listName, query);
+		}
+
+		public static IQueryable<ListItem> GetListAllItems(this ListCollection @this, string listName, Expression<Func<ListItem, object>>[] retrievals) {
+			var items = @this.GetListAllItems(listName);
+			return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
+		}
+
+		public static ListItemCollection GetListAllItems(this ListCollection @this, string title, int limit, params string[] viewFields) {
+			var query = CamlQuery.CreateAllItemsQuery(limit, viewFields);
+			return @this.GetListItems(title, query);
+		}
+
+		#endregion
+
+		#endregion
 	}
 }

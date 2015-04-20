@@ -325,7 +325,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="id">リストアイテムID</param>
 		/// <param name="files">ファイル情報配列</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddAttachmentFile(int id, params FileInfo[] files) {
+		public ListManager AddAttachmentFile(int id, IEnumerable<FileInfo> files) {
 			return AddAttachmentFile(l => l.GetItemById(id), files);
 		}
 
@@ -335,7 +335,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="getItem">リストアイテム取得メソッド</param>
 		/// <param name="files">ファイル情報配列</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddAttachmentFile(Func<SP.List, SP.ListItem> getItem, params FileInfo[] files) {
+		public ListManager AddAttachmentFile(Func<SP.List, SP.ListItem> getItem, IEnumerable<FileInfo> files) {
 			var title = this.ListName;
 			this.ReferToContext(cn => {
 				var l = cn.Web.Lists.GetByTitle(title);
@@ -358,9 +358,18 @@ namespace SharePointManager.Manager.Lists {
 
 		#endregion
 
-		#endregion
+		#region 情報取得
 
-		#region リストアイテム情報取得
+		#region GetAllItemsValues (オーバロード +1)
+
+		/// <summary>
+		/// 全てのリストアイテムを取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
+		public Dictionary<int, Dictionary<string, object>> GetAllItemsValues(string listName) {
+			return this.GetItemsValues(listName, CamlQuery.CreateAllItemsQuery());
+		}
 
 		/// <summary>
 		/// 全てのリストアイテムを取得します。
@@ -368,43 +377,46 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="listName">リスト名</param>
 		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
-		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
-		public Dictionary<int, Dictionary<string, object>> GetAllItems(string listName, int limit, params string[] viewFields) {
-			return this.GetItems(listName, limit, viewFields, (l, f) => CamlQuery.CreateAllItemsQuery(l, f));
+		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
+		public Dictionary<int, Dictionary<string, object>> GetAllItemsValues(string listName, int limit, params string[] viewFields) {
+			return this.GetItemsValues(listName, CamlQuery.CreateAllItemsQuery(limit, viewFields), viewFields);
 		}
+
+		#endregion
+
+		#region GetItemsValues
 
 		/// <summary>
 		/// 条件を指定してリストアイテムを取得します。
 		/// </summary>
 		/// <param name="listName">リスト名</param>
-		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="setQueryParameters"></param>
+		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
-		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
-		public Dictionary<int, Dictionary<string, object>> GetItems(string listName, int limit, Action<XmlView> setQueryParameters, params string[] viewFields) {
-			return this.GetItems(listName, limit, viewFields, (l, f) => ListManager.CreateQuery(l, setQueryParameters, f));
+		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
+		public Dictionary<int, Dictionary<string, object>> GetItemsValues(string listName, Action<XmlView> setQueryParameters, int limit = 0, params string[] viewFields) {
+			return this.GetItemsValues(listName, ListManager.CreateQuery(setQueryParameters, limit, viewFields), viewFields);
 		}
 
 		/// <summary>
 		/// リストアイテムを取得します。
 		/// </summary>
 		/// <param name="listName">リスト名</param>
-		/// <param name="limit">取得するアイテム数の上限値</param>
-		/// <param name="viewFields"></param>
-		/// <param name="func"></param>
+		/// <param name="query">CAML クエリ</param>
+		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
-		protected Dictionary<int, Dictionary<string, object>> GetItems(string listName, int limit, string[] viewFields, Func<int, string[], CamlQuery> func) {
+		private Dictionary<int, Dictionary<string, object>> GetItemsValues(string listName, CamlQuery query, IEnumerable<string> viewFields = null) {
 			var items = this.Load(cn => {
-				var list = cn.Web.Lists.GetByTitle(listName);
-				var query = func(limit, viewFields);
-				return list.GetItems(query);
+				return cn.Web.Lists.GetListItems(listName, query);
 			});
 
 			return (
 				from i in items
 				select new {
 					ID = i.Id,
-					Row = !viewFields.Any(f => !f.IsEmpty()) ? i.FieldValues : (
+					Row = (viewFields == null || !viewFields.Any(f => !f.IsEmpty()))
+					? i.FieldValues
+					: (
 						from v in i.FieldValues
 						join f in viewFields on v.Key equals f
 						select v
@@ -416,21 +428,75 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// CamlQuery のインスタンスを作成します。
 		/// </summary>
-		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="setQueryParameters">クエリパラメータ設定メソッド</param>
+		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>作成した CamlQuery を返します。</returns>
-		protected static CamlQuery CreateQuery(int limit, Action<XmlView> setQueryParameters, params string[] viewFields) {
+		private static CamlQuery CreateQuery(Action<XmlView> setQueryParameters, int limit, IEnumerable<string> viewFields) {
 			var xml = new XmlView(limit, viewFields);
 
 			if (setQueryParameters != null) {
 				setQueryParameters(xml);
 			}
 
-			return new CamlQuery() {
-				ViewXml = xml.ToString(),
-			};
+			return xml.CreateQuery();
 		}
+
+		#endregion
+
+		#region 添付ファイル情報取得
+
+		/// <summary>
+		/// リスト名とアイテムIDを指定して、
+		/// 添付ファイルのコレクションを取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <param name="id">アイテムID</param>
+		/// <returns>添付ファイルのコレクションを返します。</returns>
+		public IEnumerable<Attachment> GetAttachmentFiles(string listName, int id) {
+			return this.Load(cn => {
+				var items = cn.Web.Lists.GetListAllItems(listName);
+				return items.GetById(id).AttachmentFiles;
+			});
+		}
+
+		#region GetAttachmentFilesDictionary
+
+		/// <summary>
+		/// リスト名を指定して、
+		/// アイテムごとの添付ファイルコレクション Dictionary を取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <returns>添付ファイルコレクション Dictionary を返します。</returns>
+		public Dictionary<int, List<Attachment>> GetAttachmentFilesDictionary(string listName) {
+			return this.GetAllItems(listName,
+				i => i.Id
+				, i => i.AttachmentFiles.Include(
+					f => f.FileName
+					, f => f.ServerRelativeUrl
+				)
+			).ToDictionary(i => i.Id, i => i.AttachmentFiles.ToList());
+		}
+
+		/// <summary>
+		/// リスト名と検索の式木コレクションを指定して、
+		/// アイテムのコレクションを取得します。
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		/// <param name="retrievals">検索の式木コレクション</param>
+		/// <returns>アイテムのコレクションを返します。</returns>
+		protected IEnumerable<ListItem> GetAllItems(string listName, params Expression<Func<ListItem, object>>[] retrievals) {
+			return this.Load(cn => {
+				var items = cn.Web.Lists.GetListAllItems(listName);
+				return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
+			});
+		}
+
+		#endregion
+
+		#endregion
+
+		#endregion
 
 		#endregion
 

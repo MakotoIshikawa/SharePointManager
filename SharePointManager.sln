@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermStoreMngApp", "TermStor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharepointAttachmentFilesApp", "SharepointAttachmentFilesApp\SharepointAttachmentFilesApp.csproj", "{75BC8638-C10F-44A8-8DB5-F84259589A66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonFeaturesLibrary", "CommonFeaturesLibrary\CommonFeaturesLibrary.csproj", "{666330C0-B3F9-489A-AB39-4217D18728C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{75BC8638-C10F-44A8-8DB5-F84259589A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75BC8638-C10F-44A8-8DB5-F84259589A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75BC8638-C10F-44A8-8DB5-F84259589A66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{666330C0-B3F9-489A-AB39-4217D18728C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{666330C0-B3F9-489A-AB39-4217D18728C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{666330C0-B3F9-489A-AB39-4217D18728C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{666330C0-B3F9-489A-AB39-4217D18728C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

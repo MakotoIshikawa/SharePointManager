@@ -23,6 +23,7 @@
 		/// コード エディターで変更しないでください。
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			this.buttonRun = new System.Windows.Forms.Button();
 			this.textBoxFilePath = new System.Windows.Forms.TextBox();
 			this.buttonReference = new System.Windows.Forms.Button();
@@ -36,14 +37,21 @@
 			this.labelListName = new System.Windows.Forms.Label();
 			this.textBoxListName = new System.Windows.Forms.TextBox();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.listBoxMessage = new System.Windows.Forms.ListBox();
+			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.gridDirectories)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+			this.splitContainer1.Panel1.SuspendLayout();
+			this.splitContainer1.Panel2.SuspendLayout();
+			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// buttonRun
 			// 
 			this.buttonRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonRun.Enabled = false;
-			this.buttonRun.Location = new System.Drawing.Point(712, 412);
+			this.buttonRun.Location = new System.Drawing.Point(477, 407);
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.Size = new System.Drawing.Size(75, 23);
 			this.buttonRun.TabIndex = 0;
@@ -58,7 +66,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxFilePath.Location = new System.Drawing.Point(12, 12);
 			this.textBoxFilePath.Name = "textBoxFilePath";
-			this.textBoxFilePath.Size = new System.Drawing.Size(730, 19);
+			this.textBoxFilePath.Size = new System.Drawing.Size(495, 19);
 			this.textBoxFilePath.TabIndex = 1;
 			this.textBoxFilePath.TextChanged += new System.EventHandler(this.textBoxFilePath_TextChanged);
 			this.textBoxFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.obj_DragDrop);
@@ -68,7 +76,7 @@
 			// 
 			this.buttonReference.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonReference.AutoSize = true;
-			this.buttonReference.Location = new System.Drawing.Point(748, 10);
+			this.buttonReference.Location = new System.Drawing.Point(513, 10);
 			this.buttonReference.Name = "buttonReference";
 			this.buttonReference.Size = new System.Drawing.Size(39, 23);
 			this.buttonReference.TabIndex = 2;
@@ -82,7 +90,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxUrl.Location = new System.Drawing.Point(80, 38);
 			this.textBoxUrl.Name = "textBoxUrl";
-			this.textBoxUrl.Size = new System.Drawing.Size(662, 19);
+			this.textBoxUrl.Size = new System.Drawing.Size(427, 19);
 			this.textBoxUrl.TabIndex = 3;
 			// 
 			// textBoxUser
@@ -91,7 +99,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxUser.Location = new System.Drawing.Point(80, 64);
 			this.textBoxUser.Name = "textBoxUser";
-			this.textBoxUser.Size = new System.Drawing.Size(662, 19);
+			this.textBoxUser.Size = new System.Drawing.Size(427, 19);
 			this.textBoxUser.TabIndex = 4;
 			// 
 			// textBoxPassword
@@ -100,7 +108,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxPassword.Location = new System.Drawing.Point(80, 90);
 			this.textBoxPassword.Name = "textBoxPassword";
-			this.textBoxPassword.Size = new System.Drawing.Size(662, 19);
+			this.textBoxPassword.Size = new System.Drawing.Size(427, 19);
 			this.textBoxPassword.TabIndex = 5;
 			// 
 			// labelUrl
@@ -135,23 +143,21 @@
 			this.gridDirectories.AllowUserToAddRows = false;
 			this.gridDirectories.AllowUserToDeleteRows = false;
 			this.gridDirectories.AllowUserToOrderColumns = true;
-			this.gridDirectories.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridDirectories.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.gridDirectories.Location = new System.Drawing.Point(14, 115);
+			this.gridDirectories.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.gridDirectories.Location = new System.Drawing.Point(0, 0);
 			this.gridDirectories.Name = "gridDirectories";
 			this.gridDirectories.ReadOnly = true;
 			this.gridDirectories.RowTemplate.Height = 21;
 			this.gridDirectories.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.gridDirectories.Size = new System.Drawing.Size(773, 291);
+			this.gridDirectories.Size = new System.Drawing.Size(540, 143);
 			this.gridDirectories.TabIndex = 11;
 			// 
 			// labelListName
 			// 
 			this.labelListName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelListName.AutoSize = true;
-			this.labelListName.Location = new System.Drawing.Point(12, 417);
+			this.labelListName.Location = new System.Drawing.Point(12, 412);
 			this.labelListName.Name = "labelListName";
 			this.labelListName.Size = new System.Drawing.Size(41, 12);
 			this.labelListName.TabIndex = 13;
@@ -161,9 +167,9 @@
 			// 
 			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxListName.Location = new System.Drawing.Point(80, 414);
+			this.textBoxListName.Location = new System.Drawing.Point(80, 409);
 			this.textBoxListName.Name = "textBoxListName";
-			this.textBoxListName.Size = new System.Drawing.Size(626, 19);
+			this.textBoxListName.Size = new System.Drawing.Size(391, 19);
 			this.textBoxListName.TabIndex = 12;
 			// 
 			// folderBrowserDialog
@@ -172,15 +178,51 @@
 			this.folderBrowserDialog.SelectedPath = "C:\\work\\AttachmentFiles";
 			this.folderBrowserDialog.ShowNewFolderButton = false;
 			// 
+			// splitContainer1
+			// 
+			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.splitContainer1.Location = new System.Drawing.Point(12, 115);
+			this.splitContainer1.Name = "splitContainer1";
+			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add(this.gridDirectories);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.Controls.Add(this.listBoxMessage);
+			this.splitContainer1.Size = new System.Drawing.Size(540, 286);
+			this.splitContainer1.SplitterDistance = 143;
+			this.splitContainer1.TabIndex = 14;
+			// 
+			// listBoxMessage
+			// 
+			this.listBoxMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listBoxMessage.FormattingEnabled = true;
+			this.listBoxMessage.ItemHeight = 12;
+			this.listBoxMessage.Location = new System.Drawing.Point(0, 0);
+			this.listBoxMessage.Name = "listBoxMessage";
+			this.listBoxMessage.Size = new System.Drawing.Size(540, 139);
+			this.listBoxMessage.TabIndex = 22;
+			this.listBoxMessage.DoubleClick += new System.EventHandler(this.listBoxMessage_DoubleClick);
+			// 
+			// notifyIcon1
+			// 
+			this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+			this.notifyIcon1.Text = "端末装置制御";
+			// 
 			// FormAttachmentFiles
 			// 
 			this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(799, 447);
+			this.ClientSize = new System.Drawing.Size(564, 442);
+			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.labelListName);
 			this.Controls.Add(this.textBoxListName);
-			this.Controls.Add(this.gridDirectories);
 			this.Controls.Add(this.labelPassword);
 			this.Controls.Add(this.labelUser);
 			this.Controls.Add(this.labelUrl);
@@ -195,6 +237,10 @@
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.obj_DragDrop);
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.obj_DragEnter);
 			((System.ComponentModel.ISupportInitialize)(this.gridDirectories)).EndInit();
+			this.splitContainer1.Panel1.ResumeLayout(false);
+			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -215,6 +261,9 @@
 		private System.Windows.Forms.Label labelListName;
 		private System.Windows.Forms.TextBox textBoxListName;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+		private System.Windows.Forms.SplitContainer splitContainer1;
+		private System.Windows.Forms.ListBox listBoxMessage;
+		private System.Windows.Forms.NotifyIcon notifyIcon1;
 	}
 }
 
