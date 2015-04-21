@@ -82,17 +82,20 @@ namespace SharePointManager.Manager.Lists {
 		/// リストを作成します。
 		/// </summary>
 		/// <param name="title">タイトル</param>
+		/// <param name="url">URL</param>
 		/// <param name="description">説明</param>
 		/// <param name="templateType">リストタイプ</param>
-		public void Create(string title, string description, ListTemplateType templateType) {
+		public void Create(string title, string url, string description, ListTemplateType templateType) {
 			this.Execute(cn => {
 				var creationInfo = new ListCreationInformation() {
 					Title = title,
 					TemplateType = (int)templateType,
+					Url = url,
+					Description = description
 				};
 
 				var list = cn.Web.Lists.Add(creationInfo);
-				list.Description = description;
+				//list.Description = description;
 
 				list.Update();
 			});

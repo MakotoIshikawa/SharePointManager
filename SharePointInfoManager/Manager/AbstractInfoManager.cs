@@ -10,7 +10,7 @@ namespace SharePointManager.Manager {
 	/// <summary>
 	/// 情報管理抽象クラス
 	/// </summary>
-	public abstract class AbstractInfoManager : IClientSideObjectModel {
+	public abstract class AbstractInfoManager : IClientSideObjectModel, ISignInInfo {
 		#region コンストラクタ
 
 		/// <summary>
@@ -28,19 +28,6 @@ namespace SharePointManager.Manager {
 		#endregion
 
 		#region IClientSideObjectModel メンバー
-
-		#region プロパティ
-
-		/// <summary>サイトURL</summary>
-		public string Url { get; protected set; }
-
-		/// <summary>ユーザ名</summary>
-		public string UserName { get; protected set; }
-
-		/// <summary>パスワード</summary>
-		public string Password { get; protected set; }
-
-		#endregion
 
 		#region イベント
 
@@ -132,7 +119,7 @@ namespace SharePointManager.Manager {
 			if (getClientObjects == null) {
 				throw new ArgumentNullException("getClientObjects");
 			}
-	
+
 			return Extract(url, username, password, cn => {
 				var query = getClientObjects(cn);
 				var ret = cn.LoadQuery(query);
@@ -255,6 +242,23 @@ namespace SharePointManager.Manager {
 		}
 
 		#endregion
+
+		#endregion
+
+		#endregion
+
+		#region ISignInInfo メンバー
+
+		#region プロパティ
+
+		/// <summary>サイトURL</summary>
+		public string Url { get; set; }
+
+		/// <summary>ユーザ名</summary>
+		public string UserName { get; set; }
+
+		/// <summary>パスワード</summary>
+		public string Password { get; set; }
 
 		#endregion
 

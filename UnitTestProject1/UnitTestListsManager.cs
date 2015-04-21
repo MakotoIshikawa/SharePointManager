@@ -14,17 +14,17 @@ namespace UnitTestProject {
 	[TestClass]
 	public class UnitTestListsManager {
 #if false
-		private string url = @"https://NissayLeasing.sharepoint.com/";
-		private string username = @"nlcadmin@NissayLeasing.onmicrosoft.com";
-		private string password = @"!QAZ2wsx";
-#elif true
-		private string url = @"https://kariverification03.sharepoint.com";
-		private string username = @"root@KariVerification03.onmicrosoft.com";
-		private string password = @"!QAZ2wsx";
+		private string _url = @"https://NissayLeasing.sharepoint.com/";
+		private string _user = @"nlcadmin@NissayLeasing.onmicrosoft.com";
+		private string _password = @"!QAZ2wsx";
+#elif false
+		private string _url = @"https://kariverification03.sharepoint.com";
+		private string _user = @"root@KariVerification03.onmicrosoft.com";
+		private string _password = @"!QAZ2wsx";
 #else
-		private string url = @"https://mscenter.sharepoint.com/eigyou/demo/";
-		private string username = @"aoshima@mscenter.onmicrosoft.com";
-		private string password = @"P@ssword!";
+		private string _url = @"https://mscenter.sharepoint.com/eigyou/demo/";
+		private string _user = @"aoshima@mscenter.onmicrosoft.com";
+		private string _password = @"P@ssword!";
 #endif
 
 		#region サイトコンテンツ管理
@@ -33,7 +33,7 @@ namespace UnitTestProject {
 		[Owner("サイトコンテンツ管理")]
 		[TestCategory("取得")]
 		public void タイトル一覧取得() {
-			var m = new ListCollectionManager(url, username, password);
+			var m = new ListCollectionManager(_url, _user, _password);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
@@ -46,15 +46,16 @@ namespace UnitTestProject {
 		[Owner("サイトコンテンツ管理")]
 		[TestCategory("作成")]
 		public void リスト作成() {
-			var title = "カスタムリスト-日報";
+			var title = "カスタムリスト-過去日報";
+			var url = "CustomListOldDailyReport";
 
-			var m = new ListCollectionManager(url, username, password);
+			var m = new ListCollectionManager(_url, _user, _password);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
-			var description = "日報システムで作成した日報の一覧です。";
-			m.Create(title, description, ListTemplateType.GenericList);
+			var description = "過去に作成した日報の一覧です。";
+			m.Create(title, url, description, ListTemplateType.GenericList);
 
 			var ret = m.Titles;
 			m.Reload();
@@ -67,7 +68,7 @@ namespace UnitTestProject {
 		public void リスト削除() {
 			var title = "カスタムリスト-テスト";
 
-			var m = new ListCollectionManager(url, username, password);
+			var m = new ListCollectionManager(_url, _user, _password);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
@@ -87,7 +88,7 @@ namespace UnitTestProject {
 		public void フィールド拡張() {
 			var title = "カスタムリスト-テスト";
 
-			var m = new ListManager(url, username, password, title, false);
+			var m = new ListManager(_url, _user, _password, title, false);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
@@ -106,7 +107,7 @@ namespace UnitTestProject {
 		public void アイテム追加() {
 			var title = "カスタムリスト-テスト";
 
-			var m = new ListManager(url, username, password, title);
+			var m = new ListManager(_url, _user, _password, title);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
@@ -143,7 +144,7 @@ namespace UnitTestProject {
 		public void 行データ変換() {
 			var title = "カスタムリスト-テスト";
 
-			var m = new ListManager(url, username, password, title);
+			var m = new ListManager(_url, _user, _password, title);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
@@ -175,7 +176,7 @@ namespace UnitTestProject {
 		public void ファイル添付() {
 			var title = "カスタムリスト-テスト";
 
-			var m = new ListManager(url, username, password, title);
+			var m = new ListManager(_url, _user, _password, title);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
@@ -204,7 +205,7 @@ namespace UnitTestProject {
 		public void 例外処理() {
 			var title = "カスタムリスト-例外処理判定";
 
-			var m = new ListManager(url, username, password, title);
+			var m = new ListManager(_url, _user, _password, title);
 			m.ThrowException += (sender, e) => {
 				var msg = e.ErrorMessage + " : " + e.ServerStackTrace;
 				throw new Exception(msg);
@@ -238,7 +239,7 @@ namespace UnitTestProject {
 			//var title = "みんなの掲示板 One for All ,All for One";
 			var title = "カスタムリスト-テスト";
 
-			var m = new ListManager(url, username, password, title);
+			var m = new ListManager(_url, _user, _password, title);
 			m.ThrowException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};

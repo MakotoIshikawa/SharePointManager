@@ -72,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\GroupCollectionExtension.cs" />
+    <Compile Include="Interface\IListEdit.cs" />
+    <Compile Include="Interface\ISignInInfo.cs" />
     <Compile Include="Manager\AbstractInfoManager.cs" />
     <Compile Include="Extensions\ClientContextExtension.cs" />
     <Compile Include="Extensions\FileInfoExtension.cs" />

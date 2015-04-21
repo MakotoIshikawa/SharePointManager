@@ -33,6 +33,19 @@ namespace SharePointManager.Manager.Lists {
 
 		#endregion
 
+		#region プロパティ
+
+		/// <summary>リスト名</summary>
+		public string ListName { get; protected set; }
+
+		/// <summary>フィールド一覧</summary>
+		public List<SP.Field> Fields { get; protected set; }
+
+		/// <summary>アイテム数</summary>
+		public int ItemCount { get; protected set; }
+
+		#endregion
+
 		#region メソッド
 
 		#region リロード
@@ -113,6 +126,46 @@ namespace SharePointManager.Manager.Lists {
 
 		#region 追加
 
+		public void AddField(string name, string disp, SP.FieldType type) {
+			switch (type) {
+			case SP.FieldType.Calculated:
+				this.AddField<SP.FieldCalculated>(name, disp);
+				break;
+			case SP.FieldType.Computed:
+				this.AddField<SP.FieldComputed>(name, disp);
+				break;
+			case SP.FieldType.DateTime:
+				this.AddField<SP.FieldDateTime>(name, disp);
+				break;
+			case SP.FieldType.Geolocation:
+				this.AddField<SP.FieldGeolocation>(name, disp);
+				break;
+			case SP.FieldType.Guid:
+				this.AddField<SP.FieldGuid>(name, disp);
+				break;
+			case SP.FieldType.Lookup:
+				this.AddField<SP.FieldLookup>(name, disp);
+				break;
+			case SP.FieldType.MultiChoice:
+				this.AddField<SP.FieldMultiChoice>(name, disp);
+				break;
+			case SP.FieldType.Note:
+				this.AddField<SP.FieldMultiLineText>(name, disp);
+				break;
+			case SP.FieldType.Number:
+				this.AddField<SP.FieldNumber>(name, disp);
+				break;
+			case SP.FieldType.Text:
+				this.AddField<SP.FieldText>(name, disp);
+				break;
+			case SP.FieldType.URL:
+				this.AddField<SP.FieldUrl>(name, disp);
+				break;
+			default:
+				break;
+			}
+		}
+
 		/// <summary>
 		/// フィールドを追加します。
 		/// </summary>
@@ -144,7 +197,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="setField">フィールド情報設定メソッド</param>
 		/// <param name="action">設定用のメソッド</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddField<TField>(Action<XmlField> setField, Action<TField> action = null) where TField : Field {
+		protected ListManager AddField<TField>(Action<XmlField> setField, Action<TField> action = null) where TField : Field {
 			if (setField == null) {
 				return this;
 			}
@@ -508,19 +561,6 @@ namespace SharePointManager.Manager.Lists {
 		#endregion
 
 		#endregion
-
-		#endregion
-
-		#region プロパティ
-
-		/// <summary>リスト名</summary>
-		public string ListName { get; protected set; }
-
-		/// <summary>フィールド一覧</summary>
-		public List<SP.Field> Fields { get; protected set; }
-
-		/// <summary>アイテム数</summary>
-		public int ItemCount { get; protected set; }
 
 		#endregion
 	}

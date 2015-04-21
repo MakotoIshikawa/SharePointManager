@@ -52,8 +52,7 @@ namespace SharePointGroupMngApp {
 				};
 
 				var tbl = this.gridCsv.ToDataTable();
-				var gls = tbl.Rows.Cast<DataRow>()
-				.Select(r => new {
+				var gls = tbl.Select(r => new {
 					グループ名 = r["グループ名"].ToString(),
 					説明 = r["説明"].ToString(),
 				}).ToList();
@@ -105,8 +104,7 @@ namespace SharePointGroupMngApp {
 				};
 
 				var tbl = this.gridCsv.ToDataTable();
-				var gls = tbl.Rows.Cast<DataRow>()
-				.Select(r => new {
+				var gls = tbl.Select(r => new {
 					グループ名 = r["グループ名"].ToString(),
 					表示名 = r["表示名"].ToString(),
 					ログイン名 = r["ログイン名"].ToString(),
@@ -165,8 +163,7 @@ namespace SharePointGroupMngApp {
 				var userLs = gm.SiteUsers.ToDictionary(u => u.Title);
 
 				var tbl = this.gridCsv.ToDataTable();
-				var gls =tbl.Rows.Cast<DataRow>()
-				.Select(r => new {
+				var gls =tbl.Select(r => new {
 					グループ名 = r["グループ名"].ToString(),
 					メンバー名 = r["メンバー名"].ToString(),
 				}).GroupBy(r => new {

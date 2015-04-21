@@ -18,19 +18,6 @@ namespace SharePointManager.Interface {
 
 		#endregion
 
-		#region プロパティ
-
-		/// <summary>サイトURL</summary>
-		string Url { get; }
-
-		/// <summary>ユーザ名</summary>
-		string UserName { get; }
-
-		/// <summary>パスワード</summary>
-		string Password { get; }
-
-		#endregion
-
 		#region メソッド
 
 		/// <summary>

@@ -4,9 +4,9 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
+using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Lists.Xml;
 using SP = Microsoft.SharePoint.Client;
 
@@ -45,7 +45,7 @@ namespace SharePointManager.Manager.Extensions {
 		/// <param name="fieldInfo">フィールド情報</param>
 		/// <returns>フィールドを返します。</returns>
 		public static Field AddField(this FieldCollection @this, XmlField fieldInfo) {
-			var field = @this.AddFieldAsXml(fieldInfo.ToString(), true, AddFieldOptions.DefaultValue);
+			var field = @this.AddFieldAsXml(fieldInfo.ToString(), false, AddFieldOptions.AddFieldCheckDisplayName);
 			return field;
 		}
 
@@ -104,7 +104,7 @@ namespace SharePointManager.Manager.Extensions {
 		/// <param name="this">DataTable</param>
 		/// <returns>Dictionary のリストを返します。</returns>
 		public static List<Dictionary<string, object>> ToDictionaryList(this DataTable @this) {
-			return @this.Rows.Cast<DataRow>().Select(r =>
+			return @this.Select(r =>
 				r.ItemArray.Select((v, i) => new {
 					r.Table.Columns[i].ColumnName,
 					Value = v,

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
+using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 
@@ -12,7 +13,7 @@ namespace SharepointListMngApp {
 	/// <summary>
 	/// フォーム
 	/// </summary>
-	public partial class FormListMng : Form {
+	public partial class FormListMng : Form, IListEdit {
 		#region コンストラクタ
 
 		/// <summary>
@@ -21,11 +22,39 @@ namespace SharepointListMngApp {
 		public FormListMng() {
 			this.InitializeComponent();
 #if true
-			this.textBoxUrl.Text = Properties.Settings.Default.URL;
-			this.textBoxUser.Text = Properties.Settings.Default.User;
-			this.textBoxPassword.Text = Properties.Settings.Default.Password;
-			this.textBoxListName.Text = Properties.Settings.Default.ListName;
+			this.Url = Properties.Settings.Default.URL;
+			this.UserName = Properties.Settings.Default.User;
+			this.Password = Properties.Settings.Default.Password;
+			this.ListName = Properties.Settings.Default.ListName;
 #endif
+		}
+
+		#endregion
+
+		#region プロパティ
+
+		/// <summary>SharePoint サイト URL</summary>
+		public string Url {
+			get { return this.textBoxUrl.Text; }
+			set { this.textBoxUrl.Text = value; }
+		}
+
+		/// <summary>ユーザー</summary>
+		public string UserName {
+			get { return this.textBoxUser.Text; }
+			set { this.textBoxUser.Text = value; }
+		}
+
+		/// <summary>パスワード</summary>
+		public string Password {
+			get { return this.textBoxPassword.Text; }
+			set { this.textBoxPassword.Text = value; }
+		}
+
+		/// <summary>リスト名</summary>
+		public string ListName {
+			get { return this.textBoxListName.Text; }
+			set { this.textBoxListName.Text = value; }
 		}
 
 		#endregion
@@ -38,37 +67,7 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonRun_Click(object sender, EventArgs e) {
-			if (this.textBoxListName.Text.IsEmpty()) {
-				MessageBox.Show("リスト名を入力して下さい。");
-				return;
-			}
-
-			try {
-				this.Enabled = false;
-
-				var url = this.textBoxUrl.Text;
-				var username = this.textBoxUser.Text;
-				var password = this.textBoxPassword.Text;
-				var listName = this.textBoxListName.Text;
-
-				var lm = new ListManager(url, username, password, listName);
-				lm.ThrowException += (s, ea) => {
-					throw new Exception(ea.ErrorMessage);
-				};
-
-				var tbl = this.gridCsv.ToDataTable();
-				var ls = tbl.ToDictionaryList();
-				ls.ForEach(r => {
-					lm.AddListItem(r);
-				});
-
-				var msg = "[" + listName + "] にアイテムを登録しました。";
-				MessageBox.Show(msg);
-			} catch (Exception ex) {
-				MessageBox.Show(ex.ToString());
-			} finally {
-				this.Enabled = true;
-			}
+			this.Run();
 		}
 
 		/// <summary>
@@ -144,9 +143,81 @@ namespace SharepointListMngApp {
 			this.textBoxFilePath.Text = files.FirstOrDefault();
 		}
 
+		#region メニュー
+
+		/// <summary>
+		/// 新規作成
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void NewToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.CreateList();
+		}
+
+		private void CreateList() {
+			var f = new FormCreateList(this.Url, this.UserName, this.Password);
+			var ret = f.ShowDialog(this);
+			switch (ret) {
+			case DialogResult.OK:
+				f.Run();
+				break;
+			case DialogResult.Cancel:
+				MessageBox.Show("作成しませんでした。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				break;
+			}
+		}
+
+		/// <summary>
+		/// 開く
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.buttonReference_Click(sender, e);
+		}
+
+		#endregion
+
 		#endregion
 
 		#region メソッド
+
+		/// <summary>
+		/// 実行
+		/// </summary>
+		public void Run() {
+			if (this.ListName.IsEmpty()) {
+				MessageBox.Show("リスト名を入力して下さい。");
+				return;
+			}
+
+			try {
+				this.Enabled = false;
+
+				var url = this.Url;
+				var username = this.UserName;
+				var password = this.Password;
+				var listName = this.ListName;
+
+				var lm = new ListManager(url, username, password, listName);
+				lm.ThrowException += (s, ea) => {
+					throw new Exception(ea.ErrorMessage);
+				};
+
+				var tbl = this.gridCsv.ToDataTable();
+				var ls = tbl.ToDictionaryList();
+				ls.ForEach(r => {
+					lm.AddListItem(r);
+				});
+
+				var msg = "[" + listName + "] にアイテムを登録しました。";
+				MessageBox.Show(msg);
+			} catch (Exception ex) {
+				MessageBox.Show(ex.ToString());
+			} finally {
+				this.Enabled = true;
+			}
+		}
 
 		#endregion
 	}

@@ -52,8 +52,7 @@ namespace TermStoreMngApp {
 				};
 
 				var tbl = this.gridCsv.ToDataTable();
-				tbl.Rows.Cast<DataRow>()
-				.Select(r => new {
+				tbl.Select(r => new {
 					セット名 = r[0].ToString().Trim(),
 					セット説明 = r[1].ToString().Trim(),
 					公開 = r[2].ToBoolean(),
@@ -174,8 +173,7 @@ namespace TermStoreMngApp {
 			var setName = string.Empty;
 			var setDesc = string.Empty;
 			var isOpen = false;
-			var table = csv.Rows.Cast<DataRow>()
-			.Where(row => !string.IsNullOrWhiteSpace(row[4].ToString()))
+			var table = csv.Where(row => !string.IsNullOrWhiteSpace(row[4].ToString()))
 			.Select(row => {
 				var row0 = row[0].ToString();
 				if (!string.IsNullOrWhiteSpace(row0)) {

@@ -42,6 +42,56 @@ namespace ObjectAnalysisProject.Extensions {
 
 		#endregion
 
+		#region Select
+
+		/// <summary>
+		/// データテーブルのデータ行を新しいフォームに射影します。
+		/// </summary>
+		/// <typeparam name="TResult">selector によって返される値の型。</typeparam>
+		/// <param name="table">データテーブル</param>
+		/// <param name="selector">各要素に適用する変換関数。</param>
+		/// <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む IEnumerable(T)</returns>
+		public static IEnumerable<TResult> Select<TResult>(this DataTable table, Func<DataRow, int, TResult> selector) {
+			return table.Select().Select(selector);
+		}
+
+		/// <summary>
+		/// データテーブルのデータ行を新しいフォームに射影します。
+		/// </summary>
+		/// <typeparam name="TResult">selector によって返される値の型。</typeparam>
+		/// <param name="table">データテーブル</param>
+		/// <param name="selector">各要素に適用する変換関数。</param>
+		/// <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む IEnumerable(T)</returns>
+		public static IEnumerable<TResult> Select<TResult>(this DataTable table, Func<DataRow, TResult> selector) {
+			return table.Select().Select(selector);
+		}
+
+		#endregion
+
+		#region Where
+
+		/// <summary>
+		/// 述語に基づいて値のデータテーブルのデータ行をフィルター処理します。
+		/// </summary>
+		/// <param name="table">データテーブル</param>
+		/// <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+		/// <returns>条件を満たす、入力シーケンスの要素を含む IEnumerable(DataRow)</returns>
+		public static IEnumerable<DataRow> Where(this DataTable table, Func<DataRow, bool> predicate) {
+			return table.Select().Where(predicate);
+		}
+
+		/// <summary>
+		/// 述語に基づいて値のデータテーブルのデータ行をフィルター処理します。
+		/// </summary>
+		/// <param name="table">データテーブル</param>
+		/// <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+		/// <returns>条件を満たす、入力シーケンスの要素を含む IEnumerable(DataRow)</returns>
+		public static IEnumerable<DataRow> Where(this DataTable table, Func<DataRow, int, bool> predicate) {
+			return table.Select().Where(predicate);
+		}
+
+		#endregion
+
 		#region 列データ列挙取得	GetColumns(+2)
 
 		/// <summary>
@@ -51,7 +101,7 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="columnIndex">列インデックス</param>
 		/// <returns>列データの列挙を返します。</returns>
 		public static IEnumerable<Object> GetColumns(this DataTable table, int columnIndex) {
-			return table.Rows.Cast<DataRow>().Select(row => row[columnIndex]);
+			return table.Select(row => row[columnIndex]);
 		}
 
 		/// <summary>
@@ -61,7 +111,7 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="columnName">列名</param>
 		/// <returns>列データの列挙を返します。</returns>
 		public static IEnumerable<Object> GetColumns(this DataTable table, string columnName) {
-			return table.Rows.Cast<DataRow>().Select(row => row[columnName]);
+			return table.Select(row => row[columnName]);
 		}
 
 		/// <summary>
@@ -71,7 +121,7 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="column">列スキーマ</param>
 		/// <returns>列データの列挙を返します。</returns>
 		public static IEnumerable<Object> GetColumns(this DataTable table, DataColumn column) {
-			return table.Rows.Cast<DataRow>().Select(row => row[column]);
+			return table.Select(row => row[column]);
 		}
 
 		#endregion
