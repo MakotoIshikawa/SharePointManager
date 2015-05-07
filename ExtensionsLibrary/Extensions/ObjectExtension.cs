@@ -16,5 +16,6 @@ namespace ExtensionsLibrary.Extensions {
 
 			return result;
 		}
+
 	}
 }

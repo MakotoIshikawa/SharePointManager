@@ -84,9 +84,10 @@
     <Compile Include="Interface\IClientSideObjectModel.cs" />
     <Compile Include="Manager\Lists\ListManager.cs" />
     <Compile Include="Manager\Lists\ListCollectionManager.cs" />
+    <Compile Include="Manager\Lists\Xml\XmlComment.cs" />
     <Compile Include="Manager\Lists\Xml\XmlView.cs" />
     <Compile Include="Manager\Lists\Xml\XmlField.cs" />
-    <Compile Include="Manager\ThrowExceptionEventArgs.cs" />
+    <Compile Include="MyEventArgs\ThrowExceptionEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Manager\TermStore\TermInfo.cs" />
     <Compile Include="Manager\TermStore\TermSetInfo.cs" />

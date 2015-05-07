@@ -11,8 +11,8 @@
 namespace SharepointListMngApp.Properties {
     
     
-    [global::System.Runtime.CompilerServices.CompilerGenerated()]
-    [global::System.CodeDom.Compiler.GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -23,36 +23,36 @@ namespace SharepointListMngApp.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSetting()]
-        [global::System.Diagnostics.DebuggerNonUserCode()]
-        [global::System.Configuration.DefaultSettingValue("https://mscenter.sharepoint.com/eigyou/demo/")]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://mur365.sharepoint.com/")]
         public string URL {
             get {
                 return ((string)(this["URL"]));
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSetting()]
-        [global::System.Diagnostics.DebuggerNonUserCode()]
-        [global::System.Configuration.DefaultSettingValue("aoshima@mscenter.onmicrosoft.com")]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("fuji-s@mur365.onmicrosoft.com")]
         public string User {
             get {
                 return ((string)(this["User"]));
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSetting()]
-        [global::System.Diagnostics.DebuggerNonUserCode()]
-        [global::System.Configuration.DefaultSettingValue("P@ssword!")]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Muromachi_Fsi!")]
         public string Password {
             get {
                 return ((string)(this["Password"]));
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSetting()]
-        [global::System.Diagnostics.DebuggerNonUserCode()]
-        [global::System.Configuration.DefaultSettingValue("カスタムリスト-日報")]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("カスタムリスト-過去日報")]
         public string ListName {
             get {
                 return ((string)(this["ListName"]));

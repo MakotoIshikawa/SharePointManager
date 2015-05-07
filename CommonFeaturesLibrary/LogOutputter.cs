@@ -7,14 +7,7 @@ namespace CommonFeaturesLibrary {
 	/// <summary>
 	/// ログ出力クラス
 	/// </summary>
-	public class OutputLog {
-		#region フィールド
-
-		/// <summary>ファイル情報</summary>
-		private FileInfo m_fileInfo;
-
-		#endregion
-
+	public class LogOutputter {
 		#region コンストラクタ
 
 		/// <summary>
@@ -22,8 +15,8 @@ namespace CommonFeaturesLibrary {
 		/// </summary>
 		/// <remarks>
 		/// オブジェクトを生成します。</remarks>
-		public OutputLog()
-			: this(GetAppLogFilePath()) {
+		public LogOutputter()
+			: this(AppLogFilePath) {
 		}
 
 		/// <summary>
@@ -32,25 +25,39 @@ namespace CommonFeaturesLibrary {
 		/// <param name="filePath">ファイルパス</param>
 		/// <remarks>
 		/// オブジェクトを生成します。</remarks>
-		public OutputLog(String filePath) {
-			this.m_fileInfo = new FileInfo(filePath);
+		public LogOutputter(String filePath) {
+			this.FileInfo = new FileInfo(filePath);
 		}
 
 		#endregion
 
+		#region	プロパティ
+
+		/// <summary>ファイル情報</summary>
+		public FileInfo FileInfo { get; protected set; }
+
+		/// <summary>アプリログファイルパス</summary>
+		public static String AppLogFilePath {
+			get {
+				var info = new FileInfo(Application.ExecutablePath);
+				return info.ChangeExtension(".log");
+			}
+		}
+
+		#endregion
+
+		#region メソッド
+
 		#region	ログ書込
 
 		/// <summary>
-		/// ログ書込</summary>
+		/// ログ書込
+		/// </summary>
 		/// <param name="message">メッセージ</param>
 		/// <remarks>
 		/// ログファイルにログを書き込む</remarks>
 		public void WriteLog(String message) {
-			lock (this.m_fileInfo) {
-				var fileName = this.m_fileInfo.FullName;
-				this.m_fileInfo.CheckCapacity((long)message.Length);
-				this.m_fileInfo.WriteLine(message.GetTimeLog());
-			}
+			this.FileInfo.WriteLog(message);
 		}
 
 		#endregion
@@ -61,21 +68,10 @@ namespace CommonFeaturesLibrary {
 		/// ログファイルの内容をクリアします。
 		/// </summary>
 		public void LogClear() {
-			this.m_fileInfo.Clear();
+			this.FileInfo.Clear();
 		}
 
 		#endregion
-
-		#region	アプリログファイルパス取得
-
-		/// <summary>
-		/// アプリログファイルパス取得
-		/// </summary>
-		/// <remarks>
-		/// アプリログファイルパスを取得する</remarks>
-		private static String GetAppLogFilePath() {
-			return Path.ChangeExtension(Application.ExecutablePath, ".log");
-		}
 
 		#endregion
 	}

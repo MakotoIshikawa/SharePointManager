@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
 
@@ -727,19 +728,15 @@ namespace SharePointManager.Manager.Lists.Xml {
 		#region メソッド
 
 		/// <summary>
-		/// XmlField を文字列に変換します。。
+		/// XmlField を文字列に変換します。
 		/// </summary>
 		/// <returns>XmlField を表す文字列を返します。</returns>
 		public override string ToString() {
 			try {
 				var str = this.ToXmlString(false);
-				var index = str.IndexOf("<Field");
-				if (index < 0) {
-					throw new Exception();
-				}
+				var elmt = XElement.Parse(str);
 
-				var ret = str.Substring(index);
-				return ret;
+				return elmt.ToString();
 			} catch (Exception) {
 				return string.Empty;
 			}

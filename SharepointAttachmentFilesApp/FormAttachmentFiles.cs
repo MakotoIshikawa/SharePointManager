@@ -18,7 +18,7 @@ namespace SharepointAttachmentFilesApp {
 		#region フィールド
 
 		/// <summary>ログ出力</summary>
-		private OutputLog _log = new OutputLog();
+		private LogOutputter _log = new LogOutputter();
 
 		#endregion
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -239,5 +240,20 @@ namespace ExtensionsLibrary.Extensions {
 		}
 
 		#endregion
+
+		/// <summary>
+		/// 指定した名前と内容を持つ XElement クラスの新しいインスタンスを生成します。
+		/// </summary>
+		/// <param name="name">要素名を格納する XName。</param>
+		/// <param name="content">要素の内容。</param>
+		/// <returns>XElement クラスの新しいインスタンスを返します。</returns>
+		public static XElement CreateXElement(this XName name, string content) {
+			var sb = new StringBuilder()
+			.AppendFormat(@"<{0}>", name)
+			.Append(content)
+			.AppendFormat(@"</{0}>", name);
+
+			return XElement.Parse(sb.ToString());
+		}
 	}
 }

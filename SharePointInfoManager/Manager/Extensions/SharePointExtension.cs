@@ -183,7 +183,6 @@ namespace SharePointManager.Manager.Extensions {
 			return fi != null ? fi.InternalName : String.Empty;
 		}
 
-
 		#region リストアイテム取得
 
 		public static ListItemCollection GetListItems(this ListCollection @this, string listName, CamlQuery query) {
@@ -211,5 +210,25 @@ namespace SharePointManager.Manager.Extensions {
 		#endregion
 
 		#endregion
+
+		/// <summary>
+		/// XML 文字列を逆シリアライズして、
+		/// 変換メソッドで変換します。
+		/// </summary>
+		/// <typeparam name="T">逆シリアライズする型</typeparam>
+		/// <param name="this">XML 文字列</param>
+		/// <param name="convert">変換メソッド</param>
+		/// <returns>変換メソッドで変換された文字列を返します。</returns>
+		public static string ConvertXmlString<T>(this string @this, Func<T, string> convert) {
+			var name = typeof(T).GetElementName();
+			var xelement = name.CreateXElement(@this);
+			var comments = xelement.Deserialize<T>();
+
+			if (convert == null) {
+				return comments.ToString();
+			} else {
+				return convert(comments);
+			}
+		}
 	}
 }

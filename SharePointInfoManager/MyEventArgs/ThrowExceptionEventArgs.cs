@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharePointManager.Manager {
+namespace SharePointManager.MyEventArgs {
 	/// <summary>
 	/// 例外発生イベントデータクラス
 	/// </summary>

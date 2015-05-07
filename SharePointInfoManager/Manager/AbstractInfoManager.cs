@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
-using Microsoft.SharePoint.Client;
+using ExtensionsLibrary.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Interface;
+using SharePointManager.MyEventArgs;
+using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager {
 	/// <summary>
@@ -27,6 +29,18 @@ namespace SharePointManager.Manager {
 
 		#endregion
 
+		#region メソッド
+
+		/// <summary>
+		/// オブジェクトを文字列に変換します。
+		/// </summary>
+		/// <returns>オブジェクトを表す文字列を返します。</returns>
+		public override string ToString() {
+			return this.GetPropertiesString();
+		}
+
+		#endregion
+
 		#region IClientSideObjectModel メンバー
 
 		#region イベント
@@ -40,7 +54,7 @@ namespace SharePointManager.Manager {
 		/// 例外発生時に呼び出されます。
 		/// </summary>
 		/// <param name="scope">ExceptionHandlingScope</param>
-		protected virtual void OnThrowException(ExceptionHandlingScope scope) {
+		protected virtual void OnThrowException(SP.ExceptionHandlingScope scope) {
 			if (this.ThrowException == null) {
 				return;
 			}
@@ -69,7 +83,7 @@ namespace SharePointManager.Manager {
 		/// SharePoint から情報を抽出します。
 		/// </summary>
 		/// <param name="func">コンテキストを操作する関数</param>
-		public T Extract<T>(Func<ClientContext, T> func) {
+		public T Extract<T>(Func<SP.ClientContext, T> func) {
 			return Extract(this.Url, this.UserName, this.Password, func);
 		}
 
@@ -80,13 +94,13 @@ namespace SharePointManager.Manager {
 		/// <param name="username">ユーザ名</param>
 		/// <param name="password">パスワード</param>
 		/// <param name="func">コンテキストを操作する関数</param>
-		protected static T Extract<T>(string url, string username, string password, Func<ClientContext, T> func) {
+		protected static T Extract<T>(string url, string username, string password, Func<SP.ClientContext, T> func) {
 			if (func == null) {
 				return default(T);
 			}
 
-			using (var context = new ClientContext(url) {
-				Credentials = new SharePointOnlineCredentials(username, new SecureString().SetString(password)),
+			using (var context = new SP.ClientContext(url) {
+				Credentials = new SP.SharePointOnlineCredentials(username, new SecureString().SetString(password)),
 			}) {
 				return func(context);
 			}
@@ -102,7 +116,7 @@ namespace SharePointManager.Manager {
 		/// <typeparam name="T">ClientObject コレクション情報の型</typeparam>
 		/// <param name="getClientObjects">ClientObject を取得するクエリを返すメソッド</param>
 		/// <returns>ClientObject コレクションの情報を読込み、列挙を返します。</returns>
-		public IEnumerable<T> Load<T>(Func<ClientContext, IQueryable<T>> getClientObjects) where T : ClientObject {
+		public IEnumerable<T> Load<T>(Func<SP.ClientContext, IQueryable<T>> getClientObjects) where T : SP.ClientObject {
 			return Load(this.Url, this.UserName, this.Password, getClientObjects);
 		}
 
@@ -115,7 +129,7 @@ namespace SharePointManager.Manager {
 		/// <param name="password">パスワード</param>
 		/// <param name="getClientObjects">ClientObject を取得するクエリを返すメソッド</param>
 		/// <returns>ClientObject コレクションの情報を読込み、列挙を返します。</returns>
-		protected static IEnumerable<T> Load<T>(string url, string username, string password, Func<ClientContext, IQueryable<T>> getClientObjects) where T : ClientObject {
+		protected static IEnumerable<T> Load<T>(string url, string username, string password, Func<SP.ClientContext, IQueryable<T>> getClientObjects) where T : SP.ClientObject {
 			if (getClientObjects == null) {
 				throw new ArgumentNullException("getClientObjects");
 			}
@@ -139,7 +153,7 @@ namespace SharePointManager.Manager {
 		/// </summary>
 		/// <param name="action">処理を実行する関数</param>
 		/// <remarks>例外をキャッチしません。</remarks>
-		public void Execute(Action<ClientContext> action) {
+		public void Execute(Action<SP.ClientContext> action) {
 			Execute(this.Url, this.UserName, this.Password, action);
 		}
 
@@ -151,7 +165,7 @@ namespace SharePointManager.Manager {
 		/// <param name="password">パスワード</param>
 		/// <param name="action">処理を実行する関数</param>
 		/// <remarks>例外をキャッチしません。</remarks>
-		protected static void Execute(string url, string username, string password, Action<ClientContext> action) {
+		protected static void Execute(string url, string username, string password, Action<SP.ClientContext> action) {
 			ReferToContext(url, username, password, cn => {
 				action(cn);
 				cn.ExecuteQuery();
@@ -168,7 +182,7 @@ namespace SharePointManager.Manager {
 		/// <param name="action">ClientContext に対して処理を実行する関数</param>
 		/// <remarks>ClientContext に対して ExecuteQuery は実行されません。
 		/// action の処理の中で明示的に ExecuteQuery を実行して下さい。</remarks>
-		public void ReferToContext(Action<ClientContext> action) {
+		public void ReferToContext(Action<SP.ClientContext> action) {
 			ReferToContext(this.Url, this.UserName, this.Password, action);
 		}
 
@@ -181,13 +195,13 @@ namespace SharePointManager.Manager {
 		/// <param name="action">ClientContext に対して処理を実行する関数</param>
 		/// <remarks>ClientContext に対して ExecuteQuery は実行されません。
 		/// action の処理の中で明示的に ExecuteQuery を実行して下さい。</remarks>
-		protected static void ReferToContext(string url, string username, string password, Action<ClientContext> action) {
+		protected static void ReferToContext(string url, string username, string password, Action<SP.ClientContext> action) {
 			if (action == null) {
 				throw new ArgumentNullException("action");
 			}
 
-			using (var cn = new ClientContext(url) {
-				Credentials = new SharePointOnlineCredentials(username, new SecureString().SetString(password)),
+			using (var cn = new SP.ClientContext(url) {
+				Credentials = new SP.SharePointOnlineCredentials(username, new SecureString().SetString(password)),
 			}) {
 				action(cn);
 			}
@@ -204,7 +218,7 @@ namespace SharePointManager.Manager {
 		/// <param name="catchAction">例外発生時に実行するメソッド</param>
 		/// <param name="finallyAction">最終的に実行するメソッド</param>
 		/// <remarks>例外発生時と最終的に実行する処理を指定できます。</remarks>
-		public void TryExecute(Action<ClientContext> tryAction, Action<ClientContext> catchAction = null, Action<ClientContext> finallyAction = null) {
+		public void TryExecute(Action<SP.ClientContext> tryAction, Action<SP.ClientContext> catchAction = null, Action<SP.ClientContext> finallyAction = null) {
 			if (tryAction == null) {
 				throw new ArgumentNullException("tryAction");
 			}
@@ -212,10 +226,10 @@ namespace SharePointManager.Manager {
 			string url = this.Url;
 			string username = this.UserName;
 			string password = this.Password;
-			using (var context = new ClientContext(url) {
-				Credentials = new SharePointOnlineCredentials(username, new SecureString().SetString(password)),
+			using (var context = new SP.ClientContext(url) {
+				Credentials = new SP.SharePointOnlineCredentials(username, new SecureString().SetString(password)),
 			}) {
-				var scope = new ExceptionHandlingScope(context);
+				var scope = new SP.ExceptionHandlingScope(context);
 				using (scope.StartScope()) {
 					using (scope.StartTry()) {// Try
 						tryAction(context);

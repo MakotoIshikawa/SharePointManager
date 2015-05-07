@@ -41,8 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DuplicateBootCheck.cs" />
-    <Compile Include="FileVersionMng.cs" />
-    <Compile Include="OutputLog.cs" />
+    <Compile Include="FileInfoExtension.cs" />
+    <Compile Include="LogOutputter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

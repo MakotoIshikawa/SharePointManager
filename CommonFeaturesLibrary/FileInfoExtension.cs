@@ -1,12 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using ExtensionsLibrary.Extensions;
 
 namespace CommonFeaturesLibrary {
 	/// <summary>
-	/// ファイルバージョン管理クラス
+	/// FileInfo を拡張するメソッドを提供します。
 	/// </summary>
-	public static class FileVersionMng {
+	public static partial class FileInfoExtension {
 		#region	定数
 
 		/// <summary>
@@ -25,7 +26,24 @@ namespace CommonFeaturesLibrary {
 
 		#region	メソッド
 
-		#region CheckCapacity
+		#region ログ出力
+
+		/// <summary>
+		/// ファイルバージョンを管理して、
+		/// ログファイルにメッセージを書き込みます。
+		/// </summary>
+		/// <param name="this">ファイル情報</param>
+		/// <param name="message">メッセージ</param>
+		public static void WriteLog(this FileInfo @this, String message) {
+			lock (@this) {
+				@this.CheckCapacity((long)message.Length);
+				@this.WriteLine(message.GetTimeLog());
+			}
+		}
+
+		#endregion
+
+		#region ファイルバージョン管理
 
 		/// <summary>
 		/// ファイル容量のチェックしてファイルを世代管理します。
@@ -80,8 +98,6 @@ namespace CommonFeaturesLibrary {
 			}
 		}
 
-		#endregion
-
 		/// <summary>
 		/// 世代ファイル管理状況
 		/// </summary>
@@ -126,6 +142,8 @@ namespace CommonFeaturesLibrary {
 
 			Debug.WriteLine("{0}を{1}に改名\n", oldName, newName);
 		}
+
+		#endregion
 
 		#endregion
 	}

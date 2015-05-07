@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
+using ExtensionsLibrary.Extensions;
 
 namespace ExtensionsLibrary.Extensions {
 	/// <summary>
@@ -22,21 +24,7 @@ namespace ExtensionsLibrary.Extensions {
 				return fs.DeserializeFromXml<TResult>();
 			}
 		}
-#if false
-		/// <summary>
-		/// JSON ファイルを逆シリアル化します。
-		/// </summary>
-		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
-		/// <param name="this">JSON ファイル情報</param>
-		/// <returns>逆シリアル化されたオブジェクト</returns>
-		public static TResult DeserializeFromJson<TResult>(this FileInfo @this) {
-			// 読み込むファイルを開く
-			using (var fs = @this.OpenRead()) {
-				return fs.DeserializeFromJson<TResult>();
-			}
-		}
 
-#endif
 		#endregion
 
 		#region WriteLine
@@ -90,6 +78,18 @@ namespace ExtensionsLibrary.Extensions {
 
 			var name = @this.Name.CommentOut(@this.Extension);
 			return string.Format(@"{0}\{1} ({2}){3}", @this.DirectoryName, name, version, @this.Extension);
+		}
+
+		/// <summary>
+		/// ファイルパスの拡張子を変更します。
+		/// </summary>
+		/// <param name="this">ファイル情報</param>
+		/// <param name="extension">新しい拡張子</param>
+		/// <returns>拡張子を変更したファイルパスを返します。</returns>
+		public static string ChangeExtension(this FileInfo @this, string extension) {
+			var path = @this.FullName;
+			var changePath = Path.ChangeExtension(path, extension);
+			return changePath;
 		}
 
 		#endregion

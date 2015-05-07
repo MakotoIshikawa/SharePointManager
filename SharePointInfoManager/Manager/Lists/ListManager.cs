@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
+using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists.Xml;
 using SP = Microsoft.SharePoint.Client;
@@ -271,6 +274,41 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		#endregion
+
+		/// <summary>
+		/// フィールド情報設定
+		/// </summary>
+		/// <param name="tbl">データテーブル</param>
+		/// <returns>設定した情報のログを返します。</returns>
+		public string SetFields(DataTable tbl) {
+			var ls = tbl.Select(r => new {
+				表示名 = r["表示名"].ToString(),
+				列名 = r["列名"].ToString(),
+				型 = r["型"].ToString().ToEnum<SP.FieldType>(),
+			}).ToList();
+
+			var sb = new StringBuilder();
+			ls.ForEach(r => {
+				if (r.列名 != "Title") {
+					if (!this.Fields.Any(f => f.InternalName == r.列名)) {
+						this.AddField(r.列名, r.表示名, r.型);
+						sb.AppendFormat("[{0}]列を追加しました。", r.表示名).AppendLine();
+					}
+				} else {
+					var fld = this.Fields.SingleOrDefault(f => f.InternalName == r.列名);
+					if (fld != null && fld.Title != r.表示名) {
+						this.UpdateField<SP.FieldText>(r.列名, f => f.Title = r.表示名);
+						sb.AppendFormat("Title 列の表示名を[{0}]から[{1}]に変更しました。", fld.Title, r.表示名);
+					}
+				}
+			});
+
+			if (sb.Length == 0) {
+				sb.Append("列の情報を変更しませんでした。");
+			}
+
+			return sb.ToString();
+		}
 
 		#endregion
 

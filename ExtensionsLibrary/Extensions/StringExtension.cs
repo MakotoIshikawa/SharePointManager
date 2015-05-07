@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace ExtensionsLibrary.Extensions {
@@ -156,17 +155,7 @@ namespace ExtensionsLibrary.Extensions {
 		}
 
 		#endregion
-#if false
-		/// <summary>
-		/// JSON 文字列を逆シリアル化します。
-		/// </summary>
-		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
-		/// <param name="this">JSON 文字列</param>
-		/// <returns>逆シリアル化されたオブジェクト</returns>
-		public static TResult DeserializeFromJson<TResult>(this string @this) {
-			return ServiceStack.Text.JsonSerializer.DeserializeFromString<TResult>(@this);
-		}
-#endif
+
 		#endregion
 
 		#region Stream生成
@@ -329,14 +318,14 @@ namespace ExtensionsLibrary.Extensions {
 
 		#endregion
 
-		#region Nvl (オーバーロード +2)
+		#region GetValueOrEmpty
 
 		/// <summary>
 		/// null かどうかを判定して文字列を取得します。
 		/// </summary>
 		/// <param name="this">文字列</param>
 		/// <returns>null 場合 string.Empty を返します。</returns>
-		public static string Nvl(this string @this) {
+		public static string GetValueOrEmpty(this string @this) {
 			return @this.IsEmpty() ? string.Empty : @this;
 		}
 

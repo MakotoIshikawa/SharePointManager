@@ -8,6 +8,7 @@ using SharePointManager.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
+using SharePointManager.Manager.Lists.Xml;
 
 namespace SharepointListMngApp {
 	/// <summary>
@@ -35,25 +36,25 @@ namespace SharepointListMngApp {
 
 		/// <summary>SharePoint サイト URL</summary>
 		public string Url {
-			get { return this.textBoxUrl.Text; }
+			get { return this.textBoxUrl.Text.Trim(); }
 			set { this.textBoxUrl.Text = value; }
 		}
 
 		/// <summary>ユーザー</summary>
 		public string UserName {
-			get { return this.textBoxUser.Text; }
+			get { return this.textBoxUser.Text.Trim(); }
 			set { this.textBoxUser.Text = value; }
 		}
 
 		/// <summary>パスワード</summary>
 		public string Password {
-			get { return this.textBoxPassword.Text; }
+			get { return this.textBoxPassword.Text.Trim(); }
 			set { this.textBoxPassword.Text = value; }
 		}
 
 		/// <summary>リスト名</summary>
 		public string ListName {
-			get { return this.textBoxListName.Text; }
+			get { return this.textBoxListName.Text.Trim(); }
 			set { this.textBoxListName.Text = value; }
 		}
 
@@ -207,6 +208,16 @@ namespace SharepointListMngApp {
 				var tbl = this.gridCsv.ToDataTable();
 				var ls = tbl.ToDictionaryList();
 				ls.ForEach(r => {
+					var key = "コメント";
+					if (r.ContainsKey(key)) {
+						try {
+							var content = r[key].ToString();
+							var log = content.ConvertXmlString<XmlComments>(c => c.GetLog());
+							r[key] = log;
+						} catch {
+						}
+					}
+
 					lm.AddListItem(r);
 				});
 

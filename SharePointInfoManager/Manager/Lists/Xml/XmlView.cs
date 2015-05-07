@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
@@ -50,6 +51,10 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 		#region メソッド
 
+		/// <summary>
+		/// CAML クエリを生成します。
+		/// </summary>
+		/// <returns>生成した CAML クエリを返します。</returns>
 		public CamlQuery CreateQuery() {
 			var xmlstr = this.ToString();
 			return new CamlQuery() {
@@ -136,19 +141,15 @@ namespace SharePointManager.Manager.Lists.Xml {
 		#endregion
 
 		/// <summary>
-		/// XmlField を文字列に変換します。。
+		/// XmlField を文字列に変換します。
 		/// </summary>
 		/// <returns>XmlField を表す文字列を返します。</returns>
 		public override string ToString() {
 			try {
 				var str = this.ToXmlString(false);
-				var index = str.IndexOf("<View");
-				if (index < 0) {
-					throw new Exception();
-				}
+				var elmt = XElement.Parse(str);
 
-				var ret = str.Substring(index);
-				return ret;
+				return elmt.ToString();
 			} catch (Exception) {
 				return string.Empty;
 			}

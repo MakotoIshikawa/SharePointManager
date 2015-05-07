@@ -3,16 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="URL" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://mscenter.sharepoint.com/eigyou/demo/</Value>
+      <Value Profile="(Default)">https://mur365.sharepoint.com/</Value>
     </Setting>
     <Setting Name="User" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">aoshima@mscenter.onmicrosoft.com</Value>
+      <Value Profile="(Default)">fuji-s@mur365.onmicrosoft.com</Value>
     </Setting>
     <Setting Name="Password" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">P@ssword!</Value>
+      <Value Profile="(Default)">Muromachi_Fsi!</Value>
     </Setting>
     <Setting Name="ListName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">カスタムリスト-日報</Value>
+      <Value Profile="(Default)">カスタムリスト-過去日報</Value>
     </Setting>
   </Settings>
 </SettingsFile>

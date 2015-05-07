@@ -7,7 +7,6 @@ using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Interface;
-using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SP = Microsoft.SharePoint.Client;
 
@@ -21,6 +20,9 @@ namespace SharepointListMngApp {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
+		/// <param name="url">ユーザー</param>
+		/// <param name="user">ユーザー</param>
+		/// <param name="password">パスワード</param>
 		public FormCreateList(string url, string user, string password) {
 			this.InitializeComponent();
 #if true
@@ -116,31 +118,31 @@ namespace SharepointListMngApp {
 
 		/// <summary>SharePoint サイト URL</summary>
 		public string Url {
-			get { return this.textBoxUrl.Text; }
+			get { return this.textBoxUrl.Text.Trim(); }
 			set { this.textBoxUrl.Text = value; }
 		}
 
 		/// <summary>ユーザー</summary>
 		public string UserName {
-			get { return this.textBoxUser.Text; }
+			get { return this.textBoxUser.Text.Trim(); }
 			set { this.textBoxUser.Text = value; }
 		}
 
 		/// <summary>パスワード</summary>
 		public string Password {
-			get { return this.textBoxPassword.Text; }
+			get { return this.textBoxPassword.Text.Trim(); }
 			set { this.textBoxPassword.Text = value; }
 		}
 
 		/// <summary>リスト名</summary>
 		public string ListName {
-			get { return this.textBoxListName.Text; }
+			get { return this.textBoxListName.Text.Trim(); }
 			set { this.textBoxListName.Text = value; }
 		}
 
 		/// <summary>SharePoint リスト URL</summary>
 		public string ListUrl {
-			get { return this.textBoxListUrl.Text; }
+			get { return this.textBoxListUrl.Text.Trim(); }
 			set { this.textBoxListUrl.Text = value; }
 		}
 
@@ -170,72 +172,80 @@ namespace SharepointListMngApp {
 				var username = this.UserName;
 				var password = this.Password;
 				var listName = this.ListName;
-				var listUrl = this.ListUrl;
-				var description = this.Description;
 
-				{// 新規作成
-					var m = new ListCollectionManager(url, username, password);
-					m.ThrowException += (s, ea) => {
-						throw new Exception(ea.ErrorMessage);
-					};
+				// リスト作成
+				var msg = this.CreateList(url, username, password, listName);
+				var ret = MessageBox.Show(msg, "確認"
+					, MessageBoxButtons.YesNo
+					, MessageBoxIcon.Question
+					, MessageBoxDefaultButton.Button2
+				);
 
-					if (m.Titles.Any(t => t == listName)) {
-						var sb = new StringBuilder();
-						sb.AppendFormat("[{0}] は既に存在します。", listName).AppendLine()
-						.AppendLine("既存のリストに列を作成しますか？");
-						var ret = MessageBox.Show(sb.ToString(), "確認"
-							, MessageBoxButtons.YesNo
-							, MessageBoxIcon.Question
-							, MessageBoxDefaultButton.Button2
-						);
-
-						switch (ret) {
-						case DialogResult.Yes:
-							break;
-						case DialogResult.No:
-						default:
-							return;
-						}
-					} else {
-						m.Create(listName, listUrl, description, SP.ListTemplateType.GenericList);
-						var msg = "[" + listName + "] を作成しました。";
-						MessageBox.Show(msg);
-					}
-				}
-				{// フィールド拡張
-					var m = new ListManager(url, username, password, listName);
-					m.ThrowException += (s, ea) => {
-						throw new Exception(ea.ErrorMessage);
-					};
-
-					var tbl = this.gridCsv.ToDataTable();
-					var ls = tbl.Select(r => new {
-						表示名 = r["表示名"].ToString(),
-						列名 = r["列名"].ToString(),
-						型 = r["型"].ToString().ToEnum<SP.FieldType>(),
-					}).ToList();
-
-					ls.ForEach(r => {
-						if (r.列名 != "Title") {
-							if (!m.Fields.Any(f => f.InternalName == r.列名)) {
-								m.AddField(r.列名, r.表示名, r.型);
-							}
-						} else {
-							m.UpdateField<SP.FieldText>(r.列名, f => {
-								if (f.Title != r.表示名) {
-									f.Title = r.表示名;
-								}
-							});
-						}
-					});
+				switch (ret) {
+				case DialogResult.Yes:
+					// フィールド拡張
+					this.AddField(url, username, password, listName);
+					break;
+				case DialogResult.No:
+				default:
+					return;
 				}
 			} catch (SP.ServerException ex) {
+				MessageBox.Show(ex.Message);
+			} catch (SP.PropertyOrFieldNotInitializedException ex) {
 				MessageBox.Show(ex.Message);
 			} catch (Exception ex) {
 				MessageBox.Show(ex.ToString());
 			} finally {
 				this.Enabled = true;
 			}
+		}
+
+		/// <summary>
+		/// リスト作成
+		/// </summary>
+		/// <param name="url">ユーザー</param>
+		/// <param name="user">ユーザー</param>
+		/// <param name="password">パスワード</param>
+		/// <param name="listName">リスト名</param>
+		/// <returns></returns>
+		private string CreateList(string url, string username, string password, string listName) {
+			var m = new ListCollectionManager(url, username, password);
+			m.ThrowException += (s, ea) => {
+				throw new Exception(ea.ErrorMessage);
+			};
+
+			var sb = new StringBuilder();
+			if (m.Titles.Any(t => t == listName)) {
+				sb.AppendFormat("[{0}] は既に存在します。", listName).AppendLine();
+			} else {
+				var listUrl = this.ListUrl;
+				var description = this.Description;
+
+				m.Create(listName, listUrl, description, SP.ListTemplateType.GenericList);
+				sb.AppendFormat("[{0}] を作成しました。", listName).AppendLine();
+			}
+
+			sb.AppendLine("リストに列を追加しますか？");
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// フィールド拡張
+		/// </summary>
+		/// <param name="url">ユーザー</param>
+		/// <param name="user">ユーザー</param>
+		/// <param name="password">パスワード</param>
+		/// <param name="listName">リスト名</param>
+		private void AddField(string url, string username, string password, string listName) {
+			var m = new ListManager(url, username, password, listName);
+			m.ThrowException += (s, ea) => {
+				throw new Exception(ea.ErrorMessage);
+			};
+
+			var tbl = this.gridCsv.ToDataTable();
+			var msg = m.SetFields(tbl);
+			MessageBox.Show(msg);
 		}
 
 		#endregion

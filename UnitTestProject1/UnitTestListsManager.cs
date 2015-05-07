@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
-using ExtensionsLibrary.Extensions;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using System.Xml.Serialization;
 using SharePointManager.Manager.Extensions;
-using System.Linq.Expressions;
 
 namespace UnitTestProject {
 	[TestClass]
@@ -305,7 +310,23 @@ namespace UnitTestProject {
 
 			var ret = xml.ToString();
 
-			Assert.IsNotNull(ret);
+			var sb = new StringBuilder();
+			sb.Append(@"<Comment DateTime=""2015-04-23 12:30:00"" UserName=""ユーザー1"">コメント1行目です。
+コメント2行目です。
+コメント3行目です。</Comment>");
+			sb.Append(@"<Comment DateTime=""2015/04/23 13:00"" UserName=""ユーザー1"">
+コメント1行目です。
+コメント2行目です。
+コメント3行目です。
+</Comment>");
+
+			var content = sb.ToString();
+
+			var str1 = content.ConvertXmlString<XmlComments>(c => c.GetLog());
+
+			var expected = string.Empty;
+			var actual = str1;
+			Assert.AreNotEqual(expected, actual);
 		}
 
 		[TestMethod]

@@ -14,7 +14,7 @@ namespace ExtensionsLibrary.Extensions {
 	public static partial class GenericsExtension {
 		#region 値取得
 
-		#region Nvl (オーバーロード +2)
+		#region GetValueOrDefault (オーバーロード +2)
 
 		/// <summary>
 		/// null かどうかを判定して値を取得します。
@@ -24,8 +24,8 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="this">値を取得するインスタンス</param>
 		/// <param name="func">値を取得するメソッド</param>
 		/// <returns>null かどうかを判定して値を返します。</returns>
-		public static TResult Nvl<T, TResult>(this T @this, Func<T, TResult> func) {
-			return @this.Nvl(func, default(TResult));
+		public static TResult GetValueOrDefault<T, TResult>(this T @this, Func<T, TResult> func) {
+			return @this.GetValueOrDefault(func, default(TResult));
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="func">値を取得するメソッド</param>
 		/// <param name="defaultValue">default 値</param>
 		/// <returns>null かどうかを判定して値を返します。</returns>
-		public static TResult Nvl<T, TResult>(this T @this, Func<T, TResult> func, TResult defaultValue) {
+		public static TResult GetValueOrDefault<T, TResult>(this T @this, Func<T, TResult> func, TResult defaultValue) {
 			try {
 				if (@this == null) {
 					return defaultValue;
@@ -60,16 +60,12 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="func">値を取得するメソッド</param>
 		/// <returns>null かどうかを判定してコレクションを返します。</returns>
 		public static IEnumerable<TResult> GetCollection<T, TResult>(this T @this, Func<T, IEnumerable<TResult>> func) {
-#if true
-			var result = @this.Nvl(v => func(v));
+			var result = @this.GetValueOrDefault(v => func(v));
 			if (result == null) {
 				return Enumerable.Empty<TResult>();
 			}
 
 			return result;
-#else
-			return @this.Nvl(func, Enumerable.Empty<TResult>());
-#endif
 		}
 
 		/// <summary>
@@ -80,7 +76,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="func">文字列を取得するメソッド</param>
 		/// <returns>null かどうかを判定して文字列を返します。</returns>
 		public static string GetString<T>(this T @this, Func<T, string> func) {
-			return @this.Nvl(func, string.Empty).Nvl();
+			return @this.GetValueOrDefault(func, string.Empty).GetValueOrEmpty();
 		}
 
 		#endregion
@@ -170,11 +166,11 @@ namespace ExtensionsLibrary.Extensions {
 			var dic = @this.ToPropertyDictionary();
 			if (nullShow) {
 				return dic
-					.Select(p => new { Name = p.Key, Value = p.Value.Nvl(v => v.ToString(), "null"), })
+					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString(), "null"), })
 					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
 			} else {
 				return dic
-					.Select(p => new { Name = p.Key, Value = p.Value.Nvl(v => v.ToString()), })
+					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString()), })
 					.Where(p => !p.Value.IsEmpty())
 					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
 			}
@@ -267,11 +263,11 @@ namespace ExtensionsLibrary.Extensions {
 			var dic = @this.ToFieldDictionary();
 			if (nullShow) {
 				return dic
-					.Select(p => new { Name = p.Key, Value = p.Value.Nvl(v => v.ToString(), "null"), })
+					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString(), "null"), })
 					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
 			} else {
 				return dic
-					.Select(p => new { Name = p.Key, Value = p.Value.Nvl(v => v.ToString()), })
+					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString()), })
 					.Where(p => !p.Value.IsEmpty())
 					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
 			}
