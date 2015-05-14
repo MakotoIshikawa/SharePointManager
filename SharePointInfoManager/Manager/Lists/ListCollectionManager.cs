@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
-using SPC = Microsoft.SharePoint.Client;
+using SharePointManager.MyEventArgs;
+using SharePointManager.MyException;
+using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager.Lists {
 	/// <summary>
@@ -25,6 +29,76 @@ namespace SharePointManager.Manager.Lists {
 				this.Reload();
 			}
 		}
+
+		#endregion
+
+		#region イベント
+
+		#region 作成完了
+
+		/// <summary>
+		/// 作成完了後のイベントです。
+		/// </summary>
+		public event EventHandler<MessageEventArgs> Created;
+
+		/// <summary>
+		/// 作成完了後に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnCreated(string message) {
+			if (this.Created == null) {
+				return;
+			}
+
+			var e = new MessageEventArgs(message);
+			this.Created(this, e);
+		}
+
+		#endregion
+
+		#region 更新完了
+
+		/// <summary>
+		/// 更新完了後のイベントです。
+		/// </summary>
+		public event EventHandler<MessageEventArgs> Updated;
+
+		/// <summary>
+		/// 更新完了後に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnUpdated(string message) {
+			if (this.Updated == null) {
+				return;
+			}
+
+			var e = new MessageEventArgs(message);
+			this.Updated(this, e);
+		}
+
+		#endregion
+
+		#region 削除完了
+
+		/// <summary>
+		/// 削除完了後のイベントです。
+		/// </summary>
+		public event EventHandler<MessageEventArgs> Deleted;
+
+		/// <summary>
+		/// 削除完了後に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnDeleted(string message) {
+			if (this.Deleted == null) {
+				return;
+			}
+
+			var e = new MessageEventArgs(message);
+			this.Deleted(this, e);
+		}
+
+		#endregion
 
 		#endregion
 
@@ -56,7 +130,7 @@ namespace SharePointManager.Manager.Lists {
 		/// リスト情報の列挙を取得します。
 		/// </summary>
 		/// <returns>リスト情報の列挙を返します。</returns>
-		protected IEnumerable<SPC.List> GetLists() {
+		protected IEnumerable<SP.List> GetLists() {
 			return this.Load(cn => {
 				return cn.Web.Lists.Include(RetrievalsOfList);
 			});
@@ -67,7 +141,7 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <param name="retrievals">データを取得するプロパティ</param>
 		/// <returns>リスト情報の列挙を返します。</returns>
-		public IEnumerable<SPC.List> GetLists(params Expression<Func<SPC.List, object>>[] retrievals) {
+		public IEnumerable<SP.List> GetLists(params Expression<Func<SP.List, object>>[] retrievals) {
 			return this.Load(cn => {
 				return cn.Web.Lists.Include(retrievals);
 			});
@@ -85,7 +159,27 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="url">URL</param>
 		/// <param name="description">説明</param>
 		/// <param name="templateType">リストタイプ</param>
-		public void Create(string title, string url, string description, ListTemplateType templateType) {
+		public void Create(string title, string url, string description, ListTemplateType templateType = ListTemplateType.GenericList) {
+			if (title.IsEmpty()) {
+				var sb = new StringBuilder();
+				sb.AppendLine("タイトルが空です。")
+				.AppendLine("入力して下さい。");
+				throw new ArgumentException(sb.ToString(), "title");
+			}
+
+			if (this.Titles.Any(t => t == title)) {
+				var sb = new StringBuilder();
+				sb.AppendFormat("[{0}] は既にこの Web サイトに存在します。", title);
+				throw new DuplicateException(sb.ToString());
+			}
+
+			if (url.IsEmpty()) {
+				var sb = new StringBuilder();
+				sb.AppendLine("サイト URL が空です。")
+				.AppendLine("入力して下さい。");
+				throw new ArgumentException(sb.ToString(), "url");
+			}
+
 			this.Execute(cn => {
 				var creationInfo = new ListCreationInformation() {
 					Title = title,
@@ -99,6 +193,65 @@ namespace SharePointManager.Manager.Lists {
 
 				list.Update();
 			});
+
+			{// 作成完了
+				var sb = new StringBuilder();
+				sb.AppendFormat("[{0}({1})] を作成しました。", title, url).AppendLine();
+
+				this.OnCreated(sb.ToString());
+			}
+		}
+
+		#endregion
+
+		#region 更新
+
+		/// <summary>
+		/// 指定したタイトルのリストの情報を更新します。
+		/// </summary>
+		/// <param name="title">タイトル</param>
+		/// <param name="func">更新処理</param>
+		public void UpdateByTitle(string title, Action<SP.List> func) {
+			if (func == null) {
+				return;
+			}
+
+			this.Execute(cn => {
+				var list = cn.Web.Lists.GetByTitle(title);
+				func(list);
+				list.Update();
+			});
+
+			{// 更新完了
+				var sb = new StringBuilder();
+				sb.AppendFormat("[{0})] を更新しました。", title).AppendLine();
+
+				this.OnUpdated(sb.ToString());
+			}
+		}
+
+		/// <summary>
+		/// 指定したIDのリストの情報を更新します。
+		/// </summary>
+		/// <param name="id">グローバル一意識別子 (GUID)</param>
+		/// <param name="func">更新処理</param>
+		public void UpdateById(Guid id, Action<SP.List> func) {
+			if (func == null) {
+				return;
+			}
+
+			this.Execute(cn => {
+				var list = cn.Web.Lists.GetById(id);
+				func(list);
+				list.Update();
+			});
+
+			{// 更新完了
+				var sb = new StringBuilder();
+				sb.AppendFormat("[{0})] を更新しました。", id).AppendLine();
+
+				this.OnUpdated(sb.ToString());
+			}
 		}
 
 		#endregion
@@ -115,6 +268,13 @@ namespace SharePointManager.Manager.Lists {
 				var list = cn.Web.Lists.GetByTitle(title);
 				list.DeleteObject();
 			});
+
+			{// 削除完了
+				var sb = new StringBuilder();
+				sb.AppendFormat("[{0})] を削除しました。", title).AppendLine();
+
+				this.OnDeleted(sb.ToString());
+			}
 		}
 
 		/// <summary>
@@ -127,44 +287,13 @@ namespace SharePointManager.Manager.Lists {
 				var list = cn.Web.Lists.GetById(id);
 				list.DeleteObject();
 			});
-		}
 
-		#endregion
+			{// 削除完了
+				var sb = new StringBuilder();
+				sb.AppendFormat("[{0})] を削除しました。", id).AppendLine();
 
-		#region 更新
-
-		/// <summary>
-		/// 指定したタイトルのリストの情報を更新します。
-		/// </summary>
-		/// <param name="title">タイトル</param>
-		/// <param name="func">更新処理</param>
-		public void UpdateByTitle(string title, Action<SPC.List> func) {
-			if (func == null) {
-				return;
+				this.OnDeleted(sb.ToString());
 			}
-
-			this.Execute(cn => {
-				var list = cn.Web.Lists.GetByTitle(title);
-				func(list);
-				list.Update();
-			});
-		}
-
-		/// <summary>
-		/// 指定したIDのリストの情報を更新します。
-		/// </summary>
-		/// <param name="id">グローバル一意識別子 (GUID)</param>
-		/// <param name="func">更新処理</param>
-		public void UpdateById(Guid id, Action<SPC.List> func) {
-			if (func == null) {
-				return;
-			}
-
-			this.Execute(cn => {
-				var list = cn.Web.Lists.GetById(id);
-				func(list);
-				list.Update();
-			});
 		}
 
 		#endregion
@@ -177,9 +306,9 @@ namespace SharePointManager.Manager.Lists {
 		public List<string> Titles { get; protected set; }
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.List, object>>[] RetrievalsOfList {
+		protected static Expression<Func<SP.List, object>>[] RetrievalsOfList {
 			get {
-				return new Expression<Func<SPC.List, object>>[] {
+				return new Expression<Func<SP.List, object>>[] {
 					l => l.AllowContentTypes
 					, l => l.BaseTemplate
 					, l => l.BaseType
@@ -246,9 +375,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.ContentType, object>>[] RetrievalsOfContentType {
+		protected static Expression<Func<SP.ContentType, object>>[] RetrievalsOfContentType {
 			get {
-				return new Expression<Func<SPC.ContentType, object>>[] {
+				return new Expression<Func<SP.ContentType, object>>[] {
 					c => c.Description
 					, c => c.DisplayFormTemplateName
 					, c => c.DisplayFormUrl
@@ -278,9 +407,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.EventReceiverDefinition, object>>[] RetrievalsOfEventReceiverDefinition {
+		protected static Expression<Func<SP.EventReceiverDefinition, object>>[] RetrievalsOfEventReceiverDefinition {
 			get {
-				return new Expression<Func<SPC.EventReceiverDefinition, object>>[] {
+				return new Expression<Func<SP.EventReceiverDefinition, object>>[] {
 					e => e.EventType
 					, e => e.ReceiverAssembly
 					, e => e.ReceiverClass
@@ -294,9 +423,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.Field, object>>[] RetrievalsOfField {
+		protected static Expression<Func<SP.Field, object>>[] RetrievalsOfField {
 			get {
-				return new Expression<Func<SPC.Field, object>>[] {
+				return new Expression<Func<SP.Field, object>>[] {
 					f => f.CanBeDeleted
 					, f => f.DefaultValue
 					, f => f.Description
@@ -331,9 +460,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.Form, object>>[] RetrievalsOfForm {
+		protected static Expression<Func<SP.Form, object>>[] RetrievalsOfForm {
 			get {
-				return new Expression<Func<SPC.Form, object>>[] {
+				return new Expression<Func<SP.Form, object>>[] {
 					f => f.FormType
 					, f => f.Id
 					, f => f.ServerRelativeUrl
@@ -342,9 +471,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.UserCustomAction, object>>[] RetrievalsOfUserCustomAction {
+		protected static Expression<Func<SP.UserCustomAction, object>>[] RetrievalsOfUserCustomAction {
 			get {
-				return new Expression<Func<SPC.UserCustomAction, object>>[] {
+				return new Expression<Func<SP.UserCustomAction, object>>[] {
 					u => u.CommandUIExtension
 					, u => u.Description
 					, u => u.Group
@@ -367,9 +496,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.View, object>>[] RetrievalsOfView {
+		protected static Expression<Func<SP.View, object>>[] RetrievalsOfView {
 			get {
-				return new Expression<Func<SPC.View, object>>[] {
+				return new Expression<Func<SP.View, object>>[] {
 					v => v.Aggregations
 					, v => v.AggregationsStatus
 					, v => v.BaseViewId
@@ -413,9 +542,9 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.Workflow.WorkflowAssociation, object>>[] RetrievalsOfWorkflow {
+		protected static Expression<Func<SP.Workflow.WorkflowAssociation, object>>[] RetrievalsOfWorkflow {
 			get {
-				return new Expression<Func<SPC.Workflow.WorkflowAssociation, object>>[] {
+				return new Expression<Func<SP.Workflow.WorkflowAssociation, object>>[] {
 					w => w.AllowManual
 					, w => w.AssociationData
 					, w => w.AutoStartChange

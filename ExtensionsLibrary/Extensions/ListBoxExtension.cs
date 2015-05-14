@@ -1,6 +1,9 @@
 ﻿using System.Windows.Forms;
 
-namespace SharepointAttachmentFilesApp {
+namespace ExtensionsLibrary.Extensions {
+	/// <summary>
+	/// ListBox を拡張するメソッドを提供します。
+	/// </summary>
 	public static partial class ListBoxExtension {
 		/// <summary>
 		/// メッセージ追加

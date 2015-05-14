@@ -64,6 +64,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormAttachmentFiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAttachmentFiles.Designer.cs">
+      <DependentUpon>FormAttachmentFiles.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormListMng.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +84,15 @@
     <Compile Include="FormCreateList.Designer.cs">
       <DependentUpon>FormCreateList.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormCreateFields.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCreateFields.Designer.cs">
+      <DependentUpon>FormCreateFields.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="FormAttachmentFiles.resx">
+      <DependentUpon>FormAttachmentFiles.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormListMng.resx">
       <DependentUpon>FormListMng.cs</DependentUpon>
     </EmbeddedResource>
@@ -93,6 +108,9 @@
     <EmbeddedResource Include="FormCreateList.resx">
       <DependentUpon>FormCreateList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormCreateFields.resx">
+      <DependentUpon>FormCreateFields.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -107,6 +125,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonFeaturesLibrary\CommonFeaturesLibrary.csproj">
+      <Project>{666330c0-b3f9-489a-ab39-4217d18728c7}</Project>
+      <Name>CommonFeaturesLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExtensionsLibrary\ExtensionsLibrary.csproj">
       <Project>{d37920d6-23c2-42a2-a593-32f8687fd320}</Project>
       <Name>ExtensionsLibrary</Name>

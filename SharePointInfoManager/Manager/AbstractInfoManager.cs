@@ -46,6 +46,24 @@ namespace SharePointManager.Manager {
 		#region イベント
 
 		/// <summary>
+		/// 成功時のイベントです。
+		/// </summary>
+		public event EventHandler<MessageEventArgs> Success;
+
+		/// <summary>
+		/// 成功時に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnSuccess(string message) {
+			if (this.Success == null) {
+				return;
+			}
+
+			var e = new MessageEventArgs(message);
+			this.Success(this, e);
+		}
+
+		/// <summary>
 		/// 例外発生時のイベントです。
 		/// </summary>
 		public event EventHandler<ThrowExceptionEventArgs> ThrowException;
@@ -155,6 +173,8 @@ namespace SharePointManager.Manager {
 		/// <remarks>例外をキャッチしません。</remarks>
 		public void Execute(Action<SP.ClientContext> action) {
 			Execute(this.Url, this.UserName, this.Password, action);
+
+			this.OnSuccess("処理に成功しました。");
 		}
 
 		/// <summary>
@@ -251,7 +271,10 @@ namespace SharePointManager.Manager {
 				// 例外判定
 				if (!string.IsNullOrEmpty(scope.ErrorMessage)) {
 					this.OnThrowException(scope);
+					return;
 				}
+
+				this.OnSuccess("処理の試行に成功しました。");
 			}
 		}
 

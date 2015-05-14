@@ -8,6 +8,8 @@ namespace ExtensionsLibrary.Extensions {
 	/// 文字列を補助する拡張メソッドを提供します。
 	/// </summary>
 	public static partial class StringExtension {
+		#region メソッド
+
 		#region 時刻ログ取得
 
 		/// <summary>
@@ -63,8 +65,6 @@ namespace ExtensionsLibrary.Extensions {
 		}
 
 		#endregion
-
-		#region メソッド
 
 		#region Nullable 変換
 
@@ -318,7 +318,7 @@ namespace ExtensionsLibrary.Extensions {
 
 		#endregion
 
-		#region GetValueOrEmpty
+		#region 値取得
 
 		/// <summary>
 		/// null かどうかを判定して文字列を取得します。

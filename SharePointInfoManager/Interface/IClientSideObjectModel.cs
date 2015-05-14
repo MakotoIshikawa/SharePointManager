@@ -12,6 +12,11 @@ namespace SharePointManager.Interface {
 		#region イベント
 
 		/// <summary>
+		/// 成功時のイベントです。
+		/// </summary>
+		event EventHandler<MessageEventArgs> Success;
+
+		/// <summary>
 		/// 例外発生時のイベントです。
 		/// </summary>
 		event EventHandler<ThrowExceptionEventArgs> ThrowException;

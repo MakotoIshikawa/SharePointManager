@@ -305,6 +305,7 @@
 			this.終了XToolStripMenuItem.Name = "終了XToolStripMenuItem";
 			this.終了XToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
 			this.終了XToolStripMenuItem.Text = "終了(&X)";
+			this.終了XToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
 			// 
 			// 編集EToolStripMenuItem
 			// 
@@ -384,7 +385,6 @@
 			this.ツールTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.カスタマイズCToolStripMenuItem,
             this.オプションOToolStripMenuItem});
-			this.ツールTToolStripMenuItem.Enabled = false;
 			this.ツールTToolStripMenuItem.Name = "ツールTToolStripMenuItem";
 			this.ツールTToolStripMenuItem.Size = new System.Drawing.Size(74, 22);
 			this.ツールTToolStripMenuItem.Text = "ツール(&T)";
@@ -394,9 +394,11 @@
 			this.カスタマイズCToolStripMenuItem.Name = "カスタマイズCToolStripMenuItem";
 			this.カスタマイズCToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
 			this.カスタマイズCToolStripMenuItem.Text = "カスタマイズ(&C)";
+			this.カスタマイズCToolStripMenuItem.Click += new System.EventHandler(this.CustomizeToolStripMenuItem_Click);
 			// 
 			// オプションOToolStripMenuItem
 			// 
+			this.オプションOToolStripMenuItem.Enabled = false;
 			this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
 			this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
 			this.オプションOToolStripMenuItem.Text = "オプション(&O)";

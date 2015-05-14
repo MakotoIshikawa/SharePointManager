@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
@@ -9,6 +10,8 @@ using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
+using SharePointManager.MyException;
+using SP = Microsoft.SharePoint.Client;
 
 namespace SharepointListMngApp {
 	/// <summary>
@@ -147,7 +150,7 @@ namespace SharepointListMngApp {
 		#region メニュー
 
 		/// <summary>
-		/// 新規作成
+		/// [新規作成(N)]クリックイベント
 		/// </summary>
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
@@ -155,21 +158,8 @@ namespace SharepointListMngApp {
 			this.CreateList();
 		}
 
-		private void CreateList() {
-			var f = new FormCreateList(this.Url, this.UserName, this.Password);
-			var ret = f.ShowDialog(this);
-			switch (ret) {
-			case DialogResult.OK:
-				f.Run();
-				break;
-			case DialogResult.Cancel:
-				MessageBox.Show("作成しませんでした。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				break;
-			}
-		}
-
 		/// <summary>
-		/// 開く
+		/// [開く(O)]クリックイベント
 		/// </summary>
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
@@ -177,11 +167,108 @@ namespace SharepointListMngApp {
 			this.buttonReference_Click(sender, e);
 		}
 
+		/// <summary>
+		/// [終了(X)]クリックイベント
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExitToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.Close();
+		}
+
+		/// <summary>
+		/// [カスタマイズ]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void CustomizeToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.CreateFields(this.ListName);
+		}
+
 		#endregion
 
 		#endregion
 
 		#region メソッド
+
+		/// <summary>
+		/// リスト作成
+		/// </summary>
+		private void CreateList() {
+			try {
+				using (var f = new FormCreateList(this.Url, this.UserName, this.Password)) {
+					f.Manager.Created += (s, e) => {
+						var sb = new StringBuilder();
+						sb.AppendLine(e.Message);
+						sb.AppendLine("リストに列を追加しますか？");
+
+						this.ShowMessageBox(sb.ToString(), icon: MessageBoxIcon.Information);
+						var ret = this.ShowMessageBox(e.Message, "確認"
+							, MessageBoxButtons.YesNo
+							, MessageBoxIcon.Question
+							, MessageBoxDefaultButton.Button2
+						);
+
+						switch (ret) {
+						case DialogResult.Yes:
+							// フィールド拡張
+							this.CreateFields(f.ListName);
+							break;
+						case DialogResult.No:
+						default:
+							return;
+						}
+					};
+
+					switch (f.ShowDialog(this)) {
+					case DialogResult.OK:
+						f.Run();
+						break;
+					case DialogResult.Cancel:
+						this.ShowMessageBox("リストを作成しませんでした。", icon: MessageBoxIcon.Information);
+						break;
+					}
+				}
+			} catch (DuplicateException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Information);
+			} catch (SP.ServerException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+			} catch (SP.PropertyOrFieldNotInitializedException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+			} catch (ArgumentException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+			} catch (Exception ex) {
+				this.ShowMessageBox(ex.ToString(), icon: MessageBoxIcon.Error);
+			}
+		}
+
+		/// <summary>
+		/// 列の作成
+		/// </summary>
+		/// <param name="listName">リスト名</param>
+		private void CreateFields(string listName = null) {
+			try {
+				using (var f = new FormCreateFields(this.Url, this.UserName, this.Password, listName)) {
+					var ret = f.ShowDialog(this);
+					switch (ret) {
+					case DialogResult.OK:
+						f.Run();
+						break;
+					case DialogResult.Cancel:
+						this.ShowMessageBox("列を作成しませんでした。", icon: MessageBoxIcon.Information);
+						break;
+					}
+				}
+			} catch (SP.ServerException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+			} catch (SP.PropertyOrFieldNotInitializedException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+			} catch (ArgumentException ex) {
+				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+			} catch (Exception ex) {
+				this.ShowMessageBox(ex.ToString(), icon: MessageBoxIcon.Error);
+			}
+		}
 
 		/// <summary>
 		/// 実行

@@ -58,5 +58,23 @@ namespace SharepointListMngApp.Properties {
                 return ((string)(this["ListName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int LogRowLimit {
+            get {
+                return ((int)(this["LogRowLimit"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("UniqueKey")]
+        public string UniqueKey {
+            get {
+                return ((string)(this["UniqueKey"]));
+            }
+        }
     }
 }

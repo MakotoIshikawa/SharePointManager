@@ -40,18 +40,25 @@ namespace SharePointManager.MyEventArgs {
 
 		/// <summary>エラーメッセージ</summary>
 		public string ErrorMessage { get; protected set; }
+
 		/// <summary>例外があるか</summary>
 		public bool HasException { get; protected set; }
+
 		/// <summary>プロセス</summary>
 		public bool Processed { get; protected set; }
+
 		/// <summary>エラーコード</summary>
 		public int ServerErrorCode { get; protected set; }
+
 		/// <summary>エラー詳細</summary>
 		public object ServerErrorDetails { get; protected set; }
+
 		/// <summary>エラータイプ名</summary>
 		public string ServerErrorTypeName { get; protected set; }
+
 		/// <summary>エラー値</summary>
 		public string ServerErrorValue { get; protected set; }
+
 		/// <summary>スタックトレース</summary>
 		public string ServerStackTrace { get; protected set; }
 
