@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
-using SharePointManager.MyException;
 
 namespace SharepointListMngApp {
 	/// <summary>
@@ -33,12 +29,7 @@ namespace SharepointListMngApp {
 			this.Url = url;
 			this.UserName = user;
 			this.Password = password;
-
-			//TODO: テキストボックスをラベルに変更する。
-			if (!listName.IsWhiteSpace()) {
-				this.ListName = listName;
-				this.textBoxListName.Enabled = false;
-			}
+			this.ListName = listName;
 
 			this.Manager = new ListManager(url, user, password, listName);
 		}
@@ -53,8 +44,8 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonCreate_Click(object sender, EventArgs e) {
-			if (!this.IsValidatedListName(this.textBoxListName)) {
-				this.DialogResult = DialogResult.None;
+			if (this.ListName.IsWhiteSpace()) {
+				this.DialogResult = DialogResult.Cancel;
 				return;
 			}
 		}
@@ -73,36 +64,6 @@ namespace SharepointListMngApp {
 				break;
 			}
 		}
-
-		#region 検証イベント
-
-		/// <summary>
-		/// [リスト名]コントロールが検証を行っているときに呼び出されます。
-		/// </summary>
-		/// <param name="sender">送信元</param>
-		/// <param name="e">イベントデータ</param>
-		private void textBoxListName_Validating(object sender, System.ComponentModel.CancelEventArgs e) {
-			var tb = (sender as TextBox);
-			if (tb == null) {
-				return;
-			}
-
-			if (!this.IsValidatedListName(tb)) {
-				e.Cancel = true;
-				return;
-			}
-		}
-
-		/// <summary>
-		/// [共通]コントロールの検証が終了すると呼び出されます。
-		/// </summary>
-		/// <param name="sender">送信元</param>
-		/// <param name="e">イベントデータ</param>
-		private void TextBoxValidated(object sender, EventArgs e) {
-			this.errorProvider.Clear();
-		}
-
-		#endregion
 
 		/// <summary>
 		/// [ファイルパス]テキストボックスの変更イベントです。
@@ -186,8 +147,8 @@ namespace SharepointListMngApp {
 
 		/// <summary>リスト名</summary>
 		public string ListName {
-			get { return this.textBoxListName.Text.Trim(); }
-			set { this.textBoxListName.Text = value.Trim(); }
+			get { return this.textLabelListName.Text.Trim(); }
+			set { this.textLabelListName.Text = value.Trim(); }
 		}
 
 		/// <summary>フィールド情報テーブル</summary>
@@ -224,29 +185,8 @@ namespace SharepointListMngApp {
 			var listName = this.ListName;
 
 			var tbl = this.FieldsTable;
-			this.Manager.SetFields(tbl);
+			this.Manager.CreateFields(tbl);
 		}
-
-		#region 検証
-
-		/// <summary>
-		/// [リスト名]入力値判定
-		/// </summary>
-		/// <param name="tb">TextBox</param>
-		/// <returns>有効かどうかを返します。</returns>
-		private bool IsValidatedListName(TextBox tb) {
-			return tb.IsValidated(this.errorProvider, s => {
-				if (s.IsEmpty()) {
-					var sb = new StringBuilder()
-						.AppendFormat("{0}は必須項目です。", this.labelListName.Text).AppendLine()
-						.AppendLine("入力して下さい。");
-
-					throw new Exception(sb.ToString());
-				}
-			});
-		}
-
-		#endregion
 
 		#endregion
 	}

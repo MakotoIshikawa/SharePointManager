@@ -7,13 +7,9 @@ using System.Text;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using System.Xml.Serialization;
-using SharePointManager.Manager.Extensions;
 
 namespace UnitTestProject {
 	[TestClass]
@@ -22,7 +18,7 @@ namespace UnitTestProject {
 		private string _url = @"https://NissayLeasing.sharepoint.com/";
 		private string _user = @"nlcadmin@NissayLeasing.onmicrosoft.com";
 		private string _password = @"!QAZ2wsx";
-#elif false
+#elif true
 		private string _url = @"https://kariverification03.sharepoint.com";
 		private string _user = @"root@KariVerification03.onmicrosoft.com";
 		private string _password = @"!QAZ2wsx";
@@ -150,9 +146,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListManager(_url, _user, _password, title);
-			m.ThrowSharePointException += (sender, e) => {
-				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
-			};
+			var fs = m.Fields;
 
 			var num = m.ItemCount + 1;
 			var row = new Dictionary<string, object>();
@@ -167,8 +161,7 @@ namespace UnitTestProject {
 			row["Created"] = DateTime.Now;
 			row["登録日時"] = DateTime.MinValue;
 
-			var ns = m.GetInternalNames(row.Keys).ToList();
-			var items = m.ConvertRowData(row);
+			var items = row.ConvertRowData(fs);
 
 			var expected = row.Count;
 			var actual = items.Count;

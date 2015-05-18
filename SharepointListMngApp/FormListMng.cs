@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -30,6 +31,8 @@ namespace SharepointListMngApp {
 			this.UserName = user;
 			this.Password = password;
 			this.ListName = listName;
+
+			this.Manager = new ListManager(url, user, password, listName);
 		}
 
 		#endregion
@@ -47,9 +50,12 @@ namespace SharepointListMngApp {
 
 		/// <summary>リスト名</summary>
 		public string ListName {
-			get { return this.textBoxListName.Text.Trim(); }
-			set { this.textBoxListName.Text = value; }
+			get { return this.textLabelListName.Text.Trim(); }
+			set { this.textLabelListName.Text = value; }
 		}
+
+		/// <summary>管理オブジェクト</summary>
+		public ListManager Manager { get; protected set; }
 
 		#endregion
 
@@ -161,26 +167,8 @@ namespace SharepointListMngApp {
 			try {
 				this.Enabled = false;
 
-				var url = this.Url;
-				var username = this.UserName;
-				var password = this.Password;
-				var listName = this.ListName;
-
-				var m = new ListManager(url, username, password, listName);
-
 				var tbl = this.gridCsv.ToDataTable();
-				var ls = tbl.ToDictionaryList();
-				ls.ForEach(r => {
-					// [室町ビル]コメント変換処理
-					CnvComments(r);
-
-					m.AddListItem(r);
-				});
-
-				var msg = "[" + listName + "] にアイテムを登録しました。";
-				MessageBox.Show(msg);
-			} catch (Exception ex) {
-				MessageBox.Show(ex.ToString());
+				this.Manager.AddItems(tbl, CnvComments);
 			} finally {
 				this.Enabled = true;
 			}
@@ -189,14 +177,14 @@ namespace SharepointListMngApp {
 		/// <summary>
 		/// [室町ビル]コメント変換処理
 		/// </summary>
-		/// <param name="r"></param>
-		private static void CnvComments(System.Collections.Generic.Dictionary<string, object> r) {
+		/// <param name="row"></param>
+		private static void CnvComments(Dictionary<string, object> row) {
 			var key = "コメント";
-			if (r.ContainsKey(key)) {
+			if (row.ContainsKey(key)) {
 				try {
-					var content = r[key].ToString();
+					var content = row[key].ToString();
 					var log = content.ConvertXmlString<XmlComments>(c => c.GetLog());
-					r[key] = log;
+					row[key] = log;
 				} catch {
 				}
 			}

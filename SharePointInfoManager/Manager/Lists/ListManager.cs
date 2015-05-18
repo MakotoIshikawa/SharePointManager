@@ -98,6 +98,28 @@ namespace SharePointManager.Manager.Lists {
 
 		#endregion
 
+		#region アイテム追加
+
+		/// <summary>
+		/// アイテム追加後に発生します。
+		/// </summary>
+		public event EventHandler<ValueEventArgs<Dictionary<string, object>>> AddedItem;
+
+		/// <summary>
+		/// アイテム追加後に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnAddedItem(string message, Dictionary<string, object> value) {
+			if (this.AddedItem == null) {
+				return;
+			}
+
+			var e = new ValueEventArgs<Dictionary<string, object>>(value, message);
+			this.AddedItem(this, e);
+		}
+
+		#endregion
+
 		#endregion
 
 		#region メソッド
@@ -122,6 +144,45 @@ namespace SharePointManager.Manager.Lists {
 
 				this.ItemCount = cnt;
 			}
+		}
+
+		#endregion
+
+		#region リスト更新
+
+		/// <summary>
+		/// 指定したタイトルのリストの情報を更新します。
+		/// </summary>
+		/// <param name="title">タイトル</param>
+		/// <param name="update">更新処理</param>
+		protected void UpdateByTitle(string title, Action<SP.List> update) {
+			this.UpdateList(lists => lists.GetByTitle(title), update);
+		}
+
+		/// <summary>
+		/// 指定したIDのリストの情報を更新します。
+		/// </summary>
+		/// <param name="id">グローバル一意識別子 (GUID)</param>
+		/// <param name="update">更新処理</param>
+		protected void UpdateById(Guid id, Action<SP.List> update) {
+			this.UpdateList(lists => lists.GetById(id), update);
+		}
+
+		/// <summary>
+		/// 指定したリストの情報を更新します。
+		/// </summary>
+		/// <param name="getList">リストを取得するメソッド</param>
+		/// <param name="update">リストを更新するメソッド</param>
+		private void UpdateList(Func<SP.ListCollection, SP.List> getList, Action<SP.List> update) {
+			if (getList == null || update == null) {
+				return;
+			}
+
+			this.Execute(cn => {
+				var list = getList(cn.Web.Lists);
+				update(list);
+				list.Update();
+			});
 		}
 
 		#endregion
@@ -170,6 +231,59 @@ namespace SharePointManager.Manager.Lists {
 
 				return fld;
 			});
+		}
+
+		#endregion
+
+		#region 列作成
+
+		/// <summary>
+		/// テーブルデータを指定して列作成します。
+		/// </summary>
+		/// <param name="tbl">データテーブル</param>
+		public void CreateFields(DataTable tbl) {
+			var ls = tbl.Select(r => new {
+				表示名 = r["表示名"].ToString(),
+				列名 = r["列名"].ToString(),
+				型 = r["型"].ToString().ToEnum<SP.FieldType>(),
+			}).ToList();
+
+			var cnt = 0;
+			ls.ForEach(r => {
+				try {
+					if (r.列名 != "Title") {
+						if (!this.Fields.Any(f => f.InternalName == r.列名)) {
+							this.AddField(r.列名, r.表示名, r.型);
+
+							cnt++;
+						}
+					} else {
+						var fld = this.Fields.SingleOrDefault(f => f.InternalName == r.列名);
+						if (fld != null && fld.Title != r.表示名) {
+							this.UpdateField<SP.FieldText>(r.列名, f => f.Title = r.表示名);
+
+							cnt++;
+
+							var sb = new StringBuilder();
+							sb.AppendFormat("Title 列の表示名を[{0}]から[{1}]に変更しました。", fld.Title, r.表示名);
+							this.OnUpdatedField(sb.ToString(), r.表示名);
+						}
+					}
+				} catch (Exception ex) {
+					this.OnThrowException(ex);
+				}
+			});
+
+			{
+				var sb = new StringBuilder();
+				if (cnt == 0) {
+					sb.Append("列の情報を変更しませんでした。");
+				} else {
+					sb.AppendFormat("{0}件の列の情報を変更しました。", cnt);
+				}
+
+				this.OnSuccess(sb.ToString());
+			}
 		}
 
 		#endregion
@@ -242,6 +356,10 @@ namespace SharePointManager.Manager.Lists {
 					action(f);
 				}
 			});
+
+			var sb = new StringBuilder();
+			sb.AppendFormat("[{0}]列を追加しました。", disp);
+			this.OnAddedField(sb.ToString(), disp);
 
 			return this;
 		}
@@ -328,43 +446,28 @@ namespace SharePointManager.Manager.Lists {
 
 		#endregion
 
+		#endregion
+
+		#region リストアイテム
+
 		/// <summary>
-		/// フィールド情報設定
+		/// テーブルデータを指定してリストアイテムを追加します。
 		/// </summary>
 		/// <param name="tbl">データテーブル</param>
-		/// <returns>設定した情報のログを返します。</returns>
-		public void SetFields(DataTable tbl) {
-			var ls = tbl.Select(r => new {
-				表示名 = r["表示名"].ToString(),
-				列名 = r["列名"].ToString(),
-				型 = r["型"].ToString().ToEnum<SP.FieldType>(),
-			}).ToList();
+		/// <param name="convert">変換メソッド</param>
+		public void AddItems(System.Data.DataTable tbl, Action<Dictionary<string, object>> convert = null) {
+			var ls = tbl.ToDictionaryList();
 
 			var cnt = 0;
 			ls.ForEach(r => {
 				try {
-					if (r.列名 != "Title") {
-						if (!this.Fields.Any(f => f.InternalName == r.列名)) {
-							this.AddField(r.列名, r.表示名, r.型);
-
-							cnt++;
-
-							var sb = new StringBuilder();
-							sb.AppendFormat("[{0}]列を追加しました。", r.表示名);
-							this.OnAddedField(sb.ToString(), r.表示名);
-						}
-					} else {
-						var fld = this.Fields.SingleOrDefault(f => f.InternalName == r.列名);
-						if (fld != null && fld.Title != r.表示名) {
-							this.UpdateField<SP.FieldText>(r.列名, f => f.Title = r.表示名);
-
-							cnt++;
-
-							var sb = new StringBuilder();
-							sb.AppendFormat("Title 列の表示名を[{0}]から[{1}]に変更しました。", fld.Title, r.表示名);
-							this.OnUpdatedField(sb.ToString(), r.表示名);
-						}
+					if (convert != null) {
+						convert(r);
 					}
+
+					this.AddListItem(r);
+
+					cnt++;
 				} catch (Exception ex) {
 					this.OnThrowException(ex);
 				}
@@ -373,18 +476,14 @@ namespace SharePointManager.Manager.Lists {
 			{
 				var sb = new StringBuilder();
 				if (cnt == 0) {
-					sb.Append("列の情報を変更しませんでした。");
+					sb.Append("アイテムを追加しませんでした。");
 				} else {
-					sb.AppendFormat("{0}件の列の情報を変更しました。", cnt);
+					sb.AppendFormat("{0}件のアイテムを追加しました。", cnt);
 				}
 
 				this.OnSuccess(sb.ToString());
 			}
 		}
-
-		#endregion
-
-		#region リストアイテム
 
 		#region 追加
 
@@ -392,7 +491,7 @@ namespace SharePointManager.Manager.Lists {
 		/// リストにアイテムを追加します。
 		/// </summary>
 		/// <param name="row">行データ</param>
-		/// <param name="action"></param>
+		/// <param name="action">アイテムを加工するメソッド</param>
 		/// <returns>追加したアイテムのID番号を返します。</returns>
 		public ListManager AddListItem(Dictionary<string, object> row, Action<ListItem> action = null) {
 			var dic = this.ConvertRowData(row);
@@ -406,6 +505,10 @@ namespace SharePointManager.Manager.Lists {
 				}
 			});
 
+			var sb = new StringBuilder();
+			sb.AppendFormat("[{0}]アイテムを追加しました。", this.ListName);
+			this.OnAddedItem(sb.ToString(), dic);
+
 			return this;
 		}
 
@@ -414,29 +517,12 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <param name="row">行データ</param>
 		/// <returns>変換した行データを返します。</returns>
-		public Dictionary<string, object> ConvertRowData(Dictionary<string, object> row) {
+		private Dictionary<string, object> ConvertRowData(Dictionary<string, object> row) {
 			if (this.Fields == null) {
 				this.Reload();
 			}
 
 			return row.ConvertRowData(this.Fields);
-		}
-
-		public IEnumerable<string> GetInternalNames(IEnumerable<string> names) {
-			return names.Select(name => GetInternalName(name)).Distinct();
-		}
-
-		/// <summary>
-		/// 列フィールド情報から内部名を取得します。
-		/// </summary>
-		/// <param name="name">列名</param>
-		/// <returns>取得した内部名を返します。</returns>
-		public string GetInternalName(string name) {
-			if (this.Fields == null) {
-				this.Reload();
-			}
-
-			return this.Fields.GetInternalName(name);
 		}
 
 		#endregion
@@ -462,45 +548,6 @@ namespace SharePointManager.Manager.Lists {
 				item.Update();
 			});
 		}
-
-		#region 更新
-
-		/// <summary>
-		/// 指定したタイトルのリストの情報を更新します。
-		/// </summary>
-		/// <param name="title">タイトル</param>
-		/// <param name="update">更新処理</param>
-		protected void UpdateByTitle(string title, Action<SP.List> update) {
-			this.UpdateList(lists => lists.GetByTitle(title), update);
-		}
-
-		/// <summary>
-		/// 指定したIDのリストの情報を更新します。
-		/// </summary>
-		/// <param name="id">グローバル一意識別子 (GUID)</param>
-		/// <param name="update">更新処理</param>
-		protected void UpdateById(Guid id, Action<SP.List> update) {
-			this.UpdateList(lists => lists.GetById(id), update);
-		}
-
-		/// <summary>
-		/// 指定したリストの情報を更新します。
-		/// </summary>
-		/// <param name="getList">リストを取得するメソッド</param>
-		/// <param name="update">リストを更新するメソッド</param>
-		private void UpdateList(Func<SP.ListCollection, SP.List> getList, Action<SP.List> update) {
-			if (getList == null || update == null) {
-				return;
-			}
-
-			this.Execute(cn => {
-				var list = getList(cn.Web.Lists);
-				update(list);
-				list.Update();
-			});
-		}
-
-		#endregion
 
 		#endregion
 

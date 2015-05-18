@@ -34,7 +34,7 @@
 			this.gridListInfo = new System.Windows.Forms.DataGridView();
 			this.labelListName = new System.Windows.Forms.Label();
 			this.textBoxListName = new System.Windows.Forms.TextBox();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.splitContainer = new System.Windows.Forms.SplitContainer();
 			this.listBoxMessage = new System.Windows.Forms.ListBox();
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -60,6 +60,7 @@
 			this.すべて選択AToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ツールTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.カスタマイズCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.インポートIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.オプションOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ヘルプHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.内容CToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,12 +69,11 @@
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.バージョン情報AToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.buttonLoad = new System.Windows.Forms.Button();
-			this.インポートIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.gridListInfo)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-			this.splitContainer1.Panel1.SuspendLayout();
-			this.splitContainer1.Panel2.SuspendLayout();
-			this.splitContainer1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+			this.splitContainer.Panel1.SuspendLayout();
+			this.splitContainer.Panel2.SuspendLayout();
+			this.splitContainer.SuspendLayout();
 			this.menuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -149,9 +149,8 @@
 			// 
 			// labelListName
 			// 
-			this.labelListName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelListName.AutoSize = true;
-			this.labelListName.Location = new System.Drawing.Point(12, 412);
+			this.labelListName.Location = new System.Drawing.Point(12, 107);
 			this.labelListName.Name = "labelListName";
 			this.labelListName.Size = new System.Drawing.Size(41, 12);
 			this.labelListName.TabIndex = 13;
@@ -159,32 +158,32 @@
 			// 
 			// textBoxListName
 			// 
-			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxListName.Location = new System.Drawing.Point(80, 409);
+			this.textBoxListName.Location = new System.Drawing.Point(80, 104);
 			this.textBoxListName.Name = "textBoxListName";
 			this.textBoxListName.Size = new System.Drawing.Size(391, 19);
 			this.textBoxListName.TabIndex = 12;
 			// 
-			// splitContainer1
+			// splitContainer
 			// 
-			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer1.Location = new System.Drawing.Point(12, 104);
-			this.splitContainer1.Name = "splitContainer1";
-			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			this.splitContainer.Location = new System.Drawing.Point(12, 133);
+			this.splitContainer.Name = "splitContainer";
+			this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
-			// splitContainer1.Panel1
+			// splitContainer.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.gridListInfo);
+			this.splitContainer.Panel1.Controls.Add(this.gridListInfo);
 			// 
-			// splitContainer1.Panel2
+			// splitContainer.Panel2
 			// 
-			this.splitContainer1.Panel2.Controls.Add(this.listBoxMessage);
-			this.splitContainer1.Size = new System.Drawing.Size(540, 297);
-			this.splitContainer1.SplitterDistance = 148;
-			this.splitContainer1.TabIndex = 14;
+			this.splitContainer.Panel2.Controls.Add(this.listBoxMessage);
+			this.splitContainer.Size = new System.Drawing.Size(540, 297);
+			this.splitContainer.SplitterDistance = 148;
+			this.splitContainer.TabIndex = 14;
 			// 
 			// listBoxMessage
 			// 
@@ -401,6 +400,13 @@
 			this.カスタマイズCToolStripMenuItem.Text = "カスタマイズ(&C)";
 			this.カスタマイズCToolStripMenuItem.Click += new System.EventHandler(this.CustomizeToolStripMenuItem_Click);
 			// 
+			// インポートIToolStripMenuItem
+			// 
+			this.インポートIToolStripMenuItem.Name = "インポートIToolStripMenuItem";
+			this.インポートIToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+			this.インポートIToolStripMenuItem.Text = "インポート(&I)";
+			this.インポートIToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
+			// 
 			// オプションOToolStripMenuItem
 			// 
 			this.オプションOToolStripMenuItem.Enabled = false;
@@ -452,21 +458,14 @@
 			// 
 			// buttonLoad
 			// 
-			this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonLoad.Location = new System.Drawing.Point(477, 407);
+			this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonLoad.Location = new System.Drawing.Point(477, 102);
 			this.buttonLoad.Name = "buttonLoad";
 			this.buttonLoad.Size = new System.Drawing.Size(75, 23);
 			this.buttonLoad.TabIndex = 16;
 			this.buttonLoad.Text = "読込";
 			this.buttonLoad.UseVisualStyleBackColor = true;
 			this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
-			// 
-			// インポートIToolStripMenuItem
-			// 
-			this.インポートIToolStripMenuItem.Name = "インポートIToolStripMenuItem";
-			this.インポートIToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-			this.インポートIToolStripMenuItem.Text = "インポート(&I)";
-			this.インポートIToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
 			// 
 			// FormMain
 			// 
@@ -476,7 +475,7 @@
 			this.ClientSize = new System.Drawing.Size(564, 442);
 			this.Controls.Add(this.buttonLoad);
 			this.Controls.Add(this.menuStrip);
-			this.Controls.Add(this.splitContainer1);
+			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.labelListName);
 			this.Controls.Add(this.textBoxListName);
 			this.Controls.Add(this.labelPassword);
@@ -488,10 +487,10 @@
 			this.Name = "FormMain";
 			this.Text = "リスト管理アプリケーション";
 			((System.ComponentModel.ISupportInitialize)(this.gridListInfo)).EndInit();
-			this.splitContainer1.Panel1.ResumeLayout(false);
-			this.splitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-			this.splitContainer1.ResumeLayout(false);
+			this.splitContainer.Panel1.ResumeLayout(false);
+			this.splitContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+			this.splitContainer.ResumeLayout(false);
 			this.menuStrip.ResumeLayout(false);
 			this.menuStrip.PerformLayout();
 			this.ResumeLayout(false);
@@ -510,7 +509,7 @@
 		private System.Windows.Forms.DataGridView gridListInfo;
 		private System.Windows.Forms.Label labelListName;
 		private System.Windows.Forms.TextBox textBoxListName;
-		private System.Windows.Forms.SplitContainer splitContainer1;
+		private System.Windows.Forms.SplitContainer splitContainer;
 		private System.Windows.Forms.ListBox listBoxMessage;
 		private System.Windows.Forms.NotifyIcon notifyIcon;
 		private System.Windows.Forms.MenuStrip menuStrip;

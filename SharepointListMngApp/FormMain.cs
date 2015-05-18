@@ -204,8 +204,8 @@ namespace SharepointListMngApp {
 							, MessageBoxDefaultButton.Button2
 						);
 
-						// リスト名	//TODO: イベントデータから取得するように修正
-						var listName = f.ListName;
+						// リスト名
+						var listName = e.Value;
 
 						switch (ret) {
 						case DialogResult.Yes:
@@ -247,6 +247,8 @@ namespace SharepointListMngApp {
 		private void CreateFields(string listName) {
 			try {
 				using (var f = new FormCreateFields(this.Url, this.UserName, this.Password, listName)) {
+					f.Manager.AddedField += (s, e) => this.WriteLineMessage(e.Message);
+
 					var ret = f.ShowDialog(this);
 					switch (ret) {
 					case DialogResult.OK:
@@ -274,6 +276,8 @@ namespace SharepointListMngApp {
 		private void Import() {
 			try {
 				using (var f = new FormListMng(this.Url, this.UserName, this.Password, this.ListName)) {
+					f.Manager.AddedItem += (s, e) => this.WriteLineMessage(e.Message);
+
 					var ret = f.ShowDialog(this);
 					switch (ret) {
 					case DialogResult.OK:

@@ -30,7 +30,7 @@
 			this.buttonReference = new System.Windows.Forms.Button();
 			this.gridCsv = new System.Windows.Forms.DataGridView();
 			this.labelListName = new System.Windows.Forms.Label();
-			this.textBoxListName = new System.Windows.Forms.TextBox();
+			this.textLabelListName = new System.Windows.Forms.Label();
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.ファイルFToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.新規作成NToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -131,13 +131,14 @@
 			// 
 			// textBoxListName
 			// 
-			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.textLabelListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxListName.Enabled = false;
-			this.textBoxListName.Location = new System.Drawing.Point(80, 414);
-			this.textBoxListName.Name = "textBoxListName";
-			this.textBoxListName.Size = new System.Drawing.Size(545, 19);
-			this.textBoxListName.TabIndex = 12;
+			this.textLabelListName.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.textLabelListName.Location = new System.Drawing.Point(80, 414);
+			this.textLabelListName.Name = "textBoxListName";
+			this.textLabelListName.Size = new System.Drawing.Size(545, 19);
+			this.textLabelListName.TabIndex = 12;
+			this.textLabelListName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// menuStrip
 			// 
@@ -408,7 +409,7 @@
 			this.ClientSize = new System.Drawing.Size(799, 447);
 			this.Controls.Add(this.buttonCancel);
 			this.Controls.Add(this.labelListName);
-			this.Controls.Add(this.textBoxListName);
+			this.Controls.Add(this.textLabelListName);
 			this.Controls.Add(this.gridCsv);
 			this.Controls.Add(this.buttonReference);
 			this.Controls.Add(this.textBoxFilePath);
@@ -435,7 +436,7 @@
 		private System.Windows.Forms.Button buttonReference;
 		private System.Windows.Forms.DataGridView gridCsv;
 		private System.Windows.Forms.Label labelListName;
-		private System.Windows.Forms.TextBox textBoxListName;
+		private System.Windows.Forms.Label textLabelListName;
 		private System.Windows.Forms.MenuStrip menuStrip;
 		private System.Windows.Forms.ToolStripMenuItem ファイルFToolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem 新規作成NToolStripMenuItem;

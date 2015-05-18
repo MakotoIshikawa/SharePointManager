@@ -39,18 +39,18 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// 作成完了後のイベントです。
 		/// </summary>
-		public event EventHandler<MessageEventArgs> Created;
+		public event EventHandler<ValueEventArgs<string>> Created;
 
 		/// <summary>
 		/// 作成完了後に呼び出されます。
 		/// </summary>
 		/// <param name="message">メッセージ</param>
-		protected virtual void OnCreated(string message) {
+		protected virtual void OnCreated(string message, string value) {
 			if (this.Created == null) {
 				return;
 			}
 
-			var e = new MessageEventArgs(message);
+			var e = new ValueEventArgs<string>(value, message);
 			this.Created(this, e);
 		}
 
@@ -198,7 +198,7 @@ namespace SharePointManager.Manager.Lists {
 				var sb = new StringBuilder();
 				sb.AppendFormat("[{0}({1})] を作成しました。", title, url).AppendLine();
 
-				this.OnCreated(sb.ToString());
+				this.OnCreated(sb.ToString(), title);
 			}
 		}
 
