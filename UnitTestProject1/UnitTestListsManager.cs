@@ -199,9 +199,9 @@ namespace UnitTestProject {
 			//var file3 = new FileInfo(@"C:\Users\ishikawm\Documents\dummy200MB.file");
 			m.AddAttachmentFile(28, new[] { file1, file2 });
 #endif
-
-			var ret = m.Titles;
-			Assert.IsTrue(ret.Any(s => s == title));
+			//TODO: 検証内容検討
+			var ret = m.ListName;
+			Assert.AreEqual(ret, title);
 		}
 
 		[TestMethod]
@@ -233,8 +233,9 @@ namespace UnitTestProject {
 				l.Update();
 			});
 
-			var ret = m.Titles;
-			Assert.IsTrue(ret.Any(s => s == title));
+			//TODO: 検証内容検討
+			var ret = m.ListName;
+			Assert.AreEqual(ret, title);
 		}
 
 		[TestMethod]

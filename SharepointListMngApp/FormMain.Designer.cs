@@ -68,6 +68,7 @@
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.バージョン情報AToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.buttonLoad = new System.Windows.Forms.Button();
+			this.インポートIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.gridListInfo)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -387,6 +388,7 @@
 			// 
 			this.ツールTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.カスタマイズCToolStripMenuItem,
+            this.インポートIToolStripMenuItem,
             this.オプションOToolStripMenuItem});
 			this.ツールTToolStripMenuItem.Name = "ツールTToolStripMenuItem";
 			this.ツールTToolStripMenuItem.Size = new System.Drawing.Size(74, 22);
@@ -458,6 +460,13 @@
 			this.buttonLoad.Text = "読込";
 			this.buttonLoad.UseVisualStyleBackColor = true;
 			this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
+			// 
+			// インポートIToolStripMenuItem
+			// 
+			this.インポートIToolStripMenuItem.Name = "インポートIToolStripMenuItem";
+			this.インポートIToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+			this.インポートIToolStripMenuItem.Text = "インポート(&I)";
+			this.インポートIToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
 			// 
 			// FormMain
 			// 
@@ -535,6 +544,7 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem バージョン情報AToolStripMenuItem;
 		private System.Windows.Forms.Button buttonLoad;
+		private System.Windows.Forms.ToolStripMenuItem インポートIToolStripMenuItem;
 	}
 }
 

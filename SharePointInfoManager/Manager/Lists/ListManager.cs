@@ -17,7 +17,7 @@ namespace SharePointManager.Manager.Lists {
 	/// <summary>
 	/// SharePoint のリストの管理クラスです。
 	/// </summary>
-	public class ListManager : ListCollectionManager {
+	public class ListManager : AbstractInfoManager {
 		#region コンストラクタ
 
 		/// <summary>
@@ -29,10 +29,12 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="listName">リスト名</param>
 		/// <param name="load">プロパティ情報を読み込むかどうかを設定します。</param>
 		public ListManager(string url, string username, string password, string listName, bool load = true)
-			: base(url, username, password, load) {
+			: base(url, username, password) {
 			this.ListName = listName;
 
-			this.Reload();
+			if (load) {
+				this.Reload();
+			}
 		}
 
 		#endregion
@@ -105,11 +107,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// プロパティの情報をリロードします。
 		/// </summary>
-		public override void Reload() {
-			if (this.Titles == null) {
-				base.Reload();
-			}
-
+		public virtual void Reload() {
 			if (this.ListName != null) {
 				this.Fields = this.GetFields().ToList();
 
@@ -137,7 +135,7 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <returns>フィールド情報の列挙を返します。</returns>
 		protected IEnumerable<SP.Field> GetFields() {
-			return this.GetFields(RetrievalsOfField);
+			return this.GetFields(Retrievals.RetrievalsOfField);
 		}
 
 		/// <summary>
@@ -399,7 +397,8 @@ namespace SharePointManager.Manager.Lists {
 		public ListManager AddListItem(Dictionary<string, object> row, Action<ListItem> action = null) {
 			var dic = this.ConvertRowData(row);
 
-			this.UpdateByTitle(this.ListName, l => {
+			var title = this.ListName;
+			this.UpdateByTitle(title, l => {
 				var item = l.AddRow(dic);
 
 				if (action != null) {
@@ -463,6 +462,45 @@ namespace SharePointManager.Manager.Lists {
 				item.Update();
 			});
 		}
+
+		#region 更新
+
+		/// <summary>
+		/// 指定したタイトルのリストの情報を更新します。
+		/// </summary>
+		/// <param name="title">タイトル</param>
+		/// <param name="update">更新処理</param>
+		protected void UpdateByTitle(string title, Action<SP.List> update) {
+			this.UpdateList(lists => lists.GetByTitle(title), update);
+		}
+
+		/// <summary>
+		/// 指定したIDのリストの情報を更新します。
+		/// </summary>
+		/// <param name="id">グローバル一意識別子 (GUID)</param>
+		/// <param name="update">更新処理</param>
+		protected void UpdateById(Guid id, Action<SP.List> update) {
+			this.UpdateList(lists => lists.GetById(id), update);
+		}
+
+		/// <summary>
+		/// 指定したリストの情報を更新します。
+		/// </summary>
+		/// <param name="getList">リストを取得するメソッド</param>
+		/// <param name="update">リストを更新するメソッド</param>
+		private void UpdateList(Func<SP.ListCollection, SP.List> getList, Action<SP.List> update) {
+			if (getList == null || update == null) {
+				return;
+			}
+
+			this.Execute(cn => {
+				var list = getList(cn.Web.Lists);
+				update(list);
+				list.Update();
+			});
+		}
+
+		#endregion
 
 		#endregion
 

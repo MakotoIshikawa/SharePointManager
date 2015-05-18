@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -170,6 +169,15 @@ namespace SharepointListMngApp {
 			this.CreateFields(this.ListName);
 		}
 
+		/// <summary>
+		/// [インポート]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.Import();
+		}
+
 		#endregion
 
 		#endregion
@@ -236,7 +244,7 @@ namespace SharepointListMngApp {
 		/// 列の作成
 		/// </summary>
 		/// <param name="listName">リスト名</param>
-		private void CreateFields(string listName = null) {
+		private void CreateFields(string listName) {
 			try {
 				using (var f = new FormCreateFields(this.Url, this.UserName, this.Password, listName)) {
 					var ret = f.ShowDialog(this);
@@ -246,6 +254,33 @@ namespace SharepointListMngApp {
 						break;
 					case DialogResult.Cancel:
 						this.WriteLineMessage("列を作成しませんでした。");
+						break;
+					}
+				}
+			} catch (SP.ServerException ex) {
+				this.WriteLineMessage(ex.Message);
+			} catch (SP.PropertyOrFieldNotInitializedException ex) {
+				this.WriteLineMessage(ex.Message);
+			} catch (ArgumentException ex) {
+				this.WriteLineMessage(ex.Message);
+			} catch (Exception ex) {
+				this.ShowMessageBox(ex.ToString(), icon: MessageBoxIcon.Error);
+			}
+		}
+
+		/// <summary>
+		/// インポート
+		/// </summary>
+		private void Import() {
+			try {
+				using (var f = new FormListMng(this.Url, this.UserName, this.Password, this.ListName)) {
+					var ret = f.ShowDialog(this);
+					switch (ret) {
+					case DialogResult.OK:
+						f.Run();
+						break;
+					case DialogResult.Cancel:
+						this.WriteLineMessage("データをインポートしませんでした。");
 						break;
 					}
 				}
