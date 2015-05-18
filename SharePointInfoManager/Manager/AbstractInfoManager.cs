@@ -45,6 +45,8 @@ namespace SharePointManager.Manager {
 
 		#region イベント
 
+		#region 成功
+
 		/// <summary>
 		/// 成功時のイベントです。
 		/// </summary>
@@ -63,21 +65,47 @@ namespace SharePointManager.Manager {
 			this.Success(this, e);
 		}
 
+		#endregion
+
+		#region 例外発生
+
 		/// <summary>
-		/// 例外発生時のイベントです。
+		/// 例外発生時に発生します。
 		/// </summary>
-		public event EventHandler<ThrowExceptionEventArgs> ThrowException;
+		public event EventHandler<ValueEventArgs<Exception>> ThrowException;
 
 		/// <summary>
 		/// 例外発生時に呼び出されます。
 		/// </summary>
-		/// <param name="scope">ExceptionHandlingScope</param>
-		protected virtual void OnThrowException(SP.ExceptionHandlingScope scope) {
+		/// <param name="ex">例外</param>
+		protected virtual void OnThrowException(Exception ex) {
 			if (this.ThrowException == null) {
 				return;
 			}
 
-			var e = new ThrowExceptionEventArgs(
+			var e = new ValueEventArgs<Exception>(ex, ex.Message);
+			this.ThrowException(this, e);
+		}
+
+		#endregion
+
+		#region SharePoint 例外発生
+
+		/// <summary>
+		/// SharePoint 例外発生時のイベントです。
+		/// </summary>
+		public event EventHandler<ThrowSharePointExceptionEventArgs> ThrowSharePointException;
+
+		/// <summary>
+		/// SharePoint 例外発生時に呼び出されます。
+		/// </summary>
+		/// <param name="scope">ExceptionHandlingScope</param>
+		protected virtual void OnThrowSharePointException(SP.ExceptionHandlingScope scope) {
+			if (this.ThrowSharePointException == null) {
+				return;
+			}
+
+			var e = new ThrowSharePointExceptionEventArgs(
 				scope.ErrorMessage
 				, scope.HasException
 				, scope.Processed
@@ -88,8 +116,10 @@ namespace SharePointManager.Manager {
 				, scope.ServerStackTrace
 			);
 
-			this.ThrowException(this, e);
+			this.ThrowSharePointException(this, e);
 		}
+
+		#endregion
 
 		#endregion
 
@@ -270,7 +300,7 @@ namespace SharePointManager.Manager {
 
 				// 例外判定
 				if (!string.IsNullOrEmpty(scope.ErrorMessage)) {
-					this.OnThrowException(scope);
+					this.OnThrowSharePointException(scope);
 					return;
 				}
 

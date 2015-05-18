@@ -89,7 +89,7 @@
     <Compile Include="Manager\Lists\Xml\XmlView.cs" />
     <Compile Include="Manager\Lists\Xml\XmlField.cs" />
     <Compile Include="MyEventArgs\MessageEventArgs.cs" />
-    <Compile Include="MyEventArgs\ThrowExceptionEventArgs.cs" />
+    <Compile Include="MyEventArgs\ThrowSharePointExceptionEventArgs.cs" />
     <Compile Include="MyEventArgs\ValueEventArgs.cs" />
     <Compile Include="MyException\DuplicateException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

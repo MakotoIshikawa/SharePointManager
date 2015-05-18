@@ -74,7 +74,7 @@ namespace SharepointAttachmentFilesApp {
 				var listName = this.textBoxListName.Text;
 
 				var m = new ListManager(url, username, password, listName);
-				m.ThrowException += (s, ea) => {
+				m.ThrowSharePointException += (s, ea) => {
 					throw new Exception(ea.ErrorMessage);
 				};
 

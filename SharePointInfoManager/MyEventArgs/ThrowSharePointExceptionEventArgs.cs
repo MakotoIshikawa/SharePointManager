@@ -4,7 +4,7 @@ namespace SharePointManager.MyEventArgs {
 	/// <summary>
 	/// 例外発生イベントデータクラス
 	/// </summary>
-	public class ThrowExceptionEventArgs : EventArgs {
+	public class ThrowSharePointExceptionEventArgs : EventArgs {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
@@ -16,15 +16,15 @@ namespace SharePointManager.MyEventArgs {
 		/// <param name="serverErrorTypeName">エラータイプ名</param>
 		/// <param name="serverErrorValue">エラー値</param>
 		/// <param name="serverStackTrace">スタックトレース</param>
-		public ThrowExceptionEventArgs(
-			string errorMessage
-			, bool hasException
-			, bool processed
-			, int serverErrorCode
-			, object serverErrorDetails
-			, string serverErrorTypeName
-			, string serverErrorValue
-			, string serverStackTrace
+		public ThrowSharePointExceptionEventArgs(
+			string errorMessage = null
+			, bool hasException = true
+			, bool processed = false
+			, int serverErrorCode = int.MinValue
+			, object serverErrorDetails = null
+			, string serverErrorTypeName = null
+			, string serverErrorValue = null
+			, string serverStackTrace = null
 		) {
 			this.ErrorMessage = errorMessage;
 			this.HasException = hasException;

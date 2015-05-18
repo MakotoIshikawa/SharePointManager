@@ -47,7 +47,7 @@ namespace SharePointGroupMngApp {
 				var password = this.textBoxPassword.Text;
 
 				var gm = new GroupManager(url, username, password);
-				gm.ThrowException += (_sender, _e) => {
+				gm.ThrowSharePointException += (_sender, _e) => {
 					throw new Exception(_e.ErrorMessage);
 				};
 
@@ -99,7 +99,7 @@ namespace SharePointGroupMngApp {
 				var password = this.textBoxPassword.Text;
 
 				var gm = new GroupManager(url, username, password, false);
-				gm.ThrowException += (_sender, _e) => {
+				gm.ThrowSharePointException += (_sender, _e) => {
 					throw new Exception(_e.ErrorMessage);
 				};
 
@@ -156,7 +156,7 @@ namespace SharePointGroupMngApp {
 				var password = this.textBoxPassword.Text;
 
 				var gm = new GroupManager(url, username, password);
-				gm.ThrowException += (_sender, _e) => {
+				gm.ThrowSharePointException += (_sender, _e) => {
 					throw new Exception(_e.ErrorMessage);
 				};
 
@@ -226,7 +226,7 @@ namespace SharePointGroupMngApp {
 				var password = this.textBoxPassword.Text;
 
 				var gm = new GroupManager(url, username, password);
-				gm.ThrowException += (_sender, _e) => {
+				gm.ThrowSharePointException += (_sender, _e) => {
 					throw new Exception(_e.ErrorMessage);
 				};
 
@@ -257,7 +257,7 @@ namespace SharePointGroupMngApp {
 				var password = this.textBoxPassword.Text;
 
 				var gm = new GroupManager(url, username, password);
-				gm.ThrowException += (_sender, _e) => {
+				gm.ThrowSharePointException += (_sender, _e) => {
 					throw new Exception(_e.ErrorMessage);
 				};
 

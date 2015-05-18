@@ -13,7 +13,8 @@ namespace SharepointListMngApp {
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new FormListMng());
+			//Application.Run(new FormListMng());
+			Application.Run(new FormMain());
 		}
 	}
 }

@@ -27,17 +27,20 @@ namespace SharepointListMngApp {
 		/// <param name="user">ユーザー</param>
 		/// <param name="password">パスワード</param>
 		/// <param name="listName">リスト名</param>
-		public FormCreateFields(string url, string user, string password, string listName = null) {
+		public FormCreateFields(string url, string user, string password, string listName) {
 			this.InitializeComponent();
 
 			this.Url = url;
 			this.UserName = user;
 			this.Password = password;
 
+			//TODO: テキストボックスをラベルに変更する。
 			if (!listName.IsWhiteSpace()) {
 				this.ListName = listName;
 				this.textBoxListName.Enabled = false;
 			}
+
+			this.Manager = new ListManager(url, user, password, listName);
 		}
 
 		#endregion
@@ -190,6 +193,9 @@ namespace SharepointListMngApp {
 		/// <summary>フィールド情報テーブル</summary>
 		protected DataTable FieldsTable { get { return this.gridCsv.ToDataTable(); } }
 
+		/// <summary>管理オブジェクト</summary>
+		public ListManager Manager { get; protected set; }
+
 		#endregion
 
 		#region メソッド
@@ -202,8 +208,7 @@ namespace SharepointListMngApp {
 				this.Enabled = false;
 
 				// フィールド拡張
-				var msg = this.AddField();
-				this.ShowMessageBox(msg);
+				this.AddField();
 			} finally {
 				this.Enabled = true;
 			}
@@ -212,16 +217,14 @@ namespace SharepointListMngApp {
 		/// <summary>
 		/// フィールド拡張
 		/// </summary>
-		private string AddField() {
+		private void AddField() {
 			var url = this.Url;
 			var username = this.UserName;
 			var password = this.Password;
 			var listName = this.ListName;
 
-			var m = new ListManager(url, username, password, listName);
-
 			var tbl = this.FieldsTable;
-			return m.SetFields(tbl);
+			this.Manager.SetFields(tbl);
 		}
 
 		#region 検証

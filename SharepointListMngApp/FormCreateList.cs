@@ -138,7 +138,7 @@ namespace SharepointListMngApp {
 
 		/// <summary>管理オブジェクト</summary>
 		public ListCollectionManager Manager { get; protected set; }
-	
+
 		#endregion
 
 		#region メソッド

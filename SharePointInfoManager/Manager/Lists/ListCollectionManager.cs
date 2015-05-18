@@ -130,7 +130,7 @@ namespace SharePointManager.Manager.Lists {
 		/// リスト情報の列挙を取得します。
 		/// </summary>
 		/// <returns>リスト情報の列挙を返します。</returns>
-		protected IEnumerable<SP.List> GetLists() {
+		public IEnumerable<SP.List> GetLists() {
 			return this.Load(cn => {
 				return cn.Web.Lists.Include(RetrievalsOfList);
 			});

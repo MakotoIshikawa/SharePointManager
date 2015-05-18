@@ -39,7 +39,7 @@ namespace UnitTestProject {
 		[TestCategory("取得")]
 		public void タイトル一覧取得() {
 			var m = new ListCollectionManager(_url, _user, _password);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -55,7 +55,7 @@ namespace UnitTestProject {
 			var url = "CustomListOldDailyReport";
 
 			var m = new ListCollectionManager(_url, _user, _password);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -74,7 +74,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListCollectionManager(_url, _user, _password);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -94,7 +94,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListManager(_url, _user, _password, title, false);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -113,7 +113,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListManager(_url, _user, _password, title);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -150,7 +150,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListManager(_url, _user, _password, title);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -182,7 +182,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListManager(_url, _user, _password, title);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 
@@ -211,7 +211,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-例外処理判定";
 
 			var m = new ListManager(_url, _user, _password, title);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				var msg = e.ErrorMessage + " : " + e.ServerStackTrace;
 				throw new Exception(msg);
 			};
@@ -245,7 +245,7 @@ namespace UnitTestProject {
 			var title = "カスタムリスト-テスト";
 
 			var m = new ListManager(_url, _user, _password, title);
-			m.ThrowException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
 

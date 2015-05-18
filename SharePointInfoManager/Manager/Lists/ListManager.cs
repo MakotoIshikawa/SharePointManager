@@ -10,6 +10,7 @@ using Microsoft.SharePoint.Client;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists.Xml;
+using SharePointManager.MyEventArgs;
 using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager.Lists {
@@ -46,6 +47,54 @@ namespace SharePointManager.Manager.Lists {
 
 		/// <summary>アイテム数</summary>
 		public int ItemCount { get; protected set; }
+
+		#endregion
+
+		#region イベント
+
+		#region フィールド追加
+
+		/// <summary>
+		/// フィールド追加後に発生します。
+		/// </summary>
+		public event EventHandler<ValueEventArgs<string>> AddedField;
+
+		/// <summary>
+		/// フィールド追加後に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnAddedField(string message, string value = null) {
+			if (this.AddedField == null) {
+				return;
+			}
+
+			var e = new ValueEventArgs<string>(value, message);
+			this.AddedField(this, e);
+		}
+
+		#endregion
+
+		#region フィールド更新
+
+		/// <summary>
+		/// フィールド更新後のイベントです。
+		/// </summary>
+		public event EventHandler<ValueEventArgs<string>> UpdatedField;
+
+		/// <summary>
+		/// フィールド更新後に呼び出されます。
+		/// </summary>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnUpdatedField(string message, string value = null) {
+			if (this.UpdatedField == null) {
+				return;
+			}
+
+			var e = new ValueEventArgs<string>(value, message);
+			this.UpdatedField(this, e);
+		}
+
+		#endregion
 
 		#endregion
 
@@ -129,6 +178,12 @@ namespace SharePointManager.Manager.Lists {
 
 		#region 追加
 
+		/// <summary>
+		/// フィールドを追加します。
+		/// </summary>
+		/// <param name="name">内部名</param>
+		/// <param name="disp">表示名</param>
+		/// <param name="type">FieldType</param>
 		public void AddField(string name, string disp, SP.FieldType type) {
 			switch (type) {
 			case SP.FieldType.Calculated:
@@ -280,34 +335,53 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <param name="tbl">データテーブル</param>
 		/// <returns>設定した情報のログを返します。</returns>
-		public string SetFields(DataTable tbl) {
+		public void SetFields(DataTable tbl) {
 			var ls = tbl.Select(r => new {
 				表示名 = r["表示名"].ToString(),
 				列名 = r["列名"].ToString(),
 				型 = r["型"].ToString().ToEnum<SP.FieldType>(),
 			}).ToList();
 
-			var sb = new StringBuilder();
+			var cnt = 0;
 			ls.ForEach(r => {
-				if (r.列名 != "Title") {
-					if (!this.Fields.Any(f => f.InternalName == r.列名)) {
-						this.AddField(r.列名, r.表示名, r.型);
-						sb.AppendFormat("[{0}]列を追加しました。", r.表示名).AppendLine();
+				try {
+					if (r.列名 != "Title") {
+						if (!this.Fields.Any(f => f.InternalName == r.列名)) {
+							this.AddField(r.列名, r.表示名, r.型);
+
+							cnt++;
+
+							var sb = new StringBuilder();
+							sb.AppendFormat("[{0}]列を追加しました。", r.表示名);
+							this.OnAddedField(sb.ToString(), r.表示名);
+						}
+					} else {
+						var fld = this.Fields.SingleOrDefault(f => f.InternalName == r.列名);
+						if (fld != null && fld.Title != r.表示名) {
+							this.UpdateField<SP.FieldText>(r.列名, f => f.Title = r.表示名);
+
+							cnt++;
+
+							var sb = new StringBuilder();
+							sb.AppendFormat("Title 列の表示名を[{0}]から[{1}]に変更しました。", fld.Title, r.表示名);
+							this.OnUpdatedField(sb.ToString(), r.表示名);
+						}
 					}
-				} else {
-					var fld = this.Fields.SingleOrDefault(f => f.InternalName == r.列名);
-					if (fld != null && fld.Title != r.表示名) {
-						this.UpdateField<SP.FieldText>(r.列名, f => f.Title = r.表示名);
-						sb.AppendFormat("Title 列の表示名を[{0}]から[{1}]に変更しました。", fld.Title, r.表示名);
-					}
+				} catch (Exception ex) {
+					this.OnThrowException(ex);
 				}
 			});
 
-			if (sb.Length == 0) {
-				sb.Append("列の情報を変更しませんでした。");
-			}
+			{
+				var sb = new StringBuilder();
+				if (cnt == 0) {
+					sb.Append("列の情報を変更しませんでした。");
+				} else {
+					sb.AppendFormat("{0}件の列の情報を変更しました。", cnt);
+				}
 
-			return sb.ToString();
+				this.OnSuccess(sb.ToString());
+			}
 		}
 
 		#endregion
