@@ -87,15 +87,13 @@ namespace SharepointListMngApp {
 				this.Enabled = false;
 
 				var m = new ListCollectionManager(this.Url, this.UserName, this.Password);
-
 				var ls = m.GetLists(
 					l => l.Title
 					, l => l.Description
 				).Select(l => new {
 					タイトル = l.Title,
 					説明 = l.Description,
-				}).ToDataTable();
-
+				}).ToList();
 				this.gridListInfo.DataSource = ls;
 			} catch (Exception ex) {
 				this.WriteLineMessage(ex.Message);

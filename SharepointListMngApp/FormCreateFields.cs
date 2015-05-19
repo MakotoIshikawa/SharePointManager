@@ -32,6 +32,15 @@ namespace SharepointListMngApp {
 			this.ListName = listName;
 
 			this.Manager = new ListManager(url, user, password, listName);
+#if true
+			var fs = this.Manager.Fields.Select(f => new {
+				表示名 = f.Title,
+				列名 = f.InternalName,
+				型 = f.FieldTypeKind,
+				説明 = f.TypeShortDescription,
+			}).ToList();
+			this.gridCsv.DataSource = fs;
+#endif
 		}
 
 		#endregion

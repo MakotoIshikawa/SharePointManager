@@ -18,10 +18,14 @@ namespace UnitTestProject {
 		private string _url = @"https://NissayLeasing.sharepoint.com/";
 		private string _user = @"nlcadmin@NissayLeasing.onmicrosoft.com";
 		private string _password = @"!QAZ2wsx";
-#elif true
+#elif false
 		private string _url = @"https://kariverification03.sharepoint.com";
 		private string _user = @"root@KariVerification03.onmicrosoft.com";
 		private string _password = @"!QAZ2wsx";
+#elif true
+		private string _url = @"https://mur365.sharepoint.com/";
+		private string _user = @"fuji-s@mur365.onmicrosoft.com";
+		private string _password = @"Muromachi_Fsi!";
 #else
 		private string _url = @"https://mscenter.sharepoint.com/eigyou/demo/";
 		private string _user = @"aoshima@mscenter.onmicrosoft.com";
