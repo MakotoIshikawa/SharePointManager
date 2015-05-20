@@ -129,13 +129,13 @@
 			this.labelListName.TabIndex = 13;
 			this.labelListName.Text = "リスト名";
 			// 
-			// textBoxListName
+			// textLabelListName
 			// 
 			this.textLabelListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textLabelListName.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.textLabelListName.Location = new System.Drawing.Point(80, 414);
-			this.textLabelListName.Name = "textBoxListName";
+			this.textLabelListName.Name = "textLabelListName";
 			this.textLabelListName.Size = new System.Drawing.Size(545, 19);
 			this.textLabelListName.TabIndex = 12;
 			this.textLabelListName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

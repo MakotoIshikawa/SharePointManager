@@ -278,14 +278,6 @@ namespace UnitTestProject {
 				var actual = id;
 				Assert.AreEqual(expected, actual);
 			}
-
-			var retrievals = new Expression<Func<ListItem, object>>[] {
-				i => i.Id
-				, i => i.AttachmentFiles.Include(
-					f => f.FileName
-					, f => f.ServerRelativeUrl
-				)
-			};
 			{
 				var id = 1;
 				var index = 0;

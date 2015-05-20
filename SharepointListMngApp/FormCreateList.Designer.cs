@@ -44,7 +44,7 @@
 			this.buttonCreate.Location = new System.Drawing.Point(206, 103);
 			this.buttonCreate.Name = "buttonCreate";
 			this.buttonCreate.Size = new System.Drawing.Size(75, 23);
-			this.buttonCreate.TabIndex = 0;
+			this.buttonCreate.TabIndex = 3;
 			this.buttonCreate.Text = "作成";
 			this.buttonCreate.UseVisualStyleBackColor = true;
 			this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
@@ -60,7 +60,7 @@
 			this.labelListName.Location = new System.Drawing.Point(12, 15);
 			this.labelListName.Name = "labelListName";
 			this.labelListName.Size = new System.Drawing.Size(41, 12);
-			this.labelListName.TabIndex = 13;
+			this.labelListName.TabIndex = 5;
 			this.labelListName.Text = "リスト名";
 			// 
 			// textBoxListName
@@ -70,7 +70,7 @@
 			this.textBoxListName.Location = new System.Drawing.Point(80, 12);
 			this.textBoxListName.Name = "textBoxListName";
 			this.textBoxListName.Size = new System.Drawing.Size(259, 19);
-			this.textBoxListName.TabIndex = 12;
+			this.textBoxListName.TabIndex = 0;
 			this.textBoxListName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxListName_Validating);
 			this.textBoxListName.Validated += new System.EventHandler(this.TextBoxValidated);
 			// 
@@ -81,7 +81,7 @@
 			this.buttonCancel.Location = new System.Drawing.Point(287, 103);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-			this.buttonCancel.TabIndex = 14;
+			this.buttonCancel.TabIndex = 4;
 			this.buttonCancel.Text = "キャンセル";
 			this.buttonCancel.UseVisualStyleBackColor = true;
 			// 
@@ -91,7 +91,7 @@
 			this.labelDescription.Location = new System.Drawing.Point(12, 65);
 			this.labelDescription.Name = "labelDescription";
 			this.labelDescription.Size = new System.Drawing.Size(29, 12);
-			this.labelDescription.TabIndex = 16;
+			this.labelDescription.TabIndex = 7;
 			this.labelDescription.Text = "説明";
 			// 
 			// textBoxDescription
@@ -103,7 +103,7 @@
 			this.textBoxDescription.Multiline = true;
 			this.textBoxDescription.Name = "textBoxDescription";
 			this.textBoxDescription.Size = new System.Drawing.Size(259, 35);
-			this.textBoxDescription.TabIndex = 15;
+			this.textBoxDescription.TabIndex = 2;
 			// 
 			// labelListUrl
 			// 
@@ -111,7 +111,7 @@
 			this.labelListUrl.Location = new System.Drawing.Point(12, 40);
 			this.labelListUrl.Name = "labelListUrl";
 			this.labelListUrl.Size = new System.Drawing.Size(51, 12);
-			this.labelListUrl.TabIndex = 18;
+			this.labelListUrl.TabIndex = 6;
 			this.labelListUrl.Text = "リストURL";
 			// 
 			// textBoxListUrl
@@ -121,7 +121,7 @@
 			this.textBoxListUrl.Location = new System.Drawing.Point(80, 37);
 			this.textBoxListUrl.Name = "textBoxListUrl";
 			this.textBoxListUrl.Size = new System.Drawing.Size(259, 19);
-			this.textBoxListUrl.TabIndex = 17;
+			this.textBoxListUrl.TabIndex = 1;
 			this.textBoxListUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxListUrl_Validating);
 			this.textBoxListUrl.Validated += new System.EventHandler(this.TextBoxValidated);
 			// 

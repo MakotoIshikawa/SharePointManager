@@ -45,6 +45,7 @@ namespace SharePointManager.Manager.Lists {
 		/// 作成完了後に呼び出されます。
 		/// </summary>
 		/// <param name="message">メッセージ</param>
+		/// <param name="value">完了時の値を表す文字列</param>
 		protected virtual void OnCreated(string message, string value) {
 			if (this.Created == null) {
 				return;
@@ -278,7 +279,7 @@ namespace SharePointManager.Manager.Lists {
 		}
 
 		/// <summary>
-		/// タイトルを指定して、
+		/// IDを指定して、
 		/// リストを削除します。
 		/// </summary>
 		/// <param name="id">GUID</param>

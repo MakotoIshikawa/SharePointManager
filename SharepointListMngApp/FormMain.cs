@@ -195,11 +195,10 @@ namespace SharepointListMngApp {
 						sb.AppendLine(e.Message);
 						sb.AppendLine("リストに列を追加しますか？");
 
-						this.ShowMessageBox(sb.ToString(), icon: MessageBoxIcon.Information);
-						var ret = this.ShowMessageBox(e.Message, "確認"
-							, MessageBoxButtons.YesNo
-							, MessageBoxIcon.Question
-							, MessageBoxDefaultButton.Button2
+						var ret = this.ShowMessageBox(sb.ToString(), "確認"
+							, buttons: MessageBoxButtons.YesNo
+							, icon: MessageBoxIcon.Question
+							, defaultButton: MessageBoxDefaultButton.Button2
 						);
 
 						// リスト名
@@ -246,6 +245,8 @@ namespace SharepointListMngApp {
 			try {
 				using (var f = new FormCreateFields(this.Url, this.UserName, this.Password, listName)) {
 					f.Manager.AddedField += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.Success += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.ThrowException += (s, e) => this.WriteLineMessage(e.Message);
 
 					var ret = f.ShowDialog(this);
 					switch (ret) {

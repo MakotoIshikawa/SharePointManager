@@ -12,7 +12,7 @@ using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager.Extensions {
 	/// <summary>
-	/// SharePoint を拡張するメソッドを提供します。
+	/// Microsoft.SharePoint.Client のクラスを拡張するメソッドを提供します。
 	/// </summary>
 	public static partial class SharePointExtension {
 		#region AddField
@@ -185,6 +185,13 @@ namespace SharePointManager.Manager.Extensions {
 
 		#region リストアイテム取得
 
+		/// <summary>
+		/// リストのアイテムコレクションを取得します。
+		/// </summary>
+		/// <param name="this">this</param>
+		/// <param name="listName">リスト名を表す文字列</param>
+		/// <param name="query">CAMLクエリ</param>
+		/// <returns></returns>
 		public static ListItemCollection GetListItems(this ListCollection @this, string listName, CamlQuery query) {
 			var list = @this.GetByTitle(listName);
 			return list.GetItems(query);
@@ -192,22 +199,46 @@ namespace SharePointManager.Manager.Extensions {
 
 		#region GetListAllItems
 
+		/// <summary>
+		/// 指定したリスト名のリストから
+		/// 全てのアイテムコレクションを取得します。
+		/// </summary>
+		/// <param name="this">this</param>
+		/// <param name="listName">リスト名を表す文字列</param>
+		/// <returns>全てのアイテムコレクションを返します。</returns>
 		public static ListItemCollection GetListAllItems(this ListCollection @this, string listName) {
 			var query = CamlQuery.CreateAllItemsQuery();
 			return @this.GetListItems(listName, query);
 		}
 
-		public static IQueryable<ListItem> GetListAllItems(this ListCollection @this, string listName, Expression<Func<ListItem, object>>[] retrievals) {
-			var items = @this.GetListAllItems(listName);
-			return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
-		}
-
-		public static ListItemCollection GetListAllItems(this ListCollection @this, string title, int limit, params string[] viewFields) {
+		/// <summary>
+		/// 指定したリスト名のリストから
+		/// 全てのアイテムコレクションを取得します。
+		/// </summary>
+		/// <param name="this">this</param>
+		/// <param name="listName">リスト名を表す文字列</param>
+		/// <param name="limit">限界値を表す数値です。</param>
+		/// <param name="viewFields">取得するフィールド名の配列です。</param>
+		/// <returns>全てのアイテムコレクションを返します。</returns>
+		public static ListItemCollection GetListAllItems(this ListCollection @this, string listName, int limit, params string[] viewFields) {
 			var query = CamlQuery.CreateAllItemsQuery(limit, viewFields);
-			return @this.GetListItems(title, query);
+			return @this.GetListItems(listName, query);
 		}
 
 		#endregion
+
+		/// <summary>
+		/// 指定したリスト名のリストから
+		/// 全てのアイテムコレクションを取得するためのクエリを取得します。
+		/// </summary>
+		/// <param name="this">this</param>
+		/// <param name="listName">リスト名を表す文字列</param>
+		/// <param name="retrievals">値を取得する項目を指定します。</param>
+		/// <returns>全てのアイテムコレクションを返します。</returns>
+		public static IQueryable<ListItem> GetQueryListAllItems(this ListCollection @this, string listName, Expression<Func<ListItem, object>>[] retrievals) {
+			var items = @this.GetListAllItems(listName);
+			return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
+		}
 
 		#endregion
 

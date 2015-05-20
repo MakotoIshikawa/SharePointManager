@@ -745,21 +745,6 @@ namespace SharePointManager.Manager.Lists.Xml {
 		#endregion
 	}
 
-	/// <summary>
-	/// フィールドのリッチ テキスト書式を指定します。
-	/// </summary>
-	public enum SPRichTextMode {
-		/// <summary>プレイン テキストまたは太字、斜体、テキスト配置などの書式情報を含むリッチ テキストを表示します。</summary>
-		Compatible = 0,
-
-		/// <summary>画像、表、ハイパーリンクなどを含む拡張リッチ テキストを表示します。</summary>
-		FullHtml = 1,
-
-		/// <summary>HTML を XML として表示します。</summary>
-		/// <remarks>この値は、複数行にわたるテキスト フィールドではサポートされていません。</remarks>
-		HtmlAsXml = 2,
-	}
-
 	/// <summary></summary>
 	[XmlType(AnonymousType = true)]
 	public partial class FieldDisplayPattern {
@@ -791,5 +776,20 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <summary></summary>
 		[XmlText]
 		public string Text { get; set; }
+	}
+
+	/// <summary>
+	/// フィールドのリッチ テキスト書式を指定します。
+	/// </summary>
+	public enum SPRichTextMode {
+		/// <summary>プレイン テキストまたは太字、斜体、テキスト配置などの書式情報を含むリッチ テキストを表示します。</summary>
+		Compatible = 0,
+
+		/// <summary>画像、表、ハイパーリンクなどを含む拡張リッチ テキストを表示します。</summary>
+		FullHtml = 1,
+
+		/// <summary>HTML を XML として表示します。</summary>
+		/// <remarks>この値は、複数行にわたるテキスト フィールドではサポートされていません。</remarks>
+		HtmlAsXml = 2,
 	}
 }

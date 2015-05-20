@@ -26,6 +26,7 @@ namespace SharepointListMngApp {
 		/// <param name="listName">リスト名</param>
 		public FormListMng(string url, string user, string password, string listName) {
 			this.InitializeComponent();
+			//TODO: タブオーダー検討
 
 			this.Url = url;
 			this.UserName = user;

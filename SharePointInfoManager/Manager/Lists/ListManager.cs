@@ -65,6 +65,7 @@ namespace SharePointManager.Manager.Lists {
 		/// フィールド追加後に呼び出されます。
 		/// </summary>
 		/// <param name="message">メッセージ</param>
+		/// <param name="value">追加時の値を表す文字列</param>
 		protected virtual void OnAddedField(string message, string value = null) {
 			if (this.AddedField == null) {
 				return;
@@ -87,6 +88,7 @@ namespace SharePointManager.Manager.Lists {
 		/// フィールド更新後に呼び出されます。
 		/// </summary>
 		/// <param name="message">メッセージ</param>
+		/// <param name="value">変更時の値を表す文字列</param>
 		protected virtual void OnUpdatedField(string message, string value = null) {
 			if (this.UpdatedField == null) {
 				return;
@@ -109,6 +111,7 @@ namespace SharePointManager.Manager.Lists {
 		/// アイテム追加後に呼び出されます。
 		/// </summary>
 		/// <param name="message">メッセージ</param>
+		/// <param name="value">追加したアイテムの情報</param>
 		protected virtual void OnAddedItem(string message, Dictionary<string, object> value) {
 			if (this.AddedItem == null) {
 				return;
@@ -332,7 +335,7 @@ namespace SharePointManager.Manager.Lists {
 				this.AddField<SP.FieldUrl>(name, disp);
 				break;
 			default:
-				break;
+				throw new NotImplementedException(string.Format("指定されたタイプは未実装です。[{0}]", type));
 			}
 		}
 
@@ -349,6 +352,7 @@ namespace SharePointManager.Manager.Lists {
 			this.AddField<TField>(x => {
 				x.DisplayName = name;
 				x.Type = type.ToString();
+				x.Description = string.Empty;//TODO: 説明設定処理
 			}, f => {
 				f.Title = disp;
 
@@ -644,7 +648,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
-		public Dictionary<int, Dictionary<string, object>> GetItemsValues(string listName, Action<XmlView> setQueryParameters, int limit = 0, params string[] viewFields) {
+		public Dictionary<int, Dictionary<string, object>> GetItemsValues(string listName, Action<XmlView> setQueryParameters = null, int limit = 0, params string[] viewFields) {
 			return this.GetItemsValues(listName, ListManager.CreateQuery(setQueryParameters, limit, viewFields), viewFields);
 		}
 
@@ -742,11 +746,17 @@ namespace SharePointManager.Manager.Lists {
 			});
 		}
 
+		/// <summary>
+		/// 指定したキーが値と一致する
+		/// アイテムのIDを取得します。
+		/// </summary>
+		/// <param name="key">キーを表す文字列</param>
+		/// <param name="val">値を表す文字列</param>
+		/// <returns>アイテムのIDを返します。</returns>
 		public int GetID(string key, string val) {
 			var listName = this.ListName;
-			var row = this.GetItemsValues(listName, xml => {
-				xml.AddQueryItem<QueryOperatorEq>(key, "Text", val);
-			}, 1, key);
+			var row = this.GetItemsValues(listName, xml => xml.AddQueryItem<QueryOperatorEq>(key, "Text", val), 1, key);
+
 			var id = row.First().Key;
 			return id;
 		}

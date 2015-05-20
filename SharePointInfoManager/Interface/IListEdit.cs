@@ -1,6 +1,9 @@
 ﻿using System;
 
 namespace SharePointManager.Interface {
+	/// <summary>
+	/// リストの編集に関するインターフェイスです。
+	/// </summary>
 	public interface IListEdit : ISignInInfo {
 		#region プロパティ
 
