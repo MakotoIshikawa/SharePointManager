@@ -32,5 +32,33 @@ namespace SharePointManager.Extensions {
 				return false;
 			}
 		}
+
+		/// <summary>
+		/// アクティブコントロールを取得する
+		/// </summary>
+		/// <param name="this">アクティブコントロールを探す元のコンテナコントロール</param>
+		/// <returns>アクティブコントロール</returns>
+		/// <example>
+		/// 自分自身のフォームのアクティブコントロールを取得する例
+		/// <code>
+		/// var c = this.GetRealActiveControl();
+		/// </code>
+		/// </example>
+		public static Control GetActiveControl(this ContainerControl @this) {
+			// ActiveControlプロパティを取得
+			var ac = @this.ActiveControl;
+
+			if (ac == null) {
+				// ActiveControlがNULLの時は、コンテナコントロールを返す
+				return @this;
+			}
+
+			if (ac is ContainerControl) {// 再帰処理
+				// ActiveControlがコンテナコントロールの場合は、さらにActiveControlを取得
+				return (ac as ContainerControl).GetActiveControl();
+			}
+
+			return ac;
+		}
 	}
 }
