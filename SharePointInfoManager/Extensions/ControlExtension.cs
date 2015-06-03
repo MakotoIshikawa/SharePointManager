@@ -53,9 +53,9 @@ namespace SharePointManager.Extensions {
 				return @this;
 			}
 
-			if (ac is ContainerControl) {// 再帰処理
+			if (ac is ContainerControl) {
 				// ActiveControlがコンテナコントロールの場合は、さらにActiveControlを取得
-				return (ac as ContainerControl).GetActiveControl();
+				return GetActiveControl((ContainerControl)ac);
 			}
 
 			return ac;

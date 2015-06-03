@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\ObjectAnalysisProject.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -42,7 +43,6 @@
     <Compile Include="Extensions\DataGridViewExtension.cs" />
     <Compile Include="Extensions\DataTableExtension.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
-    <Compile Include="ObjectShredder.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

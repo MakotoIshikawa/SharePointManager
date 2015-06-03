@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
@@ -297,6 +297,21 @@ namespace UnitTestProject {
 				DisplayName = "テキスト",
 				Type = "Text",
 			};
+
+			var type = xml.GetType();
+
+			var member1 = xml.GetMembers()
+				.Select(m => new { Name = m.Item1, Type = m.Item2, Value = m.Item3 })
+				.ToList();
+
+			var fields = type.GetFields();
+			var properties = type.GetProperties();
+			var member2 =
+				fields.Select(f => new { Name = f.Name, Type = f.FieldType })
+				.Union(properties.Select(p => new { Name = p.Name, Type = p.PropertyType }))
+				.ToList();
+
+			Assert.IsTrue(member1.Select(m => m.Type).SequenceEqual(member2.Select(m => m.Type)));
 
 			var ret = xml.ToString();
 

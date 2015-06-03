@@ -35,7 +35,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// 指定した TextReader に格納されている
 		/// XML ドキュメントを逆シリアル化します。
 		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
+		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
 		/// <param name="this">逆シリアル化する XML ドキュメントを格納している TextReader。</param>
 		/// <returns>逆シリアル化されたオブジェクトを返します。</returns>
 		public static TResult DeserializeFromXml<TResult>(this TextReader @this) {
@@ -53,6 +53,12 @@ namespace ExtensionsLibrary.Extensions {
 
 		#region Deserialize
 
+		/// <summary>
+		/// XML ノードを逆シリアル化します。
+		/// </summary>
+		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
+		/// <param name="this">this</param>
+		/// <returns>逆シリアル化されたオブジェクトを返します。</returns>
 		public static TResult Deserialize<TResult>(this XNode @this) {
 			using (var r = @this.CreateReader()) {
 				return r.Deserialize<TResult>();

@@ -69,6 +69,7 @@
 			// buttonRun
 			// 
 			this.buttonRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonRun.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonRun.Enabled = false;
 			this.buttonRun.Location = new System.Drawing.Point(631, 412);
 			this.buttonRun.Name = "buttonRun";

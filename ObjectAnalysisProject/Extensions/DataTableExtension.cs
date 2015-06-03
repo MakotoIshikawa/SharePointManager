@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
+using ExtensionsLibrary.Extensions;
 
 namespace ObjectAnalysisProject.Extensions {
 	/// <summary>
@@ -157,19 +159,15 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="options">
 		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
 		/// null を指定できます。</param>
-		public static void ShredPrimitive<T>(this DataTable table, IEnumerable<T> source, LoadOption? options = null) {
-			// テーブルがnullの場合、例外を投げます。
-			if (table == null) {
-				throw new ArgumentNullException("table", "テーブルが null です。");
-			}
+		private static void ShredPrimitive<T>(this DataTable table, IEnumerable<T> source, LoadOption? options = null) {
+			// 列コレクション内の列の位置インデックスを取得
+			var col = table.AddColumn("Value", typeof(T));
+			var ordinal = col.Ordinal;
 
-			// テーブルのスキーマを拡張する。
-			var index = table.ExtendSchema("Value", typeof(T));
+			var length = table.Columns.Count;
 
-			var count = table.Columns.Count;
-
-			// ソースシーケンスを列挙し、スカラー値をロードします。
-			table.LoadData(source.Select(value => value.ToArray(count, index)), options);
+			// ソースシーケンスを列挙し、スカラー値をロードします。StoredArray
+			table.LoadData(source.Select(v => v.ConvertInsertedArray(length, ordinal)), options);
 		}
 
 		#endregion
@@ -184,39 +182,12 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="options">
 		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
 		/// null を指定できます。</param>
-		public static void ShredNotPrimitive<T>(this DataTable table, IEnumerable<T> source, LoadOption? options = null) {
-			// テーブルがnullの場合、例外を投げます。
-			if (table == null) {
-				throw new ArgumentNullException("table", "テーブルが null です。");
-			}
-
+		private static void ShredNotPrimitive<T>(this DataTable table, IEnumerable<T> source, LoadOption? options = null) {
 			// インスタンスのメンバ情報でテーブルのスキーマを拡張する。
 			table.ExtendSchema(source);
 
-			var count = table.Columns.Count;
-
 			// ソースシーケンスを列挙し、オブジェクトの値をロードします。
-			table.LoadData(source.Select(instance => table.GetMemberInfo(instance).ToArray(count)), options);
-		}
-
-		/// <summary>
-		/// データテーブルの列をキーとするインスタンス値の列挙子を取得します。</summary>
-		/// <typeparam name="T">データ型</typeparam>
-		/// <param name="table">データテーブル</param>
-		/// <param name="instance">インスタンス</param>
-		/// <returns>データテーブルの列をキーとするインスタンス値の列挙子</returns>
-		private static IEnumerable<KeyValuePair<int, object>> GetMemberInfo<T>(this DataTable table, T instance) {
-			// インスタンスが派生している場合は派生型を、それ以外はT型
-			var instanceType = (instance.GetType() != typeof(T)) ? instance.GetType() : typeof(T);
-
-			var fields = instanceType.GetFields();
-			var properties = instanceType.GetProperties();
-
-			var member =
-				fields.Select(f => new { Index = table.Columns[f.Name].Ordinal, Value = f.GetValue(instance) })
-				.Union(properties.Select(p => new { Index = table.Columns[p.Name].Ordinal, Value = p.GetValue(instance, null) }));
-
-			return member.Select(info => new KeyValuePair<int, object>(info.Index, info.Value));
+			table.LoadData(source.Select(v => v.ConvertInsertedArray(table.Columns)), options);
 		}
 
 		#endregion
@@ -237,13 +208,15 @@ namespace ObjectAnalysisProject.Extensions {
 				throw new ArgumentNullException("table", "テーブルが null です。");
 			}
 
-			table.BeginLoadData();
+			try {
+				table.BeginLoadData();
 
-			foreach (var values in dataRows) {
-				table.LoadDataRow(values, options);
+				foreach (var values in dataRows) {
+					table.LoadDataRow(values, options);
+				}
+			} finally {
+				table.EndLoadData();
 			}
-
-			table.EndLoadData();
 		}
 
 		/// <summary>
@@ -267,7 +240,7 @@ namespace ObjectAnalysisProject.Extensions {
 
 		#endregion
 
-		#region スキーマ拡張	ExtendSchema(+2)
+		#region スキーマ拡張	ExtendSchema(+1)
 
 		/// <summary>
 		/// テーブルのスキーマを拡張します。</summary>
@@ -286,66 +259,98 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="table">データテーブル</param>
 		/// <param name="instance">インスタンス</param>
 		private static void ExtendSchema<T>(this DataTable table, T instance) {
-			// インスタンスが派生している場合は派生型を、それ以外はT型
-			var instanceType = (instance.GetType() != typeof(T)) ? instance.GetType() : typeof(T);
+			var members = instance.GetMembers()
+			.Select(f => new { Name = f.Item1, Type = f.Item2 })
+			.ToList();
 
+			// メンバ情報でテーブルのスキーマを拡張する。
+			members.ForEach(m => {
+				table.AddColumn(m.Name, m.Type);
+			});
+		}
+
+		/// <summary>
+		/// パブリックなフィールドとプロパティの情報を取得します。
+		/// </summary>
+		/// <typeparam name="T">インスタンスの型</typeparam>
+		/// <param name="this">this</param>
+		/// <returns>メンバー情報を返します。</returns>
+		public static IEnumerable<Tuple<string, Type, object>> GetMembers<T>(this T @this) {
+			// インスタンスが派生している場合は派生型を、それ以外はT型
+			var instanceType = (@this.GetType() != typeof(T)) ? @this.GetType() : typeof(T);
 			var fields = instanceType.GetFields();
 			var properties = instanceType.GetProperties();
 
 			var member =
-				fields.Select(f => new { Name = f.Name, Type = f.FieldType })
-				.Union(properties.Select(p => new { Name = p.Name, Type = p.PropertyType }));
+				fields.Select(f => new { f.Name, Type = f.FieldType, Value = f.GetValue(@this), })
+				.Union(properties.Select(p => new { p.Name, Type = p.PropertyType, Value = p.GetValue(@this, null), }));
 
-			// メンバ情報でテーブルのスキーマを拡張する。
-			foreach (var info in member) {
-				table.ExtendSchema(info.Name, info.Type);
-			}
-		}
-
-		/// <summary>
-		/// 名前と型を指定して、テーブルのスキーマを拡張します。</summary>
-		/// <param name="table">データテーブル</param>
-		/// <param name="name">名前</param>
-		/// <param name="type">型</param>
-		/// <returns>位置</returns>
-		private static int ExtendSchema(this DataTable table, string name, Type type) {
-			// 入力テーブルに Value 列が存在しない場合、新しい列を追加します。
-			if (!table.Columns.Contains(name)) {
-				table.Columns.Add(name, type);
-			}
-
-			return table.Columns[name].Ordinal;
+			return member.Select(m => Tuple.Create(m.Name, m.Type, m.Value));
 		}
 
 		#endregion
 
-		#region 配列変換	ToArray(+1)
+		/// <summary>
+		/// 名前と型を指定して、列を追加します。
+		/// </summary>
+		/// <param name="this">this</param>
+		/// <param name="name">列の名前(System.Data.DataColumn.ColumnName)</param>
+		/// <param name="type">列の型(System.Data.DataColumn.DataType)</param>
+		/// <returns>
+		/// 新たに作成した列を返します。
+		/// 列コレクション内に同名の列が既に存在する場合は、その列を返します。
+		/// </returns>
+		private static DataColumn AddColumn(this DataTable @this, string name, Type type = null) {
+			if (!@this.Columns.Contains(name)) {
+				// 入力テーブルに Value 列が存在しない場合、新しい列を追加します。
+				if (type == null) {
+					return @this.Columns.Add(name);
+				} else {
+					return @this.Columns.Add(name, type);
+				}
+			}
+
+			return @this.Columns[name];
+		}
+
+		#region ConvertInsertedArray(+1)
 
 		/// <summary>
-		/// 配列変換</summary>
+		/// 要素数と位置インデックスを指定して、
+		/// 配列に変換します。
+		/// </summary>
 		/// <typeparam name="T">型</typeparam>
 		/// <param name="value">値</param>
-		/// <param name="count">要素数</param>
-		/// <param name="index">インデックス</param>
+		/// <param name="length">配列の要素数</param>
+		/// <param name="ordinal">列の位置インデックス</param>
 		/// <returns>配列</returns>
-		private static object[] ToArray<T>(this T value, int count, int index) {
-			var values = new object[count];
-			values[index] = value;
+		private static object[] ConvertInsertedArray<T>(this T value, int length, int ordinal) {
+			var values = new object[length];
+			values[ordinal] = value;
 			return values;
 		}
 
 		/// <summary>
-		/// 配列変換</summary>
-		/// <typeparam name="T">型</typeparam>
-		/// <param name="info">情報</param>
-		/// <param name="count">要素数</param>
-		/// <returns>配列</returns>
-		private static object[] ToArray<T>(this IEnumerable<KeyValuePair<int, T>> info, int count) {
-			var values = new object[count];
+		/// 列コレクションを指定して、
+		/// 列インデックスをキーとするインスタンス値の配列を取得します。
+		/// </summary>
+		/// <typeparam name="T">データ型</typeparam>
+		/// <param name="instance">インスタンス</param>
+		/// <param name="columns">列コレクション</param>
+		/// <returns>列をキーとするインスタンス値の配列を返します。</returns>
+		private static object[] ConvertInsertedArray<T>(this T instance, DataColumnCollection columns) {
+			var length = columns.Count;
+			var values = new object[length];
 
-			foreach (var kvp in info) {
-				values[kvp.Key] = kvp.Value;
-			}
+			var members = instance.GetMembers()
+			.Select(m => new {
+				Index = columns[m.Item1].Ordinal,
+				Value = m.Item3
+			}).ToList();
+
+			members.ForEach(m => {
+				values[m.Index] = m.Value;
+			});
 
 			return values;
 		}
