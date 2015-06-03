@@ -277,6 +277,8 @@ namespace SharepointListMngApp {
 			try {
 				using (var f = new FormListMng(this.Url, this.UserName, this.Password, this.ListName)) {
 					f.Manager.AddedItem += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.Success += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.ThrowException += (s, e) => this.WriteLineMessage(e.Message);
 
 					var ret = f.ShowDialog(this);
 					switch (ret) {

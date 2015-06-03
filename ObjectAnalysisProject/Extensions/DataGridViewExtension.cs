@@ -20,25 +20,13 @@ namespace ObjectAnalysisProject.Extensions {
 				return dt;
 			}
 
-			// データテーブルの雛形作成
-			dt = @this.CreateTable();
-
-			// 行データ追加
-			dt.AddRows(@this.Rows);
-
-			return dt;
-		}
-
-		/// <summary>
-		/// DataGridView の列構成を利用して、
-		/// 新しい DataTable のインスタンスを作成します。</summary>
-		/// <param name="this">DataGridView</param>
-		/// <returns>データテーブルの雛形を返します。</returns>
-		private static DataTable CreateTable(this DataGridView @this) {
-			var dt = new DataTable();
+			dt = new DataTable();
 
 			// 列追加
 			dt.AddColumns(@this.Columns);
+
+			// 行データ追加
+			dt.AddRows(@this.Rows);
 
 			return dt;
 		}

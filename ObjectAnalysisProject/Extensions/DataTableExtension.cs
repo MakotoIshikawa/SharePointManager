@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
 
@@ -142,105 +141,14 @@ namespace ObjectAnalysisProject.Extensions {
 				throw new ArgumentNullException("@this", "データテーブルが null です。");
 			}
 
-			if (typeof(T).IsPrimitive) {
-				// Tがプリミティブ型である場合、スカラ配列からテーブルをロードします。
-				@this.ShredPrimitive(source, options);
-			} else {
-				@this.ShredNotPrimitive(source, options);
-			}
-		}
-
-		#region プリミティブ型細断処理
-
-		/// <summary>
-		/// プリミティブ型オブジェクトの細断処理</summary>
-		/// <param name="table">データテーブル</param>
-		/// <param name="source">元になる列挙子</param>
-		/// <param name="options">
-		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
-		/// null を指定できます。</param>
-		private static void ShredPrimitive<T>(this DataTable table, IEnumerable<T> source, LoadOption? options = null) {
-			// 列コレクション内の列の位置インデックスを取得
-			var col = table.AddColumn("Value", typeof(T));
-			var ordinal = col.Ordinal;
-
-			var length = table.Columns.Count;
-
-			// ソースシーケンスを列挙し、スカラー値をロードします。StoredArray
-			table.LoadData(source.Select(v => v.ConvertInsertedArray(length, ordinal)), options);
-		}
-
-		#endregion
-
-		#region オブジェクトの細断処理
-
-		/// <summary>
-		/// オブジェクトの細断処理</summary>
-		/// <typeparam name="T">データ型</typeparam>
-		/// <param name="table">データテーブル</param>
-		/// <param name="source">元になる列挙子</param>
-		/// <param name="options">
-		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
-		/// null を指定できます。</param>
-		private static void ShredNotPrimitive<T>(this DataTable table, IEnumerable<T> source, LoadOption? options = null) {
 			// インスタンスのメンバ情報でテーブルのスキーマを拡張する。
-			table.ExtendSchema(source);
+			@this.ExtendSchema(source);
 
 			// ソースシーケンスを列挙し、オブジェクトの値をロードします。
-			table.LoadData(source.Select(v => v.ConvertInsertedArray(table.Columns)), options);
+			@this.LoadData(source.Select(v => v.ConvertInsertedArray(@this.Columns)), options);
 		}
 
-		#endregion
-
-		#endregion
-
-		#region データ読込
-
-		/// <summary>
-		/// テーブルにデータを読み込みます。</summary>
-		/// <param name="table">データテーブル</param>
-		/// <param name="dataRows">行データ</param>
-		/// <param name="options">
-		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
-		/// null を指定できます。</param>
-		public static void LoadData(this DataTable table, IEnumerable<object[]> dataRows, LoadOption? options = null) {
-			if (table == null) {
-				throw new ArgumentNullException("table", "テーブルが null です。");
-			}
-
-			try {
-				table.BeginLoadData();
-
-				foreach (var values in dataRows) {
-					table.LoadDataRow(values, options);
-				}
-			} finally {
-				table.EndLoadData();
-			}
-		}
-
-		/// <summary>
-		/// 特定の行を検索し、更新します。
-		/// 一致する行が見つからない場合は、指定した値を使用して新しい行が作成されます。</summary>
-		/// <param name="table"></param>
-		/// <param name="values">新しい行の作成に使用する値の配列。</param>
-		/// <param name="options">配列値を既存の行にある対応する値に適用する方法を決定するために使用します。</param>
-		/// <returns>新しい System.Data.DataRow。</returns>
-		public static DataRow LoadDataRow(this DataTable table, object[] values, LoadOption? options = null) {
-			if (table == null) {
-				throw new ArgumentNullException("table", "テーブルが null です。");
-			}
-
-			if (options.HasValue) {
-				return table.LoadDataRow(values, options.Value);
-			} else {
-				return table.LoadDataRow(values, true);
-			}
-		}
-
-		#endregion
-
-		#region スキーマ拡張	ExtendSchema(+1)
+		#region スキーマ拡張	ExtendSchema
 
 		/// <summary>
 		/// テーブルのスキーマを拡張します。</summary>
@@ -248,47 +156,16 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="table">データテーブル</param>
 		/// <param name="source">列挙子</param>
 		private static void ExtendSchema<T>(this DataTable table, IEnumerable<T> source) {
-			foreach (var instance in source) {
-				table.ExtendSchema(instance);
-			}
-		}
+			var members = source.SelectMany(i =>
+				i.GetMembers().ToDictionary(m => m.Item1, m => m.Item2)
+			).Distinct();
 
-		/// <summary>
-		/// インスタンスのメンバ(フィールド、プロパティ)情報でテーブルのスキーマを拡張します。</summary>
-		/// <typeparam name="T">データ型</typeparam>
-		/// <param name="table">データテーブル</param>
-		/// <param name="instance">インスタンス</param>
-		private static void ExtendSchema<T>(this DataTable table, T instance) {
-			var members = instance.GetMembers()
-			.Select(f => new { Name = f.Item1, Type = f.Item2 })
-			.ToList();
-
-			// メンバ情報でテーブルのスキーマを拡張する。
 			members.ForEach(m => {
-				table.AddColumn(m.Name, m.Type);
+				table.AddColumn(m.Key, m.Value);
 			});
 		}
 
-		/// <summary>
-		/// パブリックなフィールドとプロパティの情報を取得します。
-		/// </summary>
-		/// <typeparam name="T">インスタンスの型</typeparam>
-		/// <param name="this">this</param>
-		/// <returns>メンバー情報を返します。</returns>
-		public static IEnumerable<Tuple<string, Type, object>> GetMembers<T>(this T @this) {
-			// インスタンスが派生している場合は派生型を、それ以外はT型
-			var instanceType = (@this.GetType() != typeof(T)) ? @this.GetType() : typeof(T);
-			var fields = instanceType.GetFields();
-			var properties = instanceType.GetProperties();
-
-			var member =
-				fields.Select(f => new { f.Name, Type = f.FieldType, Value = f.GetValue(@this), })
-				.Union(properties.Select(p => new { p.Name, Type = p.PropertyType, Value = p.GetValue(@this, null), }));
-
-			return member.Select(m => Tuple.Create(m.Name, m.Type, m.Value));
-		}
-
-		#endregion
+		#region AddColumn
 
 		/// <summary>
 		/// 名前と型を指定して、列を追加します。
@@ -313,22 +190,57 @@ namespace ObjectAnalysisProject.Extensions {
 			return @this.Columns[name];
 		}
 
-		#region ConvertInsertedArray(+1)
+		#endregion
+
+		#endregion
+
+		#region データ読込
 
 		/// <summary>
-		/// 要素数と位置インデックスを指定して、
-		/// 配列に変換します。
-		/// </summary>
-		/// <typeparam name="T">型</typeparam>
-		/// <param name="value">値</param>
-		/// <param name="length">配列の要素数</param>
-		/// <param name="ordinal">列の位置インデックス</param>
-		/// <returns>配列</returns>
-		private static object[] ConvertInsertedArray<T>(this T value, int length, int ordinal) {
-			var values = new object[length];
-			values[ordinal] = value;
-			return values;
+		/// テーブルにデータを読み込みます。</summary>
+		/// <param name="table">データテーブル</param>
+		/// <param name="dataRows">行データ</param>
+		/// <param name="options">
+		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
+		/// null を指定できます。</param>
+		private static void LoadData(this DataTable table, IEnumerable<object[]> dataRows, LoadOption? options = null) {
+			if (table == null) {
+				throw new ArgumentNullException("table", "テーブルが null です。");
+			}
+
+			try {
+				table.BeginLoadData();
+
+				foreach (var values in dataRows) {
+					table.LoadDataRow(values, options);
+				}
+			} finally {
+				table.EndLoadData();
+			}
 		}
+
+		/// <summary>
+		/// 特定の行を検索し、更新します。
+		/// 一致する行が見つからない場合は、指定した値を使用して新しい行が作成されます。</summary>
+		/// <param name="table"></param>
+		/// <param name="values">新しい行の作成に使用する値の配列。</param>
+		/// <param name="options">配列値を既存の行にある対応する値に適用する方法を決定するために使用します。</param>
+		/// <returns>新しい System.Data.DataRow。</returns>
+		private static DataRow LoadDataRow(this DataTable table, object[] values, LoadOption? options = null) {
+			if (table == null) {
+				throw new ArgumentNullException("table", "テーブルが null です。");
+			}
+
+			if (options.HasValue) {
+				return table.LoadDataRow(values, options.Value);
+			} else {
+				return table.LoadDataRow(values, true);
+			}
+		}
+
+		#endregion
+
+		#region ConvertInsertedArray
 
 		/// <summary>
 		/// 列コレクションを指定して、
@@ -354,6 +266,8 @@ namespace ObjectAnalysisProject.Extensions {
 
 			return values;
 		}
+
+		#endregion
 
 		#endregion
 

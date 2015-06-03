@@ -67,7 +67,7 @@ namespace CommonFeaturesLibrary {
 		/// <summary>
 		/// ログファイルの内容をクリアします。
 		/// </summary>
-		public void LogClear() {
+		public void Clear() {
 			this.FileInfo.Clear();
 		}
 

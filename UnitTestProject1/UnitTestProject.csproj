@@ -40,6 +40,7 @@
     <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
@@ -57,6 +58,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="UnitTestObjectAnalysis.cs" />
     <Compile Include="UnitTestGroupManager.cs" />
     <Compile Include="UnitTestListsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,6 +76,9 @@
       <Project>{c5dbedf8-f96a-4c85-83f2-71f462efb15f}</Project>
       <Name>SharePointManager</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

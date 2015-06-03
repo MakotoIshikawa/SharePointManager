@@ -292,28 +292,11 @@ namespace UnitTestProject {
 		[TestMethod]
 		[Owner("リスト管理")]
 		[TestCategory("更新")]
-		public void XML文字列確認() {//XmlField
+		public void XML文字列確認() {
 			var xml = new XmlField() {
 				DisplayName = "テキスト",
 				Type = "Text",
 			};
-
-			var type = xml.GetType();
-
-			var member1 = xml.GetMembers()
-				.Select(m => new { Name = m.Item1, Type = m.Item2, Value = m.Item3 })
-				.ToList();
-
-			var fields = type.GetFields();
-			var properties = type.GetProperties();
-			var member2 =
-				fields.Select(f => new { Name = f.Name, Type = f.FieldType })
-				.Union(properties.Select(p => new { Name = p.Name, Type = p.PropertyType }))
-				.ToList();
-
-			Assert.IsTrue(member1.Select(m => m.Type).SequenceEqual(member2.Select(m => m.Type)));
-
-			var ret = xml.ToString();
 
 			var sb = new StringBuilder();
 			sb.Append(@"<Comment DateTime=""2015-04-23 12:30:00"" UserName=""ユーザー1"">コメント1行目です。

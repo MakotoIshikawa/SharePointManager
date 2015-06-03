@@ -81,6 +81,35 @@ namespace ExtensionsLibrary.Extensions {
 
 		#endregion
 
+		#region メンバ情報取得
+
+		/// <summary>
+		/// パブリックなフィールドとプロパティの情報を取得します。
+		/// </summary>
+		/// <typeparam name="T">インスタンスの型</typeparam>
+		/// <param name="this">this</param>
+		/// <returns>メンバー情報を返します。</returns>
+		public static IEnumerable<Tuple<string, Type, object>> GetMembers<T>(this T @this) {
+			var type = @this.GetType();
+			var fields = type.GetFields();
+			var properties = type.GetProperties().Where(p => p.Name != type.GetIndexerName());
+
+			var member =
+				fields.Select(f => new { f.Name, Type = f.FieldType, Value = f.GetValue(@this), })
+				.Union(properties.Select(p => new { p.Name, Type = p.PropertyType, Value = p.GetValue(@this), }))
+				.ToList();
+
+			if (@this is string) {
+				member.Add(new { Name = "Value", Type = typeof(string), Value = (object)@this });
+			} else if (typeof(T).IsPrimitive) {
+				member.Add(new { Name = "Value", Type = typeof(T), Value = (object)@this });
+			}
+
+			return member.Select(m => Tuple.Create(m.Name, m.Type, m.Value));
+		}
+
+		#endregion
+
 		#region プロパティ情報
 
 		/// <summary>
@@ -91,7 +120,8 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="name">プロパティ名</param>
 		/// <returns>プロパティ情報を返します。</returns>
 		public static PropertyInfo GetPropertyInfo<T>(this T @this, string name) {
-			return @this.GetType().GetProperty(name);
+			var type = @this.GetType();
+			return type.GetProperty(name);
 		}
 
 		#region 値取得
@@ -141,7 +171,8 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="this">対象のインスタンス</param>
 		/// <returns>プロパティ情報のコレクションを返します。</returns>
 		public static IEnumerable<PropertyInfo> GetProperties<T>(this T @this) {
-			return @this.GetType().GetProperties().Where(p => p.CanRead || p.CanWrite);
+			var type = @this.GetType();
+			return type.GetProperties();
 		}
 
 		/// <summary>
@@ -188,7 +219,8 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="name">フィールド名</param>
 		/// <returns>フィールド情報を返します。</returns>
 		public static FieldInfo GetFieldInfo<T>(this T @this, string name) {
-			return @this.GetType().GetField(name);
+			var type = @this.GetType();
+			return type.GetField(name);
 		}
 
 		#region 値取得
@@ -238,7 +270,8 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="this">対象のインスタンス</param>
 		/// <returns>フィールド情報のコレクションを返します。</returns>
 		public static IEnumerable<FieldInfo> GetFields<T>(this T @this) {
-			return @this.GetType().GetFields().Where(p => p.IsPublic);
+			var type = @this.GetType();
+			return type.GetFields();
 		}
 
 		/// <summary>
