@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Interface;
@@ -26,14 +28,12 @@ namespace SharepointListMngApp {
 		/// <param name="listName">リスト名</param>
 		public FormListMng(string url, string user, string password, string listName) {
 			this.InitializeComponent();
-			//TODO: タブオーダー検討
 
-			this.Url = url;
-			this.UserName = user;
-			this.Password = password;
 			this.ListName = listName;
-
 			this.Manager = new ListManager(url, user, password, listName);
+
+			var tb = this.Manager.ItemsTable;
+			this.gridCsv.DataSource = tb;
 		}
 
 		#endregion
@@ -41,13 +41,22 @@ namespace SharepointListMngApp {
 		#region プロパティ
 
 		/// <summary>SharePoint サイト URL</summary>
-		public string Url { get; set; }
+		public string Url {
+			get { return this.Manager.Url; }
+			set { this.Manager.Url = value; }
+		}
 
 		/// <summary>ユーザー</summary>
-		public string UserName { get; set; }
+		public string UserName {
+			get { return this.Manager.UserName; }
+			set { this.Manager.UserName = value; }
+		}
 
 		/// <summary>パスワード</summary>
-		public string Password { get; set; }
+		public string Password {
+			get { return this.Manager.Password; }
+			set { this.Manager.Password = value; }
+		}
 
 		/// <summary>リスト名</summary>
 		public string ListName {
@@ -92,7 +101,8 @@ namespace SharepointListMngApp {
 				var file = new FileInfo(tb.Text);
 				this.buttonRun.Enabled = file.Exists;
 
-				var table = file.LoadCsvData();
+				var sl = Properties.Settings.Default.SelectCol;
+				var table = file.LoadDataTable(sl.IsEmpty() ? string.Empty : sl);
 				this.gridCsv.DataSource = table;
 			} catch (Exception ex) {
 				this.gridCsv.DataSource = null;
@@ -107,20 +117,17 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragEnter(object sender, DragEventArgs e) {
-			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+			try {
+				// ドラッグ中のファイルやディレクトリの取得
+				var infos = e.Data.GetFiles();
+				if (!infos.Any()) {
+					throw new FileNotFoundException();
+				}
+
+				e.Effect = DragDropEffects.Copy;
+			} catch (Exception) {
 				return;
 			}
-
-			// ドラッグ中のファイルやディレクトリの取得
-			var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			foreach (var f in drags.Select(v => new FileInfo(v))) {
-				if (!f.Exists) {
-					return;
-				}
-			}
-
-			e.Effect = DragDropEffects.Copy;
 		}
 
 		/// <summary>
@@ -130,9 +137,8 @@ namespace SharepointListMngApp {
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
 			// ドラッグ＆ドロップされたファイル
-			var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			this.textBoxFilePath.Text = files.FirstOrDefault();
+			var infos = e.Data.GetFiles();
+			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
 		#region メニュー
@@ -178,16 +184,18 @@ namespace SharepointListMngApp {
 		/// <summary>
 		/// [室町ビル]コメント変換処理
 		/// </summary>
-		/// <param name="row"></param>
+		/// <param name="row">行データ</param>
 		private static void CnvComments(Dictionary<string, object> row) {
 			var key = "コメント";
-			if (row.ContainsKey(key)) {
-				try {
-					var content = row[key].ToString();
-					var log = content.ConvertXmlString<XmlComments>(c => c.GetLog());
-					row[key] = log;
-				} catch {
-				}
+			if (!row.ContainsKey(key)) {
+				return;
+			}
+
+			try {
+				var content = row[key].ToString();
+				var log = content.ConvertXmlString<XmlComments>(c => c.ToString());
+				row[key] = log;
+			} catch {
 			}
 		}
 

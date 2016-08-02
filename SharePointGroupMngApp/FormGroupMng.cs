@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Manager;
@@ -295,7 +296,7 @@ namespace SharePointGroupMngApp {
 				this.buttonAddGroup.Enabled = file.Exists;
 				this.buttonAddMember.Enabled = file.Exists;
 
-				var table = file.LoadCsvData();
+				var table = file.LoadDataTable();
 				this.gridCsv.DataSource = table;
 
 				var cols = table.Columns.Cast<DataColumn>();
@@ -329,20 +330,17 @@ namespace SharePointGroupMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragEnter(object sender, DragEventArgs e) {
-			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+			try {
+				// ドラッグ中のファイルやディレクトリの取得
+				var infos = e.Data.GetFiles();
+				if (!infos.Any()) {
+					throw new FileNotFoundException();
+				}
+
+				e.Effect = DragDropEffects.Copy;
+			} catch (Exception) {
 				return;
 			}
-
-			// ドラッグ中のファイルやディレクトリの取得
-			var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			foreach (var f in drags.Select(v => new FileInfo(v))) {
-				if (!f.Exists) {
-					return;
-				}
-			}
-
-			e.Effect = DragDropEffects.Copy;
 		}
 
 		/// <summary>
@@ -352,9 +350,8 @@ namespace SharePointGroupMngApp {
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
 			// ドラッグ＆ドロップされたファイル
-			var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			this.textBoxFilePath.Text = files.FirstOrDefault();
+			var infos = e.Data.GetFiles();
+			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
 		#endregion

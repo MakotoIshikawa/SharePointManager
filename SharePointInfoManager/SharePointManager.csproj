@@ -86,6 +86,7 @@
     <Compile Include="Manager\Lists\ListManager.cs" />
     <Compile Include="Manager\Lists\ListCollectionManager.cs" />
     <Compile Include="Manager\Lists\Retrievals.cs" />
+    <Compile Include="Manager\Lists\Xml\IAddQuery.cs" />
     <Compile Include="Manager\Lists\Xml\XmlComment.cs" />
     <Compile Include="Manager\Lists\Xml\XmlView.cs" />
     <Compile Include="Manager\Lists\Xml\XmlField.cs" />

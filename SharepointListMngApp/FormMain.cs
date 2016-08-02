@@ -91,9 +91,11 @@ namespace SharepointListMngApp {
 				var ls = m.GetLists(
 					l => l.Title
 					, l => l.Description
+					, l => l.ItemCount
 				).Select(l => new {
 					タイトル = l.Title,
 					説明 = l.Description,
+					件数 = l.ItemCount,
 				}).ToList();
 				this.gridListInfo.DataSource = ls;
 			} catch (Exception ex) {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -147,21 +148,17 @@ namespace SharepointAttachmentFilesApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragEnter(object sender, DragEventArgs e) {
-			var format = DataFormats.FileDrop;
-			if (!e.Data.GetDataPresent(format)) {
+			try {
+				// ドラッグ中のファイルやディレクトリの取得
+				var infos = e.Data.GetDirectories();
+				if (!infos.Any()) {
+					throw new DirectoryNotFoundException();
+				}
+
+				e.Effect = DragDropEffects.Copy;
+			} catch (Exception) {
 				return;
 			}
-
-			// ドラッグ中のファイルやディレクトリの取得
-			var drags = (string[])e.Data.GetData(format);
-
-			foreach (var d in drags.Select(v => new DirectoryInfo(v))) {
-				if (!d.Exists) {
-					return;
-				}
-			}
-
-			e.Effect = DragDropEffects.Copy;
 		}
 
 		/// <summary>
@@ -170,11 +167,9 @@ namespace SharepointAttachmentFilesApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
-			var format = DataFormats.FileDrop;
-			// ドラッグ＆ドロップされたファイルやディレクトリ
-			var files = (string[])e.Data.GetData(format);
-
-			this.textBoxFilePath.Text = files.FirstOrDefault();
+			// ドラッグ中のファイルやディレクトリの取得
+			var infos = e.Data.GetDirectories();
+			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
 		/// <summary>
@@ -233,5 +228,4 @@ namespace SharepointAttachmentFilesApp {
 
 		#endregion
 	}
-
 }

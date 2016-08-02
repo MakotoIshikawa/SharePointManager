@@ -177,7 +177,7 @@ namespace ObjectAnalysisProject.Extensions {
 		/// 新たに作成した列を返します。
 		/// 列コレクション内に同名の列が既に存在する場合は、その列を返します。
 		/// </returns>
-		private static DataColumn AddColumn(this DataTable @this, string name, Type type = null) {
+		public static DataColumn AddColumn(this DataTable @this, string name, Type type = null) {
 			if (!@this.Columns.Contains(name)) {
 				// 入力テーブルに Value 列が存在しない場合、新しい列を追加します。
 				if (type == null) {
@@ -203,7 +203,7 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="options">
 		/// 配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
 		/// null を指定できます。</param>
-		private static void LoadData(this DataTable table, IEnumerable<object[]> dataRows, LoadOption? options = null) {
+		public static void LoadData(this DataTable table, IEnumerable<object[]> dataRows, LoadOption? options = null) {
 			if (table == null) {
 				throw new ArgumentNullException("table", "テーブルが null です。");
 			}

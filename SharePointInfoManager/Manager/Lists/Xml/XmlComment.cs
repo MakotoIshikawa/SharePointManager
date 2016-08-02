@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -8,13 +9,29 @@ using ExtensionsLibrary.Extensions;
 using SharePointManager.Interface;
 
 namespace SharePointManager.Manager.Lists.Xml {
-	/// <summary></summary>
+	/// <summary>コメントリストのXMLデータ形式です。</summary>
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("Comments", Namespace = "", IsNullable = false)]
 	public partial class XmlComments {
-		/// <summary></summary>
+		#region プロパティ
+
+		/// <summary>コメントリスト</summary>
 		[XmlElement("Comment")]
 		public List<XmlCommentsItem> Items { get; set; }
+
+		/// <summary>
+		/// コメントのログ情報の文字列を取得します。
+		/// </summary>
+		[XmlIgnore]
+		public string Log {
+			get {
+				return this.Items
+					.Select(i => i.ToString())
+					.Join(Environment.NewLine);
+			}
+		}
+
+		#endregion
 
 		#region メソッド
 
@@ -23,6 +40,9 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// </summary>
 		/// <returns>XmlField を表す文字列を返します。</returns>
 		public override string ToString() {
+#if true
+			return this.Log;
+#else
 			try {
 				var str = this.ToXmlString(false);
 				var elmt = XElement.Parse(str);
@@ -31,20 +51,7 @@ namespace SharePointManager.Manager.Lists.Xml {
 			} catch (Exception) {
 				return string.Empty;
 			}
-		}
-
-		/// <summary>
-		/// コメントのログ情報の文字列を取得します。
-		/// </summary>
-		/// <returns>コメントのログ情報の文字列を返します。</returns>
-		public string GetLog() {
-			var sb = new StringBuilder();
-			foreach (var i in this.Items) {
-				sb.AppendFormat("{0} {1}", i.DateTime, i.UserName).AppendLine();
-				sb.AppendLine(i.Text).AppendLine();
-			}
-
-			return sb.ToString();
+#endif
 		}
 
 		#endregion
@@ -69,19 +76,19 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 		#endregion
 
-		/// <summary></summary>
+		/// <summary>ユーザー名</summary>
 		[XmlAttribute]
 		public string UserName { get; set; }
 
-		/// <summary></summary>
+		/// <summary>カテゴリー</summary>
 		[XmlAttribute]
 		public string Category { get; set; }
 
-		/// <summary></summary>
+		/// <summary>ショートメッセージ</summary>
 		[XmlAttribute]
-		public string ShoerMsg { get; set; }
+		public string ShortMsg { get; set; }
 
-		/// <summary></summary>
+		/// <summary>複数行テキスト</summary>
 		[XmlText]
 		public string Text { get; set; }
 
@@ -92,14 +99,18 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// </summary>
 		/// <returns>XmlField を表す文字列を返します。</returns>
 		public override string ToString() {
-			try {
-				var str = this.ToXmlString(false);
-				var elmt = XElement.Parse(str);
-
-				return elmt.ToString();
-			} catch (Exception) {
-				return string.Empty;
+			var sb = new StringBuilder();
+			sb.Append(this.DateTime.ToString("yyyy/MM/dd hh:mm "));
+			if (!this.Category.IsEmpty()) {
+				sb.AppendFormat("[{0}]", this.Category);
 			}
+			sb.AppendLine(this.UserName);
+			if (!this.ShortMsg.IsEmpty()) {
+				sb.AppendLine(this.ShortMsg);
+			}
+			sb.AppendLine(this.Text);
+
+			return sb.ToString();
 		}
 
 		#endregion

@@ -2,23 +2,26 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SharepointListMngApp.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="URL" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://mur365.sharepoint.com/</Value>
+    <Setting Name="URL" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://devorix.sharepoint.com/sites/fsisupport</Value>
     </Setting>
     <Setting Name="User" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">fuji-s@mur365.onmicrosoft.com</Value>
+      <Value Profile="(Default)">daisuke_karikomi@devorix.onmicrosoft.com</Value>
     </Setting>
     <Setting Name="Password" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Muromachi_Fsi!</Value>
+      <Value Profile="(Default)">!QAZ2wsx</Value>
     </Setting>
     <Setting Name="ListName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">カスタムリスト-過去日報</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="LogRowLimit" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="UniqueKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">UniqueKey</Value>
+      <Value Profile="(Default)">OldID</Value>
+    </Setting>
+    <Setting Name="SelectCol" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[旧式ID], [表題], [状態], [内容], [大項目], [中項目], [小項目], [備考]</Value>
     </Setting>
   </Settings>
 </SettingsFile>

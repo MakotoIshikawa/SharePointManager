@@ -50,6 +50,16 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>アイテム数</summary>
 		public int ItemCount { get; protected set; }
 
+		/// <summary>
+		/// アイテム情報のテーブルを取得するプロパティです。
+		/// </summary>
+		public DataTable ItemsTable {
+			get {
+				var items = this.GetAllItems().Select(i => i.FieldValues);
+				return this.GetItemsTable(items);
+			}
+		}
+
 		#endregion
 
 		#region イベント
@@ -133,20 +143,22 @@ namespace SharePointManager.Manager.Lists {
 		/// プロパティの情報をリロードします。
 		/// </summary>
 		public virtual void Reload() {
-			if (this.ListName != null) {
-				this.Fields = this.GetFields().ToList();
-
-				var title = this.ListName;
-				var cnt = this.Extract(cn => {
-					var list = cn.Web.Lists.GetByTitle(title);
-					cn.Load(list, l => l.ItemCount);
-					cn.ExecuteQuery();
-
-					return list.ItemCount;
-				});
-
-				this.ItemCount = cnt;
+			if (this.ListName.IsEmpty()) {
+				return;
 			}
+
+			this.Fields = this.GetFields().ToList();
+
+			var title = this.ListName;
+			var cnt = this.Extract(cn => {
+				var list = cn.Web.Lists.GetByTitle(title);
+				cn.Load(list, l => l.ItemCount);
+				cn.ExecuteQuery();
+
+				return list.ItemCount;
+			});
+
+			this.ItemCount = cnt;
 		}
 
 		#endregion
@@ -454,6 +466,8 @@ namespace SharePointManager.Manager.Lists {
 
 		#region リストアイテム
 
+		#region 追加
+
 		/// <summary>
 		/// テーブルデータを指定してリストアイテムを追加します。
 		/// </summary>
@@ -488,8 +502,6 @@ namespace SharePointManager.Manager.Lists {
 				this.OnSuccess(sb.ToString());
 			}
 		}
-
-		#region 追加
 
 		/// <summary>
 		/// リストにアイテムを追加します。
@@ -619,21 +631,19 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// 全てのリストアイテムを取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
-		public Dictionary<int, Dictionary<string, object>> GetAllItemsValues(string listName) {
-			return this.GetItemsValues(listName, CamlQuery.CreateAllItemsQuery());
+		protected IEnumerable<Dictionary<string, object>> GetAllItemsValues() {
+			return this.GetItemsValues(CamlQuery.CreateAllItemsQuery());
 		}
 
 		/// <summary>
 		/// 全てのリストアイテムを取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
-		public Dictionary<int, Dictionary<string, object>> GetAllItemsValues(string listName, int limit, params string[] viewFields) {
-			return this.GetItemsValues(listName, CamlQuery.CreateAllItemsQuery(limit, viewFields), viewFields);
+		public IEnumerable<Dictionary<string, object>> GetAllItemsValues(int limit, params string[] viewFields) {
+			return this.GetItemsValues(CamlQuery.CreateAllItemsQuery(limit, viewFields), viewFields);
 		}
 
 		#endregion
@@ -643,26 +653,22 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// 条件を指定してリストアイテムを取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <param name="setQueryParameters"></param>
 		/// <param name="limit">取得するアイテム数の上限値</param>
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
-		public Dictionary<int, Dictionary<string, object>> GetItemsValues(string listName, Action<XmlView> setQueryParameters = null, int limit = 0, params string[] viewFields) {
-			return this.GetItemsValues(listName, ListManager.CreateQuery(setQueryParameters, limit, viewFields), viewFields);
+		public IEnumerable<Dictionary<string, object>> GetItemsValues(Action<XmlView> setQueryParameters = null, int limit = 0, params string[] viewFields) {
+			return this.GetItemsValues(ListManager.CreateQuery(setQueryParameters, limit, viewFields), viewFields);
 		}
 
 		/// <summary>
 		/// リストアイテムを取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <param name="query">CAML クエリ</param>
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
-		private Dictionary<int, Dictionary<string, object>> GetItemsValues(string listName, CamlQuery query, IEnumerable<string> viewFields = null) {
-			var items = this.Load(cn => {
-				return cn.Web.Lists.GetListItems(listName, query);
-			});
+		private IEnumerable<Dictionary<string, object>> GetItemsValues(CamlQuery query, IEnumerable<string> viewFields = null) {
+			var items = this.GetListItems(query);
 
 			return (
 				from i in items
@@ -676,8 +682,22 @@ namespace SharePointManager.Manager.Lists {
 						select v
 					).ToDictionary(),
 				}
-			).ToDictionary(i => i.ID, i => i.Row);
+			).Select(i => i.Row);
 		}
+
+
+		#region GetListItems
+
+		/// <summary>
+		/// リストアイテムを取得します。
+		/// </summary>
+		/// <param name="query">query</param>
+		/// <returns>取得したリストアイテムのコレクションを返します。</returns>
+		private IEnumerable<ListItem> GetListItems(CamlQuery query) {
+			return this.Load(cn => cn.Web.Lists.GetListItems(this.ListName, query));
+		}
+
+		#endregion
 
 		/// <summary>
 		/// CamlQuery のインスタンスを作成します。
@@ -701,13 +721,13 @@ namespace SharePointManager.Manager.Lists {
 		#region 添付ファイル情報取得
 
 		/// <summary>
-		/// リスト名とアイテムIDを指定して、
+		/// アイテムIDを指定して、
 		/// 添付ファイルのコレクションを取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <param name="id">アイテムID</param>
 		/// <returns>添付ファイルのコレクションを返します。</returns>
-		public IEnumerable<Attachment> GetAttachmentFiles(string listName, int id) {
+		public IEnumerable<Attachment> GetAttachmentFiles(int id) {
+			var listName = this.ListName;
 			return this.Load(cn => {
 				var items = cn.Web.Lists.GetListAllItems(listName);
 				return items.GetById(id).AttachmentFiles;
@@ -717,13 +737,11 @@ namespace SharePointManager.Manager.Lists {
 		#region GetAttachmentFilesDictionary
 
 		/// <summary>
-		/// リスト名を指定して、
 		/// アイテムごとの添付ファイルコレクション Dictionary を取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <returns>添付ファイルコレクション Dictionary を返します。</returns>
-		public Dictionary<int, List<Attachment>> GetAttachmentFilesDictionary(string listName) {
-			return this.GetAllItems(listName,
+		public Dictionary<int, List<Attachment>> GetAttachmentFilesDictionary() {
+			return this.GetAllItems(
 				i => i.Id
 				, i => i.AttachmentFiles.Include(
 					f => f.FileName
@@ -732,14 +750,18 @@ namespace SharePointManager.Manager.Lists {
 			).ToDictionary(i => i.Id, i => i.AttachmentFiles.ToList());
 		}
 
+		#endregion
+
+		#endregion
+
 		/// <summary>
 		/// リスト名と検索の式木コレクションを指定して、
 		/// アイテムのコレクションを取得します。
 		/// </summary>
-		/// <param name="listName">リスト名</param>
 		/// <param name="retrievals">検索の式木コレクション</param>
 		/// <returns>アイテムのコレクションを返します。</returns>
-		protected IEnumerable<ListItem> GetAllItems(string listName, params Expression<Func<ListItem, object>>[] retrievals) {
+		protected IEnumerable<ListItem> GetAllItems(params Expression<Func<ListItem, object>>[] retrievals) {
+			var listName = this.ListName;
 			return this.Load(cn => {
 				var items = cn.Web.Lists.GetListAllItems(listName);
 				return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
@@ -754,20 +776,43 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="val">値を表す文字列</param>
 		/// <returns>アイテムのIDを返します。</returns>
 		public int GetID(string key, string val) {
-			var listName = this.ListName;
-			var row = this.GetItemsValues(listName, xml => xml.AddQueryItem<QueryOperatorEq>(key, "Text", val), 1, key);
-
-			var id = row.First().Key;
-			return id;
+			try {
+				var field = "ID";
+				var row = this.GetItemsValues(xml => xml.AddQuery<QueryOperatorEq>(key, val), 1, field);
+				var id = Convert.ToInt32(row.First()[field]);
+				return id;
+			} catch (Exception ex) {
+				this.OnThrowException(ex);
+				return int.MinValue;
+			}
 		}
 
 		#endregion
 
 		#endregion
 
-		#endregion
+		/// <summary>
+		/// アイテム情報のテーブルを取得するメソッドです。
+		/// </summary>
+		/// <param name="items">テーブルに格納するアイテム情報</param>
+		/// <returns>指定したアイテム情報を格納したテーブルを返します。</returns>
+		protected DataTable GetItemsTable(IEnumerable<Dictionary<string, object>> items) {
+			var fields = this.Fields.GetEditFields();
 
-		#endregion
+			var tb = new DataTable();
+			fields.ForEach(f => {
+				tb.AddColumn(f.Title);
+			});
+
+			var rows = items.Select(row =>
+				fields.Select(f =>
+					row.ContainsKey(f.InternalName) ? row[f.InternalName] : null
+				).ToArray()
+			);
+
+			tb.LoadData(rows);
+			return tb;
+		}
 
 		#endregion
 	}

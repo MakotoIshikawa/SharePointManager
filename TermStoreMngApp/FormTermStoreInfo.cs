@@ -130,20 +130,17 @@ namespace TermStoreMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragEnter(object sender, DragEventArgs e) {
-			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+			try {
+				// ドラッグ中のファイルやディレクトリの取得
+				var infos = e.Data.GetFiles();
+				if (!infos.Any()) {
+					throw new FileNotFoundException();
+				}
+
+				e.Effect = DragDropEffects.Copy;
+			} catch (Exception) {
 				return;
 			}
-
-			// ドラッグ中のファイルやディレクトリの取得
-			var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			foreach (var f in drags.Select(v => new FileInfo(v))) {
-				if (!f.Exists) {
-					return;
-				}
-			}
-
-			e.Effect = DragDropEffects.Copy;
 		}
 
 		/// <summary>
@@ -153,9 +150,8 @@ namespace TermStoreMngApp {
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
 			// ドラッグ＆ドロップされたファイル
-			var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			this.textBoxFilePath.Text = files.FirstOrDefault();
+			var infos = e.Data.GetFiles();
+			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
 		#endregion
@@ -168,7 +164,7 @@ namespace TermStoreMngApp {
 		/// <param name="file">ファイル情報</param>
 		/// <returns>データテーブル</returns>
 		protected static DataTable GetCsvTable(FileInfo file) {
-			var csv = file.LoadCsvData();
+			var csv = file.LoadDataTable();
 
 			var setName = string.Empty;
 			var setDesc = string.Empty;

@@ -8,6 +8,7 @@ using ObjectAnalysisProject.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
+using SharePointManager.Manager.Extensions;
 
 namespace SharepointListMngApp {
 	/// <summary>
@@ -33,7 +34,7 @@ namespace SharepointListMngApp {
 
 			this.Manager = new ListManager(url, user, password, listName);
 #if true
-			var fs = this.Manager.Fields.Select(f => new {
+			var fs = this.Manager.Fields.GetEditFields().Select(f => new {
 				表示名 = f.Title,
 				列名 = f.InternalName,
 				型 = f.FieldTypeKind,
@@ -94,7 +95,7 @@ namespace SharepointListMngApp {
 
 				this.buttonCreate.Enabled = file.Exists;
 
-				var table = file.LoadCsvData();
+				var table = file.LoadDataTable();
 				this.gridCsv.DataSource = table;
 			} catch (FileNotFoundException) {
 				this.gridCsv.DataSource = null;
@@ -111,20 +112,17 @@ namespace SharepointListMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragEnter(object sender, DragEventArgs e) {
-			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+			try {
+				// ドラッグ中のファイルやディレクトリの取得
+				var infos = e.Data.GetFiles();
+				if (!infos.Any()) {
+					throw new FileNotFoundException();
+				}
+
+				e.Effect = DragDropEffects.Copy;
+			} catch (Exception) {
 				return;
 			}
-
-			// ドラッグ中のファイルやディレクトリの取得
-			var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			foreach (var f in drags.Select(v => new FileInfo(v))) {
-				if (!f.Exists) {
-					return;
-				}
-			}
-
-			e.Effect = DragDropEffects.Copy;
 		}
 
 		/// <summary>
@@ -134,11 +132,8 @@ namespace SharepointListMngApp {
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
 			// ドラッグ＆ドロップされたファイル
-			var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			var filePath = files.FirstOrDefault();
-			var fileInfo = new FileInfo(filePath);
-			this.textBoxFilePath.Text = fileInfo.Exists ? fileInfo.FullName : string.Empty;
+			var infos = e.Data.GetFiles();
+			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
 		#endregion

@@ -1,9 +1,12 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
 using System.Data.OleDb;
 using System.IO;
+using System.Text;
 using ExtensionsLibrary.Extensions;
+using SharePointManager.Properties;
 
 namespace SharePointManager.Extensions {
 	/// <summary>
@@ -11,30 +14,41 @@ namespace SharePointManager.Extensions {
 	/// </summary>
 	public static partial class FileInfoExtension {
 		/// <summary>
+		/// ファイルのデータを読込みます。
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <param name="select">SELECT句を表す文字列</param>
+		/// <returns>ファイルのデータを格納した DataTable を返します。</returns>
+		public static DataTable LoadDataTable(this FileInfo @this, string select = null) {
+			return @this.LoadCsvData(select);
+		}
+
+		/// <summary>
 		/// CSVファイルのデータを読込みます。
 		/// </summary>
 		/// <param name="this">FileInfo</param>
+		/// <param name="select">SELECT句を表す文字列</param>
 		/// <returns>CSVファイルのデータを格納した DataTable を返します。</returns>
-		public static DataTable LoadCsvData(this FileInfo @this) {
+		/// <exception cref="System.IO.FileNotFoundException">ファイルが存在しません。</exception>
+		private static DataTable LoadCsvData(this FileInfo @this, string select = null) {
 			if (!@this.Exists) {
 				throw new FileNotFoundException("ファイルが存在しません。");
 			}
 #if true
 			// 接続文字列取得
-			var connectionString = @this.GetConnectionStringOfCsvByOleDb();
+			var connectionString = @this.GetConnectionStringByOleDb();
 
 			var tbl = new DataTable();
 			using (var cn = new OleDbConnection(connectionString)) {
-				if (@this.Extension.HasString("xls")) {
-					var cmd = @this.GetSelectCommandTextOfExcel();
-					using (var adapter = new OleDbDataAdapter(cmd, cn)) {
-						adapter.Fill(tbl);
-					}
-				} else {
-					var cmd = @this.GetSelectCommandTextOfCSV();
-					using (var adapter = new OleDbDataAdapter(cmd, cn)) {
-						adapter.Fill(tbl);
-					}
+				var cmd = (
+					@this.Extension.HasString("md")
+					|| @this.Extension.HasString("accd")
+					|| @this.Extension.HasString("xls")
+				) ? @this.GetSelectCommandTextOfExcel(select, string.Empty)
+				: @this.GetSelectCommandTextOfCSV(select);
+
+				using (var adapter = new OleDbDataAdapter(cmd, cn)) {
+					adapter.Fill(tbl);
 				}
 			}
 
@@ -56,6 +70,48 @@ namespace SharePointManager.Extensions {
 		}
 
 		/// <summary>
+		/// CSVファイルのデータを変更する
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <param name="modify">データを変更するメソッド</param>
+		/// <exception cref="System.IO.FileNotFoundException">ファイルが存在しません。</exception>
+		/// <exception cref="System.ArgumentNullException">データを変更するメソッドが指定されていません。</exception>
+		public static void SaveCsvData(this FileInfo @this, Action<DataTable> modify) {
+			if (!@this.Exists) {
+				throw new FileNotFoundException("ファイルが存在しません。");
+			}
+
+			if (modify == null) {
+				throw new ArgumentNullException("データを変更するメソッドが指定されていません。");
+			}
+
+			// 接続文字列取得
+			var connectionString = @this.GetConnectionStringByOleDb();
+
+			var tbl = new DataTable();
+			using (var cn = new OleDbConnection(connectionString)) {
+				cn.Open();
+
+				var cmd = (
+					@this.Extension.HasString("md")
+					|| @this.Extension.HasString("accd")
+					|| @this.Extension.HasString("xls")
+				) ? @this.GetSelectCommandTextOfExcel(null, string.Empty)
+				: @this.GetSelectCommandTextOfCSV(null);
+
+				using (var ad = new OleDbDataAdapter(cmd, cn)) {
+					ad.Fill(tbl);
+
+					modify(tbl);
+
+					ad.UpdateCommand = cn.CreateCommand();
+					ad.UpdateCommand.CommandText = @"";
+					ad.Update(tbl);
+				}
+			}
+		}
+
+		/// <summary>
 		/// CSVファイル形式の接続文字列を取得します。(ODBC)
 		/// </summary>
 		/// <param name="this">FileInfo</param>
@@ -64,6 +120,13 @@ namespace SharePointManager.Extensions {
 			var connectionString = "Driver={Microsoft Text Driver (*.txt; *.csv)};"
 			+ "Dbq=" + @this.DirectoryName + ";"
 			+ "Extensions=asc,csv,tab,txt;";
+			return connectionString;
+		}
+
+		#region OLE DB
+
+		private static string GetConnectionStringByOleDb(this FileInfo @this) {
+			var connectionString = @this.GetConnectionStringOfCsvByOleDb();
 			return connectionString;
 		}
 
@@ -80,19 +143,24 @@ namespace SharePointManager.Extensions {
 			cmd["Provider"] = "Microsoft.ACE.OLEDB.12.0";
 
 			var sb = new DbConnectionStringBuilder();
-			sb["HDR"] = hdr ? "Yes" : "No";
 
-			var properties = string.Empty;
-			if (@this.Extension.HasString("xls")) {
+			var properties = new StringBuilder();
+			if (@this.Extension.HasString("md")
+			|| @this.Extension.HasString("accd")
+			) {
 				cmd["Data Source"] = @this.FullName;
+			} else if (@this.Extension.HasString("xls")) {
+				cmd["Data Source"] = @this.FullName;
+				sb["HDR"] = hdr ? "Yes" : "No";
 
 				var fileKind = "Excel 8.0";
-				properties = fileKind + ";";
+				properties.Append(fileKind).Append(";");
 			} else {
 				cmd["Data Source"] = @this.DirectoryName;
+				sb["HDR"] = hdr ? "Yes" : "No";
 
 				var fileKind = "text";
-				properties = fileKind + ";";
+				properties.Append(fileKind).Append(";");
 				sb["FMT"] = "Delimited";
 			}
 
@@ -100,33 +168,50 @@ namespace SharePointManager.Extensions {
 				sb["IMEX"] = (short)imex;
 			}
 
-			properties += sb.ToString();
+			properties.Append(sb.ToString());
 
-			cmd["Extended Properties"] = properties;
+			if (!properties.ToString().IsEmpty()) {
+				cmd["Extended Properties"] = properties.ToString();
+			}
 
 			var str = cmd.ToString();
 			return str;
 		}
+
+		#endregion
 
 		/// <summary>
 		/// CSVファイル形式のSQL SELECT ステートメント文字列を取得します。
 		/// </summary>
 		/// <param name="this">FileInfo</param>
 		/// <returns>SQL SELECT ステートメント文字列を返します。</returns>
-		private static string GetSelectCommandTextOfCSV(this FileInfo @this) {
-			var selectCommandText = "SELECT * FROM [" + @this.Name + "]";
-			return selectCommandText;
+		private static string GetSelectCommandTextOfCSV(this FileInfo @this, string select) {
+			var sb = new StringBuilder();
+			sb.AppendFormat("SELECT {1} FROM [{0}]", @this.Name, select.IsEmpty() ? "*" : select);
+			return sb.ToString();
 		}
 
 		/// <summary>
 		/// Excelファイル形式のSQL SELECT ステートメント文字列を取得します。
 		/// </summary>
 		/// <param name="this">FileInfo</param>
+		/// <param name="tableName">テーブル名</param>
 		/// <returns>SQL SELECT ステートメント文字列を返します。</returns>
-		/// <remarks>ファイル名と同名のシートのデータを取得します。</remarks>
-		private static string GetSelectCommandTextOfExcel(this FileInfo @this) {
-			var selectCommandText = "SELECT * FROM [" + @this.Name.CommentOut(@this.Extension) + "$]";
-			return selectCommandText;
+		/// <remarks>
+		/// <para>指定したテーブル名のデータを取得します。</para>
+		/// <para>テーブル名の指定がない場合は、ファイル名と同名のシートのデータを取得します。</para>
+		/// </remarks>
+		private static string GetSelectCommandTextOfExcel(this FileInfo @this, string select, string tableName) {
+			var name = tableName.IsEmpty() ? @this.Name.CommentOut(@this.Extension) : tableName;
+
+			var sb = new StringBuilder();
+			if (@this.Extension.HasString("xls")) {
+				sb.AppendFormat("SELECT {1} FROM [{0}$]", name, select.IsEmpty() ? "*" : select);
+			} else {
+				sb.AppendFormat("SELECT {1} FROM [{0}]", name, select.IsEmpty() ? "*" : select);
+			}
+
+			return sb.ToString();
 		}
 	}
 

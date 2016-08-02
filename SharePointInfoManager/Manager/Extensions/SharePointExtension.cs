@@ -261,5 +261,21 @@ namespace SharePointManager.Manager.Extensions {
 				return convert(comments);
 			}
 		}
+
+		/// <summary>
+		/// 編集可能なフィールドのみを取得します。
+		/// </summary>
+		/// <param name="this">フィールド情報</param>
+		/// <returns>編集可能なフィールドのみを返します。</returns>
+		public static List<SP.Field> GetEditFields(this List<SP.Field> @this) {
+			return @this.Where(f =>
+				f.CanBeDeleted
+				|| f.InternalName == "Title"	// タイトル
+				|| f.InternalName == "Modified"	// 更新日時
+				|| f.InternalName == "Created"	// 登録日時
+				|| f.InternalName == "Author"	// 登録者
+				|| f.InternalName == "Editor"	// 更新者
+			).ToList();
+		}
 	}
 }

@@ -58,6 +58,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="UnitTestExtensions.cs" />
     <Compile Include="UnitTestObjectAnalysis.cs" />
     <Compile Include="UnitTestGroupManager.cs" />
     <Compile Include="UnitTestListsManager.cs" />

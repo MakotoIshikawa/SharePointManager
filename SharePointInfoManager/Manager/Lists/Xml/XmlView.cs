@@ -11,7 +11,7 @@ namespace SharePointManager.Manager.Lists.Xml {
 	/// </summary>
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("View", Namespace = "", IsNullable = false)]
-	public partial class XmlView {
+	public partial class XmlView : IAddQuery {
 		#region コンストラクタ
 
 		/// <summary>
@@ -62,6 +62,8 @@ namespace SharePointManager.Manager.Lists.Xml {
 			};
 		}
 
+		#region フィールド追加
+
 		/// <summary>
 		/// 参照フィールド追加
 		/// </summary>
@@ -84,14 +86,18 @@ namespace SharePointManager.Manager.Lists.Xml {
 			}
 		}
 
-		#region AddQueryItem
+		#endregion
+
+		#region クエリ追加
+
+		#region AddQuery (+4)
 
 		/// <summary>
 		/// クエリ項目追加
 		/// </summary>
 		/// <typeparam name="TOperator">条件型</typeparam>
 		/// <param name="name">参照フィールド名</param>
-		public void AddQueryItem<TOperator>(string name) where TOperator : QueryOperator, new() {
+		public void AddQuery<TOperator>(string name) where TOperator : QueryOperator, new() {
 			this.AddQueryItem(new TOperator() {
 				FieldRef = new FieldRef() { Name = name },
 			});
@@ -104,10 +110,48 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <param name="name">参照フィールド名</param>
 		/// <param name="type">比較値型</param>
 		/// <param name="value">比較値</param>
-		public void AddQueryItem<TOperator>(string name, string type, string value) where TOperator : QueryOperator, new() {
+		public void AddQuery<TOperator>(string name, string type, string value) where TOperator : QueryOperator, new() {
 			this.AddQueryItem(new TOperator() {
 				FieldRef = new FieldRef() { Name = name },
 				Value = new ViewValue() { Type = type, Value = value },
+			});
+		}
+
+		/// <summary>
+		/// 条件項目追加
+		/// </summary>
+		/// <typeparam name="TOperator">条件型</typeparam>
+		/// <param name="name">参照フィールド名</param>
+		/// <param name="value">比較値</param>
+		public void AddQuery<TOperator>(string name, int value) where TOperator : QueryOperator, new() {
+			this.AddQuery<TOperator>(name, "Number", value.ToString());
+		}
+
+		/// <summary>
+		/// 条件項目追加
+		/// </summary>
+		/// <typeparam name="TOperator">条件型</typeparam>
+		/// <param name="name">参照フィールド名</param>
+		/// <param name="value">比較値</param>
+		public void AddQuery<TOperator>(string name, string value) where TOperator : QueryOperator, new() {
+			this.AddQuery<TOperator>(name, "Text", value);
+		}
+
+		/// <summary>
+		/// 条件項目追加
+		/// </summary>
+		/// <typeparam name="TOperator">条件型</typeparam>
+		/// <param name="name">参照フィールド名</param>
+		/// <param name="value">比較値</param>
+		public void AddQuery<TOperator>(string name, DateTime value) where TOperator : QueryOperator, new() {
+			this.AddQueryItem(new TOperator() {
+				FieldRef = new FieldRef() { Name = name },
+				Value = new ViewValue() {
+					Type = "DateTime",
+					Value = value.ToString("s"),
+					//StorageTZ = "TRUE",
+					//IncludeTimeValue = "TRUE",
+				},
 			});
 		}
 
@@ -125,6 +169,8 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 			this.Query.Items.Add(item);
 		}
+
+		#endregion
 
 		/// <summary>
 		/// クエリ項目追加
@@ -181,7 +227,7 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 	/// <summary></summary>
 	[XmlType(AnonymousType = true)]
-	public abstract partial class QueryItems {
+	public abstract partial class QueryItems : IAddQuery {
 		#region コンストラクタ
 
 		/// <summary>
@@ -207,12 +253,16 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 		#region メソッド
 
+		#region クエリ追加
+
+		#region AddQuery (+4)
+
 		/// <summary>
 		/// 条件項目追加
 		/// </summary>
 		/// <typeparam name="TOperator">条件型</typeparam>
 		/// <param name="name">参照フィールド名</param>
-		public void AddOperatorItem<TOperator>(string name) where TOperator : QueryOperator, new() {
+		public void AddQuery<TOperator>(string name) where TOperator : QueryOperator, new() {
 			this.AddOperatorItem(new TOperator() {
 				FieldRef = new FieldRef() { Name = name },
 			});
@@ -225,12 +275,52 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <param name="name">参照フィールド名</param>
 		/// <param name="type">比較値型</param>
 		/// <param name="value">比較値</param>
-		public void AddOperatorItem<TOperator>(string name, string type, string value) where TOperator : QueryOperator, new() {
+		public void AddQuery<TOperator>(string name, string type, string value) where TOperator : QueryOperator, new() {
 			this.AddOperatorItem(new TOperator() {
 				FieldRef = new FieldRef() { Name = name },
 				Value = new ViewValue() { Type = type, Value = value },
 			});
 		}
+
+		/// <summary>
+		/// 条件項目追加
+		/// </summary>
+		/// <typeparam name="TOperator">条件型</typeparam>
+		/// <param name="name">参照フィールド名</param>
+		/// <param name="value">比較値</param>
+		public void AddQuery<TOperator>(string name, int value) where TOperator : QueryOperator, new() {
+			this.AddQuery<TOperator>(name, "Number", value.ToString());
+		}
+
+		/// <summary>
+		/// 条件項目追加
+		/// </summary>
+		/// <typeparam name="TOperator">条件型</typeparam>
+		/// <param name="name">参照フィールド名</param>
+		/// <param name="value">比較値</param>
+		public void AddQuery<TOperator>(string name, string value) where TOperator : QueryOperator, new() {
+			this.AddQuery<TOperator>(name, "Text", value);
+		}
+
+		/// <summary>
+		/// 条件項目追加
+		/// </summary>
+		/// <typeparam name="TOperator">条件型</typeparam>
+		/// <param name="name">参照フィールド名</param>
+		/// <param name="value">比較値</param>
+		public void AddQuery<TOperator>(string name, DateTime value) where TOperator : QueryOperator, new() {
+			this.AddOperatorItem(new TOperator() {
+				FieldRef = new FieldRef() { Name = name },
+				Value = new ViewValue() {
+					Type = "DateTime",
+					Value = value.ToString("s"),
+					StorageTZ = "TRUE",
+					IncludeTimeValue = "TRUE",
+				},
+			});
+		}
+
+		#endregion
 
 		/// <summary>
 		/// 条件項目追加
@@ -243,6 +333,8 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 			this.Items.Add(item);
 		}
+
+		#endregion
 
 		#endregion
 	}
@@ -293,6 +385,14 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <summary></summary>
 		[XmlText]
 		public string Value { get; set; }
+
+		/// <summary></summary>
+		[XmlAttribute]
+		public string StorageTZ { get; set; }
+
+		/// <summary></summary>
+		[XmlAttribute]
+		public string IncludeTimeValue { get; set; }
 	}
 
 	/// <summary></summary>
