@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using CommonFeaturesLibrary.Extensions;
-using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
-using SP = Microsoft.SharePoint.Client;
 
 namespace UnitTestProject {
 	[TestClass]
