@@ -26,7 +26,7 @@ namespace SharepointListMngApp.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://devorix.sharepoint.com/sites/fsisupport")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://kariverification12.sharepoint.com/sites/IDEA")]
         public string URL {
             get {
                 return ((string)(this["URL"]));
@@ -35,7 +35,7 @@ namespace SharepointListMngApp.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("daisuke_karikomi@devorix.onmicrosoft.com")]
+        [global::System.Configuration.DefaultSettingValueAttribute("root@kariverification12.onmicrosoft.com")]
         public string User {
             get {
                 return ((string)(this["User"]));
@@ -53,7 +53,7 @@ namespace SharepointListMngApp.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("海外出張申請")]
         public string ListName {
             get {
                 return ((string)(this["ListName"]));
@@ -71,7 +71,7 @@ namespace SharepointListMngApp.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("OldID")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DocUniID")]
         public string UniqueKey {
             get {
                 return ((string)(this["UniqueKey"]));
@@ -80,7 +80,7 @@ namespace SharepointListMngApp.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[旧式ID], [表題], [状態], [内容], [大項目], [中項目], [小項目], [備考]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string SelectCol {
             get {
                 return ((string)(this["SelectCol"]));

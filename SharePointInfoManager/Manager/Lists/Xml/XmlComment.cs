@@ -40,18 +40,7 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// </summary>
 		/// <returns>XmlField を表す文字列を返します。</returns>
 		public override string ToString() {
-#if true
 			return this.Log;
-#else
-			try {
-				var str = this.ToXmlString(false);
-				var elmt = XElement.Parse(str);
-
-				return elmt.ToString();
-			} catch (Exception) {
-				return string.Empty;
-			}
-#endif
 		}
 
 		#endregion

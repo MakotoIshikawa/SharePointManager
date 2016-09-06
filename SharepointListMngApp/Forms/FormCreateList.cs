@@ -13,7 +13,7 @@ using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
 using SharePointManager.MyException;
 
-namespace SharepointListMngApp {
+namespace SharepointListMngApp.Forms {
 	/// <summary>
 	/// フォーム
 	/// </summary>

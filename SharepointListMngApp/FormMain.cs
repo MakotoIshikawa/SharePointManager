@@ -4,10 +4,9 @@ using System.Text;
 using System.Windows.Forms;
 using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
-using ObjectAnalysisProject.Extensions;
+using SharepointListMngApp.Forms;
 using SharePointManager.Manager.Lists;
 using SharePointManager.MyException;
-using SharePointManager.Extensions;
 using SP = Microsoft.SharePoint.Client;
 
 namespace SharepointListMngApp {
@@ -18,7 +17,7 @@ namespace SharepointListMngApp {
 		#region フィールド
 
 		/// <summary>ログ出力</summary>
-		private LogOutputter _log = new LogOutputter();
+		private Logger _log = new Logger();
 
 		#endregion
 
@@ -78,38 +77,28 @@ namespace SharepointListMngApp {
 
 		#region イベントハンドラ
 
+		#region クリックイベント
+
 		/// <summary>
-		/// [読込]クリックイベント
+		/// [一覧取得]クリックイベント
 		/// </summary>
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonLoad_Click(object sender, EventArgs e) {
-			try {
-				this.Enabled = false;
-
-				var m = new ListCollectionManager(this.Url, this.UserName, this.Password);
-				var ls = m.GetLists(
-					l => l.Title
-					, l => l.Description
-					, l => l.ItemCount
-				).Select(l => new {
-					タイトル = l.Title,
-					説明 = l.Description,
-					件数 = l.ItemCount,
-				}).ToList();
-				this.gridListInfo.DataSource = ls;
-			} catch (Exception ex) {
-				this.WriteLineMessage(ex.Message);
-			} finally {
-				this.Enabled = true;
-			}
+			this.LoadLists();
 		}
+
+		#endregion
+
+		#region ダブルクリックイベント
 
 		/// <summary>
 		/// ダブルクリックイベント
 		/// </summary>
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
+		/// <remarks>
+		/// ダブルクリックされたときに発生します。</remarks>
 		private void listBoxMessage_DoubleClick(object sender, EventArgs e) {
 			var ret = MessageBox.Show("ログをクリアしますか？", "確認"
 				, MessageBoxButtons.YesNo
@@ -126,6 +115,10 @@ namespace SharepointListMngApp {
 			}
 		}
 
+		#endregion
+
+		#region グリッド行選択イベント
+
 		/// <summary>
 		/// グリッド行選択イベント
 		/// </summary>
@@ -140,6 +133,8 @@ namespace SharepointListMngApp {
 			var cell = grid["タイトル", e.RowIndex];
 			this.ListName = cell.Value.ToString();
 		}
+
+		#endregion
 
 		#region メニュー
 
@@ -171,12 +166,39 @@ namespace SharepointListMngApp {
 		}
 
 		/// <summary>
-		/// [インポート]クリックイベント
+		/// [インポート-カスタムリスト]クリックイベント
 		/// </summary>
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
-		private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
-			this.Import();
+		private void CustomListToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.Import(false);
+		}
+
+		/// <summary>
+		/// [インポート-ディスカッション掲示板]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void DiscussionBBSToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.Import(true);
+		}
+
+		/// <summary>
+		/// [リストビュー]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void ListViewToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.ListView();
+		}
+
+		/// <summary>
+		/// [フォルダ]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void FolderToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.CreateFolders();
 		}
 
 		#endregion
@@ -184,6 +206,31 @@ namespace SharepointListMngApp {
 		#endregion
 
 		#region メソッド
+
+		/// <summary>
+		/// リストの一覧を取得する処理です。
+		/// </summary>
+		private void LoadLists() {
+			try {
+				this.Enabled = false;
+
+				var m = new ListCollectionManager(this.Url, this.UserName, this.Password);
+				var ls = m.GetLists(
+					l => l.Title
+					, l => l.Description
+					, l => l.ItemCount
+				).Select(l => new {
+					タイトル = l.Title,
+					説明 = l.Description,
+					件数 = l.ItemCount,
+				}).ToList();
+				this.gridListInfo.DataSource = ls;
+			} catch (Exception ex) {
+				this.WriteLineMessage(ex.Message);
+			} finally {
+				this.Enabled = true;
+			}
+		}
 
 		/// <summary>
 		/// リスト作成
@@ -275,9 +322,12 @@ namespace SharepointListMngApp {
 		/// <summary>
 		/// インポート
 		/// </summary>
-		private void Import() {
+		/// <param name="isFolder">追加するアイテムがフォルダかどうか</param>
+		private void Import(bool isFolder) {
 			try {
-				using (var f = new FormListMng(this.Url, this.UserName, this.Password, this.ListName)) {
+				using (var f = new FormImport(this.Url, this.UserName, this.Password, this.ListName) {
+					IsFolder = isFolder,
+				}) {
 					f.Manager.AddedItem += (s, e) => this.WriteLineMessage(e.Message);
 					f.Manager.Success += (s, e) => this.WriteLineMessage(e.Message);
 					f.Manager.ThrowException += (s, e) => this.WriteLineMessage(e.Message);
@@ -304,12 +354,86 @@ namespace SharepointListMngApp {
 		}
 
 		/// <summary>
+		/// フォルダー生成処理
+		/// </summary>
+		private void CreateFolders() {
+			try {
+				using (var f = new FormCreateFolders(this.Url, this.UserName, this.Password, this.ListName)) {
+					f.Manager.AddedItem += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.Success += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.ThrowException += (s, e) => this.WriteLineMessage(e.Message);
+
+					var ret = f.ShowDialog(this);
+					switch (ret) {
+					case DialogResult.OK:
+						f.Run();
+						break;
+					case DialogResult.Cancel:
+						this.WriteLineMessage("フォルダーの作成をキャンセルしました。");
+						break;
+					}
+				}
+			} catch (SP.ServerException ex) {
+				this.WriteLineMessage(ex.Message);
+				this.WriteException(ex);
+			} catch (SP.PropertyOrFieldNotInitializedException ex) {
+				this.WriteLineMessage(ex.Message);
+				this.WriteException(ex);
+			} catch (ArgumentException ex) {
+				this.WriteLineMessage(ex.Message);
+				this.WriteException(ex);
+			} catch (Exception ex) {
+				this.ShowMessageBox(ex.ToString(), icon: MessageBoxIcon.Error);
+				this.WriteException(ex);
+			}
+		}
+
+		/// <summary>
+		/// リストビュー
+		/// </summary>
+		private void ListView() {
+			try {
+				using (var f = new FormListView(this.Url, this.UserName, this.Password, this.ListName)) {
+					f.Manager.AddedItem += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.Success += (s, e) => this.WriteLineMessage(e.Message);
+					f.Manager.ThrowException += (s, e) => this.WriteLineMessage(e.Message);
+
+					var ret = f.ShowDialog(this);
+					switch (ret) {
+					case DialogResult.OK:
+					case DialogResult.Cancel:
+					default:
+						break;
+					}
+				}
+			} catch (SP.ServerException ex) {
+				this.WriteLineMessage(ex.Message);
+			} catch (SP.PropertyOrFieldNotInitializedException ex) {
+				this.WriteLineMessage(ex.Message);
+			} catch (ArgumentException ex) {
+				this.WriteLineMessage(ex.Message);
+			} catch (Exception ex) {
+				this.ShowMessageBox(ex.ToString(), icon: MessageBoxIcon.Error);
+			}
+		}
+
+		#region メッセージ出力
+
+		/// <summary>
+		/// 例外をログに残します。
+		/// </summary>
+		/// <param name="ex">例外</param>
+		protected void WriteException(Exception ex) {
+			this._log.WriteLog(ex.ToString());
+		}
+
+		/// <summary>
 		/// メッセージ書込
 		/// </summary>
 		/// <param name="message">メッセージ</param>
 		/// <remarks>
 		/// ユーザインターフェイスにメッセージを書き込む</remarks>
-		private void WriteLineMessage(string message) {
+		protected void WriteLineMessage(string message) {
 			try {
 				// 時刻ログ取得
 				var msg = message.GetTimeLog();
@@ -329,6 +453,8 @@ namespace SharepointListMngApp {
 				this._log.WriteLog(ex.ToString());
 			}
 		}
+
+		#endregion
 
 		#endregion
 	}

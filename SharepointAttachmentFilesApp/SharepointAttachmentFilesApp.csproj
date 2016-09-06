@@ -98,6 +98,10 @@
       <Project>{c5dbedf8-f96a-4c85-83f2-71f462efb15f}</Project>
       <Name>SharePointManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SharepointListMngApp\SharepointListMngApp.csproj">
+      <Project>{88d47241-accd-48a7-8b71-b12a15707da2}</Project>
+      <Name>SharepointListMngApp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

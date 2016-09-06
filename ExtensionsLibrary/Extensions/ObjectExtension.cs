@@ -5,6 +5,8 @@ namespace ExtensionsLibrary.Extensions {
 	/// Object を拡張するメソッドを提供します。
 	/// </summary>
 	public static partial class ObjectExtension {
+		#region メソッド
+
 		/// <summary>
 		/// Boolean 型に変換します。
 		/// </summary>
@@ -17,5 +19,6 @@ namespace ExtensionsLibrary.Extensions {
 			return result;
 		}
 
+		#endregion
 	}
 }

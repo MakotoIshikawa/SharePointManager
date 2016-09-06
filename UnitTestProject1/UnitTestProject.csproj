@@ -65,6 +65,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonFeaturesLibrary\CommonFeaturesLibrary.csproj">
+      <Project>{666330c0-b3f9-489a-ab39-4217d18728c7}</Project>
+      <Name>CommonFeaturesLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExtensionsLibrary\ExtensionsLibrary.csproj">
       <Project>{d37920d6-23c2-42a2-a593-32f8687fd320}</Project>
       <Name>ExtensionsLibrary</Name>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -8,7 +9,7 @@ namespace ExtensionsLibrary.Extensions {
 	/// <summary>
 	/// 逆シリアル化を拡張するメソッドを提供します。
 	/// </summary>
-	public static partial class DeserializeExtension {
+	public static partial class Deserializer {
 		#region 逆シリアル化
 
 		/// <summary>
@@ -82,6 +83,41 @@ namespace ExtensionsLibrary.Extensions {
 				throw new ArgumentException("XML データの逆シリアル化に失敗しました。", ex);
 			} finally {
 				@this.Close();
+			}
+		}
+
+		#endregion
+
+		#endregion
+
+		#region XML 文字列逆シリアル化
+
+		#region DeserializeFromXml (オーバーロード +1)
+
+		/// <summary>
+		/// XML 文字列を逆シリアル化します。
+		/// </summary>
+		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
+		/// <param name="this">XML 文字列</param>
+		/// <returns>逆シリアル化されたオブジェクト</returns>
+		public static TResult DeserializeFromXml<TResult>(this string @this) {
+			return @this.DeserializeFromXml<TResult>(Encoding.UTF8);
+		}
+
+		/// <summary>
+		/// XML 文字列を逆シリアル化します。
+		/// </summary>
+		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
+		/// <param name="this">XML 文字列</param>
+		/// <param name="encoding">エンコーディング</param>
+		/// <returns>逆シリアル化されたオブジェクト</returns>
+		public static TResult DeserializeFromXml<TResult>(this string @this, Encoding encoding) {
+			if (@this.IsEmpty()) {
+				return default(TResult);
+			}
+
+			using (var ms = @this.CreateStream(encoding)) {
+				return ms.DeserializeFromXml<TResult>();
 			}
 		}
 

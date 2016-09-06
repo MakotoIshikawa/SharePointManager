@@ -123,6 +123,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxPassword.Location = new System.Drawing.Point(80, 90);
 			this.textBoxPassword.Name = "textBoxPassword";
+			this.textBoxPassword.PasswordChar = '*';
 			this.textBoxPassword.Size = new System.Drawing.Size(662, 19);
 			this.textBoxPassword.TabIndex = 5;
 			// 

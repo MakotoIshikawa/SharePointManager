@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
@@ -185,6 +186,8 @@ namespace ObjectAnalysisProject.Extensions {
 				} else {
 					return @this.Columns.Add(name, type);
 				}
+			} else {
+				Debug.WriteLine("テーブルに既に列が存在します。name = {0}:{1}", name, type);
 			}
 
 			return @this.Columns[name];

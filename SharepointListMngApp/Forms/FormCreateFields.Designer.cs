@@ -1,4 +1,4 @@
-﻿namespace SharepointListMngApp {
+﻿namespace SharepointListMngApp.Forms {
 	partial class FormCreateFields {
 		/// <summary>
 		/// 必要なデザイナー変数です。

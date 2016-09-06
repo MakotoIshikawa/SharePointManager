@@ -77,7 +77,6 @@
     <Compile Include="Interface\ISignInInfo.cs" />
     <Compile Include="Manager\AbstractInfoManager.cs" />
     <Compile Include="Extensions\ClientContextExtension.cs" />
-    <Compile Include="Extensions\FileInfoExtension.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Extensions\TermSetExtension.cs" />
     <Compile Include="Manager\Extensions\SharePointExtension.cs" />

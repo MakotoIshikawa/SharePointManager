@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,11 +9,11 @@ using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 
-namespace SharepointListMngApp {
+namespace SharepointListMngApp.Forms {
 	/// <summary>
-	/// フォーム
+	/// フォルダー追加処理用のフォームです。
 	/// </summary>
-	public partial class FormCreateFields : FormEditText, IListEdit {
+	public partial class FormCreateFolders : FormEditText, IListEdit {
 		#region コンストラクタ
 
 		/// <summary>
@@ -24,46 +23,66 @@ namespace SharepointListMngApp {
 		/// <param name="user">ユーザー</param>
 		/// <param name="password">パスワード</param>
 		/// <param name="listName">リスト名</param>
-		public FormCreateFields(string url, string user, string password, string listName) {
+		public FormCreateFolders(string url, string user, string password, string listName) {
 			this.InitializeComponent();
 
-			this.Url = url;
-			this.UserName = user;
-			this.Password = password;
-			this.ListName = listName;
+			this.ListPath = listName;
+			var listPath = this.ListPath.Split('/', '\\');
+			this.ListName = listPath.FirstOrDefault();
 
-			this.Manager = new ListManager(url, user, password, listName);
-#if false
-			var fs = this.Manager.Fields.ToList();
-			this.gridCsv.DataSource = fs;
-#else
-			var fs = this.Manager.Fields.GetEditFields().Select(f => new {
-				表示名 = f.Title,
-				列名 = f.InternalName,
-				型 = f.FieldTypeKind,
-				説明 = f.TypeShortDescription,
-				読取り専用 = f.ReadOnlyField,
-				削除可能 = f.CanBeDeleted,
-			}).ToList();
-			this.gridCsv.DataSource = fs;
-#endif
+			this.FolderName = listPath.Skip(1).Join("/");
+
+			this.Manager = new ListManager(url, user, password, this.ListName) {
+				FolderName = this.FolderName,
+			};
 		}
 
 		#endregion
 
-		#region イベントハンドラ
+		#region プロパティ
+
+		/// <summary>SharePoint サイト URL</summary>
+		public string Url {
+			get { return this.Manager.Url; }
+			set { this.Manager.Url = value; }
+		}
+
+		/// <summary>ユーザー</summary>
+		public string UserName {
+			get { return this.Manager.UserName; }
+			set { this.Manager.UserName = value; }
+		}
+
+		/// <summary>パスワード</summary>
+		public string Password {
+			get { return this.Manager.Password; }
+			set { this.Manager.Password = value; }
+		}
 
 		/// <summary>
-		/// [作成]ボタンのクリックイベントです。
+		/// リストパス
 		/// </summary>
-		/// <param name="sender">送信元</param>
-		/// <param name="e">イベントデータ</param>
-		private void buttonCreate_Click(object sender, EventArgs e) {
-			if (this.ListName.IsWhiteSpace()) {
-				this.DialogResult = DialogResult.Cancel;
-				return;
-			}
+		public string ListPath {
+			get { return this.textLabelListName.Text.Trim(); }
+			set { this.textLabelListName.Text = value; }
 		}
+
+		/// <summary>
+		/// リスト名
+		/// </summary>
+		public string ListName { get; protected set; }
+
+		/// <summary>
+		/// フォルダ名
+		/// </summary>
+		public string FolderName { get; protected set; }
+
+		/// <summary>管理オブジェクト</summary>
+		public ListManager Manager { get; protected set; }
+
+		#endregion
+
+		#region イベントハンドラ
 
 		/// <summary>
 		/// [参照]ボタンのクリックイベントです。
@@ -93,21 +112,14 @@ namespace SharepointListMngApp {
 
 			try {
 				var file = new FileInfo(tb.Text);
-				if (!file.Exists) {
-					this.buttonCreate.Enabled = false;
-					throw new FileNotFoundException();
-				}
-
-				this.buttonCreate.Enabled = file.Exists;
+				this.buttonRun.Enabled = file.Exists;
 
 				var table = file.LoadDataTable();
 				this.gridCsv.DataSource = table;
-			} catch (FileNotFoundException) {
-				this.gridCsv.DataSource = null;
 			} catch (Exception ex) {
 				this.gridCsv.DataSource = null;
 
-				this.ShowMessageBox(ex.Message, icon: MessageBoxIcon.Warning);
+				MessageBox.Show(ex.Message);
 			}
 		}
 
@@ -141,30 +153,27 @@ namespace SharepointListMngApp {
 			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
-		#endregion
+		#region メニュー
 
-		#region プロパティ
-
-		/// <summary>SharePoint サイト URL</summary>
-		public string Url { get; set; }
-
-		/// <summary>ユーザー</summary>
-		public string UserName { get; set; }
-
-		/// <summary>パスワード</summary>
-		public string Password { get; set; }
-
-		/// <summary>リスト名</summary>
-		public string ListName {
-			get { return this.textLabelListName.Text.Trim(); }
-			set { this.textLabelListName.Text = value.Trim(); }
+		/// <summary>
+		/// [開く(O)]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.buttonReference_Click(sender, e);
 		}
 
-		/// <summary>フィールド情報テーブル</summary>
-		protected DataTable FieldsTable { get { return this.gridCsv.ToDataTable(); } }
+		/// <summary>
+		/// [終了(X)]クリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		private void ExitToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.Close();
+		}
 
-		/// <summary>管理オブジェクト</summary>
-		public ListManager Manager { get; protected set; }
+		#endregion
 
 		#endregion
 
@@ -177,24 +186,16 @@ namespace SharepointListMngApp {
 			try {
 				this.Enabled = false;
 
-				// フィールド拡張
-				this.AddField();
+				var tbl = this.gridCsv.ToDataTable();
+				var ls = tbl.ToDictionaryList();
+
+				// TODO: Title で固定している
+				var titles = ls.Select(kvp => kvp["Title"].ToString());
+
+				this.Manager.AddFolders(titles);
 			} finally {
 				this.Enabled = true;
 			}
-		}
-
-		/// <summary>
-		/// フィールド拡張
-		/// </summary>
-		private void AddField() {
-			var url = this.Url;
-			var username = this.UserName;
-			var password = this.Password;
-			var listName = this.ListName;
-
-			var tbl = this.FieldsTable;
-			this.Manager.CreateFields(tbl);
 		}
 
 		#endregion

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using ExtensionsLibrary.Extensions;
 
-namespace ExtensionsLibrary.Extensions {
+namespace CommonFeaturesLibrary.Extensions {
 	/// <summary>
 	/// FileInfo を拡張するメソッドを提供します。
 	/// </summary>
@@ -55,6 +55,8 @@ namespace ExtensionsLibrary.Extensions {
 
 		#endregion
 
+		#region Clear
+
 		/// <summary>
 		/// ファイルのデータを初期化します。
 		/// </summary>
@@ -64,6 +66,10 @@ namespace ExtensionsLibrary.Extensions {
 			using (var sw = new StreamWriter(fileName, false)) {
 			}
 		}
+
+		#endregion
+
+		#region GetVersionName
 
 		/// <summary>
 		/// バージョン番号を付与したファイル名を取得します。
@@ -80,6 +86,10 @@ namespace ExtensionsLibrary.Extensions {
 			return string.Format(@"{0}\{1} ({2}){3}", @this.DirectoryName, name, version, @this.Extension);
 		}
 
+		#endregion
+
+		#region ChangeExtension
+
 		/// <summary>
 		/// ファイルパスの拡張子を変更します。
 		/// </summary>
@@ -91,6 +101,8 @@ namespace ExtensionsLibrary.Extensions {
 			var changePath = Path.ChangeExtension(path, extension);
 			return changePath;
 		}
+
+		#endregion
 
 		#endregion
 	}

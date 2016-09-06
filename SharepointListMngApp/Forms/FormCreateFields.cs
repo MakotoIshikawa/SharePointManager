@@ -10,7 +10,7 @@ using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 
-namespace SharepointListMngApp {
+namespace SharepointListMngApp.Forms {
 	/// <summary>
 	/// フォーム
 	/// </summary>

@@ -14,7 +14,7 @@ namespace SharePointManager.Manager.Lists {
 	public static class Retrievals {
 		#region プロパティ
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>List の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.List, object>>[] RetrievalsOfList {
 			get {
 				return new Expression<Func<SP.List, object>>[] {
@@ -83,7 +83,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>ContentType の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.ContentType, object>>[] RetrievalsOfContentType {
 			get {
 				return new Expression<Func<SP.ContentType, object>>[] {
@@ -104,6 +104,7 @@ namespace SharePointManager.Manager.Lists {
 					, c => c.NewFormTemplateName
 					, c => c.NewFormUrl
 					, c => c.Parent
+					, c => c.Parent.Parent
 					, c => c.ReadOnly
 					, c => c.SchemaXml
 					, c => c.SchemaXmlWithResourceTokens
@@ -115,7 +116,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>EventReceiverDefinition 用の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.EventReceiverDefinition, object>>[] RetrievalsOfEventReceiverDefinition {
 			get {
 				return new Expression<Func<SP.EventReceiverDefinition, object>>[] {
@@ -131,7 +132,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>Field 用の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.Field, object>>[] RetrievalsOfField {
 			get {
 				return new Expression<Func<SP.Field, object>>[] {
@@ -168,7 +169,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>Form 用の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.Form, object>>[] RetrievalsOfForm {
 			get {
 				return new Expression<Func<SP.Form, object>>[] {
@@ -179,7 +180,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>UserCustomAction の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.UserCustomAction, object>>[] RetrievalsOfUserCustomAction {
 			get {
 				return new Expression<Func<SP.UserCustomAction, object>>[] {
@@ -204,7 +205,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>View の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.View, object>>[] RetrievalsOfView {
 			get {
 				return new Expression<Func<SP.View, object>>[] {
@@ -250,7 +251,7 @@ namespace SharePointManager.Manager.Lists {
 			}
 		}
 
-		/// <summary>参照プロパティ配列</summary>
+		/// <summary>WorkflowAssociation の参照プロパティ配列を取得します。</summary>
 		public static Expression<Func<SP.Workflow.WorkflowAssociation, object>>[] RetrievalsOfWorkflow {
 			get {
 				return new Expression<Func<SP.Workflow.WorkflowAssociation, object>>[] {

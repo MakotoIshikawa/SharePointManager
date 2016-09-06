@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,10 +28,14 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="username">ユーザ名</param>
 		/// <param name="password">パスワード</param>
 		/// <param name="listName">リスト名</param>
+		/// <param name="folderName">フォルダ名</param>
 		/// <param name="load">プロパティ情報を読み込むかどうかを設定します。</param>
-		public ListManager(string url, string username, string password, string listName, bool load = true)
+		public ListManager(string url, string username, string password, string listName, string folderName = null, bool load = true)
 			: base(url, username, password) {
 			this.ListName = listName;
+			this.FolderName = folderName;
+			this.IsFolder = false;
+			this.ListID = this.GetGuID();
 
 			if (load) {
 				this.Reload();
@@ -59,6 +64,36 @@ namespace SharePointManager.Manager.Lists {
 				return this.GetItemsTable(items);
 			}
 		}
+
+		/// <summary>
+		/// アイテムのコレクションを取得するプロパティです。
+		/// </summary>
+		public IEnumerable<ListItem> AllItems {
+			get {
+				var items = this.GetAllItems();
+				return items;
+			}
+		}
+
+		/// <summary>
+		/// リストのパスを取得します。
+		/// </summary>
+		public string ListPath { get { return WebCombine(this.Url, "Lists", this.ListName); } }
+
+		/// <summary>
+		/// リストのグローバル一意識別子 (GUID) を取得します。
+		/// </summary>
+		public Guid ListID { get; protected set; }
+
+		/// <summary>
+		/// フォルダ名
+		/// </summary>
+		public string FolderName { get; set; }
+
+		/// <summary>
+		/// 追加するアイテムがフォルダかどうかを取得、設定します。
+		/// </summary>
+		public bool IsFolder { get; set; }
 
 		#endregion
 
@@ -149,16 +184,40 @@ namespace SharePointManager.Manager.Lists {
 
 			this.Fields = this.GetFields().ToList();
 
-			var title = this.ListName;
 			var cnt = this.Extract(cn => {
-				var list = cn.Web.Lists.GetByTitle(title);
+				var list = cn.Web.Lists.GetById(this.ListID);
+#if false
+				cn.Load(list, Retrievals.RetrievalsOfList);
+#else
 				cn.Load(list, l => l.ItemCount);
+#endif
 				cn.ExecuteQuery();
 
 				return list.ItemCount;
 			});
-
+#if false	// コンテンツタイプ確認
+			var types = this.Extract(cn => {
+				var list = cn.Web.Lists.GetById(this.ListID);
+				cn.Load(list, l => l.ContentTypes.Include(Retrievals.RetrievalsOfContentType));
+				cn.ExecuteQuery();
+				return list.ContentTypes;
+			}).ToList().ToList();
+#endif
 			this.ItemCount = cnt;
+		}
+
+		/// <summary>
+		/// リストからグローバル一意識別子 (GUID) を取得します。
+		/// </summary>
+		/// <returns>グローバル一意識別子を返します。</returns>
+		protected Guid GetGuID() {
+			return this.Extract(cn => {
+				var list = cn.Web.Lists.GetByTitle(this.ListName);
+				cn.Load(list, l => l.Id);
+				cn.ExecuteQuery();
+
+				return list.Id;
+			});
 		}
 
 		#endregion
@@ -166,21 +225,11 @@ namespace SharePointManager.Manager.Lists {
 		#region リスト更新
 
 		/// <summary>
-		/// 指定したタイトルのリストの情報を更新します。
+		/// リストの情報を更新します。
 		/// </summary>
-		/// <param name="title">タイトル</param>
 		/// <param name="update">更新処理</param>
-		protected void UpdateByTitle(string title, Action<SP.List> update) {
-			this.UpdateList(lists => lists.GetByTitle(title), update);
-		}
-
-		/// <summary>
-		/// 指定したIDのリストの情報を更新します。
-		/// </summary>
-		/// <param name="id">グローバル一意識別子 (GUID)</param>
-		/// <param name="update">更新処理</param>
-		protected void UpdateById(Guid id, Action<SP.List> update) {
-			this.UpdateList(lists => lists.GetById(id), update);
+		public void Update(Action<SP.List> update) {
+			this.UpdateList(lists => lists.GetById(this.ListID), update);
 		}
 
 		/// <summary>
@@ -188,7 +237,7 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <param name="getList">リストを取得するメソッド</param>
 		/// <param name="update">リストを更新するメソッド</param>
-		private void UpdateList(Func<SP.ListCollection, SP.List> getList, Action<SP.List> update) {
+		protected void UpdateList(Func<SP.ListCollection, SP.List> getList, Action<SP.List> update) {
 			if (getList == null || update == null) {
 				return;
 			}
@@ -364,7 +413,7 @@ namespace SharePointManager.Manager.Lists {
 			this.AddField<TField>(x => {
 				x.DisplayName = name;
 				x.Type = type.ToString();
-				x.Description = string.Empty;//TODO: 説明設定処理
+				x.Description = string.Empty;// TODO: 説明設定処理
 			}, f => {
 				f.Title = disp;
 
@@ -469,67 +518,63 @@ namespace SharePointManager.Manager.Lists {
 		#region 追加
 
 		/// <summary>
-		/// テーブルデータを指定してリストアイテムを追加します。
+		/// フォルダ名を指定してリストにフォルダを追加します。
 		/// </summary>
-		/// <param name="tbl">データテーブル</param>
-		/// <param name="convert">変換メソッド</param>
-		public void AddItems(System.Data.DataTable tbl, Action<Dictionary<string, object>> convert = null) {
-			var ls = tbl.ToDictionaryList();
+		/// <param name="title">フォルダの名前</param>
+		/// <param name="folderName">親フォルダ名</param>
+		/// <returns>this を返します。</returns>
+		public ListManager AddFolder(string title, string folderName = null) {
+			var folderPath = folderName.IsEmpty() ? null : WebCombine(this.ListPath, folderName);
+			this.Update(l => l.AddItem(title, true, folderPath, i => {
+				i["Title"] = title;
+			}));
 
-			var cnt = 0;
-			ls.ForEach(r => {
-				try {
-					if (convert != null) {
-						convert(r);
-					}
+			var sb = new StringBuilder();
+			sb.Append("[").Append(this.ListName);
+			if (!this.FolderName.IsEmpty())
+				sb.AppendFormat("/{0}", this.FolderName);
+			sb.Append("]");
+			sb.AppendFormat(" にフォルダを追加しました。 [{0}] ", title);
+			this.OnAddedItem(sb.ToString(), new Dictionary<string, object> { { "Title", title }, });
 
-					this.AddListItem(r);
-
-					cnt++;
-				} catch (Exception ex) {
-					this.OnThrowException(ex);
-				}
-			});
-
-			{
-				var sb = new StringBuilder();
-				if (cnt == 0) {
-					sb.Append("アイテムを追加しませんでした。");
-				} else {
-					sb.AppendFormat("{0}件のアイテムを追加しました。", cnt);
-				}
-
-				this.OnSuccess(sb.ToString());
-			}
+			return this;
 		}
 
 		/// <summary>
 		/// リストにアイテムを追加します。
 		/// </summary>
 		/// <param name="row">行データ</param>
-		/// <param name="action">アイテムを加工するメソッド</param>
-		/// <returns>追加したアイテムのID番号を返します。</returns>
-		public ListManager AddListItem(Dictionary<string, object> row, Action<ListItem> action = null) {
+		/// <param name="folderName">
+		/// <para>アイテムを追加するフォルダ名</para>
+		/// <para>設定しない場合はルートにアイテムが追加されます。</para>
+		/// </param>
+		/// <param name="isFolder">追加するアイテムがフォルダかどうか</param>
+		/// <returns>this を返します。</returns>
+		public ListManager AddListItem(Dictionary<string, object> row, string folderName = null, bool isFolder = false) {
 			var dic = this.ConvertRowData(row);
 
-			var title = this.ListName;
-			this.UpdateByTitle(title, l => {
-				var item = l.AddRow(dic);
-
-				if (action != null) {
-					action(item);
-				}
-			});
+			var key = "Title";
+			var title = dic.ContainsKey(key) ? dic[key].ToString() : null;
+			var folderPath = folderName.IsEmpty() ? null : WebCombine(this.ListPath, folderName);
+			this.Update(l => l.AddItem(title, isFolder, folderPath, i => {
+				dic.ForEach(kvp => {
+					i[kvp.Key] = kvp.Value;
+				});
+			}));
 
 			var sb = new StringBuilder();
-			sb.AppendFormat("[{0}]アイテムを追加しました。", this.ListName);
+			sb.Append("[").Append(this.ListName);
+			if (!this.FolderName.IsEmpty())
+				sb.AppendFormat("/{0}", this.FolderName);
+			sb.Append("]");
+			sb.AppendFormat(" にアイテムを追加しました。 [{0}] ", title);
 			this.OnAddedItem(sb.ToString(), dic);
 
 			return this;
 		}
 
 		/// <summary>
-		/// 行データを変換して取得します。
+		/// フィールド情報を元に Key 値を内部名に変換します。
 		/// </summary>
 		/// <param name="row">行データ</param>
 		/// <returns>変換した行データを返します。</returns>
@@ -539,6 +584,65 @@ namespace SharePointManager.Manager.Lists {
 			}
 
 			return row.ConvertRowData(this.Fields);
+		}
+
+		/// <summary>
+		/// 指定されたデータテーブルの情報を件数分リストに追加します。
+		/// </summary>
+		/// <param name="names">名前のコレクション</param>
+		public void AddFolders(IEnumerable<string> names) {
+			var cnt = 0;
+			names.ForEach(n => {
+				try {
+					this.AddFolder(n, this.FolderName);
+
+					cnt++;
+				} catch (Exception ex) {
+					this.OnThrowException(ex);
+				}
+			});
+
+			var sb = new StringBuilder();
+			if (cnt == 0) {
+				sb.Append("フォルダを追加しませんでした。");
+			} else {
+				sb.AppendFormat("{0}件のフォルダを追加しました。", cnt);
+			}
+
+			this.OnSuccess(sb.ToString());
+		}
+
+		/// <summary>
+		/// 指定されたデータテーブルの情報を件数分リストに追加します。
+		/// </summary>
+		/// <param name="tbl">データテーブル</param>
+		/// <param name="convert">変換メソッド</param>
+		public void AddItems(DataTable tbl, Action<Dictionary<string, object>> convert = null) {
+			var ls = tbl.ToDictionaryList();
+
+			var cnt = 0;
+			ls.ForEach(r => {
+				try {
+					if (convert != null) {
+						convert(r);
+					}
+
+					this.AddListItem(r, this.FolderName, this.IsFolder);
+
+					cnt++;
+				} catch (Exception ex) {
+					this.OnThrowException(ex);
+				}
+			});
+
+			var sb = new StringBuilder();
+			if (cnt == 0) {
+				sb.Append("アイテムを追加しませんでした。");
+			} else {
+				sb.AppendFormat("{0}件のアイテムを追加しました。", cnt);
+			}
+
+			this.OnSuccess(sb.ToString());
 		}
 
 		#endregion
@@ -556,8 +660,7 @@ namespace SharePointManager.Manager.Lists {
 				return;
 			}
 
-			var title = this.ListName;
-			this.UpdateByTitle(title, l => {
+			this.Update(l => {
 				var item = l.GetItemById(id);
 				func(item);
 
@@ -574,8 +677,7 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <param name="id">ID</param>
 		public void DeleteListItem(int id) {
-			var title = this.ListName;
-			this.UpdateByTitle(title, l => {
+			this.Update(l => {
 				var item = l.GetItemById(id);
 				item.DeleteObject();
 			});
@@ -658,7 +760,8 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>取得したリストアイテムの値コレクションを返します。</returns>
 		public IEnumerable<Dictionary<string, object>> GetItemsValues(Action<XmlView> setQueryParameters = null, int limit = 0, params string[] viewFields) {
-			return this.GetItemsValues(ListManager.CreateQuery(setQueryParameters, limit, viewFields), viewFields);
+			var caml = ListManager.CreateQuery(setQueryParameters, limit, viewFields);
+			return this.GetItemsValues(caml, viewFields);
 		}
 
 		/// <summary>
@@ -707,7 +810,9 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="viewFields">取得するフィールド名</param>
 		/// <returns>作成した CamlQuery を返します。</returns>
 		public static CamlQuery CreateQuery(Action<XmlView> setQueryParameters, int limit, IEnumerable<string> viewFields) {
-			var xml = new XmlView(limit, viewFields);
+			var xml = new XmlView(limit, viewFields) {
+				RecursiveAll = true,
+			};
 
 			if (setQueryParameters != null) {
 				setQueryParameters(xml);
@@ -760,10 +865,18 @@ namespace SharePointManager.Manager.Lists {
 		/// </summary>
 		/// <param name="retrievals">検索の式木コレクション</param>
 		/// <returns>アイテムのコレクションを返します。</returns>
-		protected IEnumerable<ListItem> GetAllItems(params Expression<Func<ListItem, object>>[] retrievals) {
+		public IEnumerable<ListItem> GetAllItems(params Expression<Func<ListItem, object>>[] retrievals) {
 			var listName = this.ListName;
 			return this.Load(cn => {
 				var items = cn.Web.Lists.GetListAllItems(listName);
+				return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
+			});
+		}
+
+		public IEnumerable<ListItem> GetAllItems(int limit, string[] viewFields, params Expression<Func<ListItem, object>>[] retrievals) {
+			var listName = this.ListName;
+			return this.Load(cn => {
+				var items = cn.Web.Lists.GetListAllItems(listName, limit, viewFields);
 				return (retrievals != null && retrievals.Any()) ? items.Include(retrievals) : items;
 			});
 		}
@@ -803,7 +916,12 @@ namespace SharePointManager.Manager.Lists {
 			fields.ForEach(f => {
 				tb.AddColumn(f.Title);
 			});
-
+#if true
+			// TODO: テーブル列作成時に列数が合わないバグ
+			if (fields.Count != tb.Columns.Count) {
+				throw new ArgumentException("列構成に異常があります。同じ名前の列が存在している可能性があります。");
+			}
+#endif
 			var rows = items.Select(row =>
 				fields.Select(f =>
 					row.ContainsKey(f.InternalName) ? row[f.InternalName] : null
@@ -812,6 +930,16 @@ namespace SharePointManager.Manager.Lists {
 
 			tb.LoadData(rows);
 			return tb;
+		}
+
+		/// <summary>
+		/// 文字列の配列をURLとして結合します。
+		/// </summary>
+		/// <param name="paths">文字列の配列</param>
+		/// <returns></returns>
+		private static string WebCombine(params string[] paths) {
+			var path = Path.Combine(paths);
+			return path.Replace(@"\", "/");
 		}
 
 		#endregion

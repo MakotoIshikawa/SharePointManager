@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
-using SharePointManager.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
+using SP = Microsoft.SharePoint.Client;
 
-namespace SharepointListMngApp {
+namespace SharepointListMngApp.Forms {
 	/// <summary>
-	/// フォーム
+	/// インポート処理用のフォームです。
 	/// </summary>
-	public partial class FormListMng : FormEditText, IListEdit {
+	public partial class FormImport : FormEditText, IListEdit {
 		#region コンストラクタ
 
 		/// <summary>
@@ -26,14 +26,28 @@ namespace SharepointListMngApp {
 		/// <param name="user">ユーザー</param>
 		/// <param name="password">パスワード</param>
 		/// <param name="listName">リスト名</param>
-		public FormListMng(string url, string user, string password, string listName) {
+		public FormImport(string url, string user, string password, string listName) {
 			this.InitializeComponent();
 
-			this.ListName = listName;
-			this.Manager = new ListManager(url, user, password, listName);
+			this.ListPath = listName;
+			var listPath = this.ListPath.Split('/', '\\');
+			this.ListName = listPath.FirstOrDefault();
 
-			var tb = this.Manager.ItemsTable;
+			this.FolderName = listPath.Skip(1).Join("/");
+
+			this.Manager = new ListManager(url, user, password, this.ListName) {
+				FolderName = this.FolderName,
+			};
+#if false
+			// TODO: フォルダ構成表示
+			var tb = this.Manager.AllItems.Where(i => i.FileSystemObjectType == SP.FileSystemObjectType.Folder)
+				.Select(i => new {
+					タイトル = i["Title"],
+					//名前 = i["FileLeafRef"],
+					//親アイテムID = i["ParentItemID"],
+				}).ToDataTable();
 			this.gridCsv.DataSource = tb;
+#endif
 		}
 
 		#endregion
@@ -58,14 +72,34 @@ namespace SharepointListMngApp {
 			set { this.Manager.Password = value; }
 		}
 
-		/// <summary>リスト名</summary>
-		public string ListName {
+		/// <summary>
+		/// リストパス
+		/// </summary>
+		public string ListPath {
 			get { return this.textLabelListName.Text.Trim(); }
 			set { this.textLabelListName.Text = value; }
 		}
 
+		/// <summary>
+		/// リスト名
+		/// </summary>
+		public string ListName { get; protected set; }
+
+		/// <summary>
+		/// フォルダ名
+		/// </summary>
+		public string FolderName { get; protected set; }
+
 		/// <summary>管理オブジェクト</summary>
 		public ListManager Manager { get; protected set; }
+
+		/// <summary>
+		/// 追加するアイテムがフォルダかどうかを取得、設定します。
+		/// </summary>
+		public bool IsFolder {
+			get { return this.Manager.IsFolder; }
+			set { this.Manager.IsFolder = value; }
+		}
 
 		#endregion
 
@@ -100,9 +134,17 @@ namespace SharepointListMngApp {
 			try {
 				var file = new FileInfo(tb.Text);
 				this.buttonRun.Enabled = file.Exists;
-
+#if false
+				// TODO: 取得列設定方法を検討、暫定処理として設定ファイルから取得
 				var sl = Properties.Settings.Default.SelectCol;
-				var table = file.LoadDataTable(sl.IsEmpty() ? string.Empty : sl);
+				if (!sl.IsEmpty()) {
+					var tbl = file.LoadDataTable(sl.Split(','));
+					this.gridCsv.DataSource = tbl;
+
+					return;
+				}
+#endif
+				var table = file.LoadDataTable();
 				this.gridCsv.DataSource = table;
 			} catch (Exception ex) {
 				this.gridCsv.DataSource = null;
@@ -167,6 +209,8 @@ namespace SharepointListMngApp {
 
 		#region メソッド
 
+#if true
+
 		/// <summary>
 		/// 実行
 		/// </summary>
@@ -175,30 +219,42 @@ namespace SharepointListMngApp {
 				this.Enabled = false;
 
 				var tbl = this.gridCsv.ToDataTable();
-				this.Manager.AddItems(tbl, CnvComments);
+				this.Manager.AddItems(tbl);
 			} finally {
 				this.Enabled = true;
 			}
 		}
 
-		/// <summary>
-		/// [室町ビル]コメント変換処理
-		/// </summary>
-		/// <param name="row">行データ</param>
-		private static void CnvComments(Dictionary<string, object> row) {
-			var key = "コメント";
-			if (!row.ContainsKey(key)) {
-				return;
-			}
+#else	// [室町ビル]用の処理
 
+		/// <summary>
+		/// 実行
+		/// </summary>
+		public void Run() {
 			try {
-				var content = row[key].ToString();
-				var log = content.ConvertXmlString<XmlComments>(c => c.ToString());
-				row[key] = log;
-			} catch {
+				this.Enabled = false;
+
+				var tbl = this.gridCsv.ToDataTable();
+
+				this.Manager.AddItems(tbl, row => {// [室町ビル]コメント変換処理
+					var key = "コメント";
+					if (!row.ContainsKey(key)) {
+						return;
+					}
+
+					try {
+						var content = row[key].ToString();
+						var log = content.ConvertXmlString<XmlComments>(c => c.ToString());
+						row[key] = log;
+					} catch {
+					}
+				});
+			} finally {
+				this.Enabled = true;
 			}
 		}
 
+#endif
 		#endregion
 	}
 }

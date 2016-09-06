@@ -51,35 +51,38 @@ namespace SharePointManager.Manager.Extensions {
 
 		#endregion
 
+		#region アイテム追加
+
 		/// <summary>
-		/// 行データを追加します。
+		/// リストにアイテムを追加します。
 		/// </summary>
 		/// <param name="this">SharePoint リスト</param>
-		/// <param name="row"></param>
-		/// <returns></returns>
-		public static ListItem AddRow(this SP.List @this, Dictionary<string, object> row) {
-			var item = @this.AddItem(new ListItemCreationInformation());
-			foreach (var i in row) {
-#if true
-				item[i.Key] = i.Value;
-#else	// TODO: URL 判定処理を実装する。
-				if (i.Value.GetType() == typeof(Uri)) {
-					var u = i.Value as Uri;
-					var str = i.Value.ToString();
-					var url = new FieldUrlValue() {
-						Url = u.AbsolutePath,
-						Description = u.OriginalString,
-					};
-					item[i.Key] = url;
-				} else {
-					item[i.Key] = i.Value;
-				}
-#endif
-			}
-			item.Update();
+		/// <param name="leafName">新しいリストアイテムの名前</param>
+		/// <param name="isFolder">追加するアイテムがフォルダかどうか</param>
+		/// <param name="folderPath">
+		/// <para>追加先のフォルダのパス。</para>
+		/// <para>絶対パス、又は相対パスを指定します。</para>
+		/// <para>指定しない場合はリスト直下にアイテムが追加されます。</para>
+		/// </param>
+		/// <param name="processItem">追加したアイテムを加工するメソッド</param>
+		/// <returns>リストに追加したアイテムを返します。</returns>
+		public static void AddItem(this SP.List @this, string leafName, bool isFolder, string folderPath, Action<ListItem> processItem = null) {
+			var item = @this.AddItem(new ListItemCreationInformation {
+				FolderUrl = folderPath,
+				LeafName = leafName,
+				UnderlyingObjectType = isFolder
+					? FileSystemObjectType.Folder
+					: FileSystemObjectType.File,
+			});
 
-			return item;
+			if (processItem != null) {
+				processItem(item);
+			}
+
+			item.Update();
 		}
+
+		#endregion
 
 		/// <summary>
 		/// FileStream を指定して、
@@ -158,11 +161,13 @@ namespace SharePointManager.Manager.Extensions {
 			var cells = row.Where(c => !(c.Value is System.DBNull));
 			var query = (
 				from c in cells
-				let name = fields.GetInternalName(c.Key)
+				let field = fields.ExtractFieldByDispName(c.Key)
+				let name = field.GetString(f => f.InternalName)
+				let val = field.ConvertValue(c.Value)
 				where !name.IsEmpty()
 				select new {
 					DisplayName = c.Key,
-					c.Value,
+					Value = val,
 					InternalName = name,
 				}
 			).Distinct(c => c.InternalName).ToList();
@@ -171,16 +176,37 @@ namespace SharePointManager.Manager.Extensions {
 		}
 
 		/// <summary>
-		/// 列フィールド情報から内部名を取得します。
+		/// フィールド情報を元に値を変換します。
 		/// </summary>
 		/// <param name="fields">フィールド情報</param>
-		/// <param name="name">列名</param>
-		/// <returns>取得した内部名を返します。</returns>
-		public static string GetInternalName(this List<Field> fields, string name) {
-			var fi = fields.Select(f => new { f.Title, f.InternalName, })
-				.FirstOrDefault(f => f.Title == name || f.InternalName == name);
+		/// <param name="value">値</param>
+		/// <returns>変換した値を返します。</returns>
+		public static object ConvertValue(this Field fields, object value) {
+			// TODO: URL 判定処理を実装する。
+#if true
+			return value;
+#else
+			if (value.GetType() == typeof(Uri)) {
+				var u = value as Uri;
+				var url = new FieldUrlValue() {
+					Url = u.AbsolutePath,
+					Description = u.OriginalString,
+				};
+				return url;
+			} else {
+				return value.ToString();
+			}
+#endif
+		}
 
-			return fi != null ? fi.InternalName : String.Empty;
+		/// <summary>
+		/// 表示名を指定してフィールドの列挙からフィールドを取得します。
+		/// </summary>
+		/// <param name="fields">フィールド情報</param>
+		/// <param name="dispName">列の表示名</param>
+		/// <returns>該当するフィールド情報を返します。</returns>
+		public static Field ExtractFieldByDispName(this IEnumerable<Field> fields, string dispName) {
+			return fields.FirstOrDefault(f => f.Title == dispName || f.InternalName == dispName);
 		}
 
 		#region リストアイテム取得
@@ -269,7 +295,8 @@ namespace SharePointManager.Manager.Extensions {
 		/// <returns>編集可能なフィールドのみを返します。</returns>
 		public static List<SP.Field> GetEditFields(this List<SP.Field> @this) {
 			return @this.Where(f =>
-				f.CanBeDeleted
+				!f.ReadOnlyField
+				|| f.CanBeDeleted
 				|| f.InternalName == "Title"	// タイトル
 				|| f.InternalName == "Modified"	// 更新日時
 				|| f.InternalName == "Created"	// 登録日時

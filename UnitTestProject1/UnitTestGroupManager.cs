@@ -11,9 +11,10 @@ namespace UnitTestProject {
 		private string username = @"nlcadmin@NissayLeasing.onmicrosoft.com";
 		private string password = @"!QAZ2wsx";
 #else
-		private string url = @"https://kariverification03.sharepoint.com";
-		private string username = @"root@KariVerification03.onmicrosoft.com";
-		private string password = @"!QAZ2wsx";
+		private const int _ver = 12;
+		private string _rootUrl = String.Format(@"https://kariverification{0:00}.sharepoint.com", _ver);
+		private string _user = String.Format(@"root@KariVerification{0:00}.onmicrosoft.com", _ver);
+		private string _password = @"!QAZ2wsx";
 #endif
 
 		[TestMethod]
@@ -21,7 +22,7 @@ namespace UnitTestProject {
 		[TestCategory("正常系")]
 		[Priority(1)]
 		public void サイトグループ情報取得() {
-			var m = new GroupManager(url, username, password);
+			var m = new GroupManager(_rootUrl, _user, _password);
 
 			Assert.IsTrue(m.SiteGroups.Any());
 		}

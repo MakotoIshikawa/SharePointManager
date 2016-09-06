@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
-using SharePointManager.Extensions;
 using SharePointManager.Manager;
 
 namespace SharePointGroupMngApp {

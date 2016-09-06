@@ -40,6 +40,10 @@ namespace SharePointManager.Manager.Lists.Xml {
 		public List<FieldRef> Fields { get; set; }
 
 		/// <summary></summary>
+		[XmlAttribute]
+		public string Scope { get; set; }
+
+		/// <summary></summary>
 		public ViewQuery Query { get; set; }
 
 		/// <summary></summary>
@@ -48,6 +52,13 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <summary></summary>
 		[XmlIgnore]
 		public bool RowLimitSpecified { get { return this.RowLimit > 0; } }
+
+		/// <summary>全てのフォルダを再帰的に検索するかどうかを設定、取得します。</summary>
+		[XmlIgnore]
+		public bool RecursiveAll {
+			get { return (this.Scope == "RecursiveAll"); }
+			set { this.Scope = value ? "RecursiveAll" : null; }
+		}
 
 		#region メソッド
 

@@ -1,36 +1,29 @@
 ﻿using System;
+using System.Linq;
 using System.Data;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Odbc;
 using System.Data.OleDb;
 using System.IO;
 using System.Text;
 using ExtensionsLibrary.Extensions;
-using SharePointManager.Properties;
 
-namespace SharePointManager.Extensions {
+namespace CommonFeaturesLibrary {
 	/// <summary>
-	/// FileInfo を拡張するメソッドを提供します。
+	/// ファイルにアクセスするメソッドを提供します。
 	/// </summary>
-	public static partial class FileInfoExtension {
-		/// <summary>
-		/// ファイルのデータを読込みます。
-		/// </summary>
-		/// <param name="this">FileInfo</param>
-		/// <param name="select">SELECT句を表す文字列</param>
-		/// <returns>ファイルのデータを格納した DataTable を返します。</returns>
-		public static DataTable LoadDataTable(this FileInfo @this, string select = null) {
-			return @this.LoadCsvData(select);
-		}
+	public static partial class FileProvider {
+		#region 読込
 
 		/// <summary>
 		/// CSVファイルのデータを読込みます。
 		/// </summary>
 		/// <param name="this">FileInfo</param>
-		/// <param name="select">SELECT句を表す文字列</param>
+		/// <param name="cols">SELECT する列の配列</param>
 		/// <returns>CSVファイルのデータを格納した DataTable を返します。</returns>
 		/// <exception cref="System.IO.FileNotFoundException">ファイルが存在しません。</exception>
-		private static DataTable LoadCsvData(this FileInfo @this, string select = null) {
+		public static DataTable LoadDataTable(this FileInfo @this, params string[] cols) {
 			if (!@this.Exists) {
 				throw new FileNotFoundException("ファイルが存在しません。");
 			}
@@ -44,8 +37,8 @@ namespace SharePointManager.Extensions {
 					@this.Extension.HasString("md")
 					|| @this.Extension.HasString("accd")
 					|| @this.Extension.HasString("xls")
-				) ? @this.GetSelectCommandTextOfExcel(select, string.Empty)
-				: @this.GetSelectCommandTextOfCSV(select);
+				) ? @this.GetSelectCommandTextOfExcel(string.Empty, cols)
+				: @this.GetSelectCommandTextOfCSV(cols);
 
 				using (var adapter = new OleDbDataAdapter(cmd, cn)) {
 					adapter.Fill(tbl);
@@ -70,46 +63,21 @@ namespace SharePointManager.Extensions {
 		}
 
 		/// <summary>
-		/// CSVファイルのデータを変更する
+		/// 文字列の列挙から Select 句を生成します。
 		/// </summary>
-		/// <param name="this">FileInfo</param>
-		/// <param name="modify">データを変更するメソッド</param>
-		/// <exception cref="System.IO.FileNotFoundException">ファイルが存在しません。</exception>
-		/// <exception cref="System.ArgumentNullException">データを変更するメソッドが指定されていません。</exception>
-		public static void SaveCsvData(this FileInfo @this, Action<DataTable> modify) {
-			if (!@this.Exists) {
-				throw new FileNotFoundException("ファイルが存在しません。");
-			}
-
-			if (modify == null) {
-				throw new ArgumentNullException("データを変更するメソッドが指定されていません。");
-			}
-
-			// 接続文字列取得
-			var connectionString = @this.GetConnectionStringByOleDb();
-
-			var tbl = new DataTable();
-			using (var cn = new OleDbConnection(connectionString)) {
-				cn.Open();
-
-				var cmd = (
-					@this.Extension.HasString("md")
-					|| @this.Extension.HasString("accd")
-					|| @this.Extension.HasString("xls")
-				) ? @this.GetSelectCommandTextOfExcel(null, string.Empty)
-				: @this.GetSelectCommandTextOfCSV(null);
-
-				using (var ad = new OleDbDataAdapter(cmd, cn)) {
-					ad.Fill(tbl);
-
-					modify(tbl);
-
-					ad.UpdateCommand = cn.CreateCommand();
-					ad.UpdateCommand.CommandText = @"";
-					ad.Update(tbl);
-				}
-			}
+		/// <param name="cols">列名の列挙</param>
+		/// <returns>生成した Select 句の文字列を返します。</returns>
+		private static string CreateSelectPhrase(IEnumerable<string> cols) {
+			return (cols == null || !cols.Any())
+				? "*"
+				: cols.Select(c => string.Format("[{0}]", c)).Join(", ");
 		}
+
+		#endregion
+
+		#region 接続文字列取得
+
+		#region ODBC
 
 		/// <summary>
 		/// CSVファイル形式の接続文字列を取得します。(ODBC)
@@ -123,12 +91,9 @@ namespace SharePointManager.Extensions {
 			return connectionString;
 		}
 
-		#region OLE DB
+		#endregion
 
-		private static string GetConnectionStringByOleDb(this FileInfo @this) {
-			var connectionString = @this.GetConnectionStringOfCsvByOleDb();
-			return connectionString;
-		}
+		#region OLE DB
 
 		/// <summary>
 		/// CSVファイル形式の接続文字列を取得します。(OLE DB)
@@ -137,7 +102,7 @@ namespace SharePointManager.Extensions {
 		/// <param name="hdr">かどうかを表す値</param>
 		/// <param name="imex">imex</param>
 		/// <returns>CSVファイル形式の接続文字列を返します。</returns>
-		private static string GetConnectionStringOfCsvByOleDb(this FileInfo @this, bool hdr = true, EImex? imex = null) {
+		private static string GetConnectionStringByOleDb(this FileInfo @this, bool hdr = true, EImex? imex = null) {
 			var cmd = new DbConnectionStringBuilder();
 			//cmd["Provider"] = "Microsoft.Jet.OLEDB.4.0";
 			cmd["Provider"] = "Microsoft.ACE.OLEDB.12.0";
@@ -180,14 +145,20 @@ namespace SharePointManager.Extensions {
 
 		#endregion
 
+		#endregion
+
+		#region 抽出条件文取得
+
 		/// <summary>
 		/// CSVファイル形式のSQL SELECT ステートメント文字列を取得します。
 		/// </summary>
 		/// <param name="this">FileInfo</param>
+		/// <param name="cols">SELECT する列の配列</param>
 		/// <returns>SQL SELECT ステートメント文字列を返します。</returns>
-		private static string GetSelectCommandTextOfCSV(this FileInfo @this, string select) {
+		private static string GetSelectCommandTextOfCSV(this FileInfo @this, params string[] cols) {
+			var select = CreateSelectPhrase(cols);
 			var sb = new StringBuilder();
-			sb.AppendFormat("SELECT {1} FROM [{0}]", @this.Name, select.IsEmpty() ? "*" : select);
+			sb.AppendFormat("SELECT {1} FROM [{0}]", @this.Name, select);
 			return sb.ToString();
 		}
 
@@ -196,23 +167,27 @@ namespace SharePointManager.Extensions {
 		/// </summary>
 		/// <param name="this">FileInfo</param>
 		/// <param name="tableName">テーブル名</param>
+		/// <param name="cols">SELECT する列の配列</param>
 		/// <returns>SQL SELECT ステートメント文字列を返します。</returns>
 		/// <remarks>
 		/// <para>指定したテーブル名のデータを取得します。</para>
 		/// <para>テーブル名の指定がない場合は、ファイル名と同名のシートのデータを取得します。</para>
 		/// </remarks>
-		private static string GetSelectCommandTextOfExcel(this FileInfo @this, string select, string tableName) {
+		private static string GetSelectCommandTextOfExcel(this FileInfo @this, string tableName, params string[] cols) {
 			var name = tableName.IsEmpty() ? @this.Name.CommentOut(@this.Extension) : tableName;
 
+			var select = CreateSelectPhrase(cols);
 			var sb = new StringBuilder();
 			if (@this.Extension.HasString("xls")) {
-				sb.AppendFormat("SELECT {1} FROM [{0}$]", name, select.IsEmpty() ? "*" : select);
+				sb.AppendFormat("SELECT {1} FROM [{0}$]", name, select);
 			} else {
-				sb.AppendFormat("SELECT {1} FROM [{0}]", name, select.IsEmpty() ? "*" : select);
+				sb.AppendFormat("SELECT {1} FROM [{0}]", name, select);
 			}
 
 			return sb.ToString();
 		}
+
+		#endregion
 	}
 
 	/// <summary>

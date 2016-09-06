@@ -1,5 +1,5 @@
-﻿namespace SharepointListMngApp {
-	partial class FormMain {
+﻿namespace SharepointListMngApp.Forms {
+	partial class FormListView {
 		/// <summary>
 		/// 必要なデザイナー変数です。
 		/// </summary>
@@ -23,20 +23,12 @@
 		/// コード エディターで変更しないでください。
 		/// </summary>
 		private void InitializeComponent() {
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-			this.textBoxUrl = new System.Windows.Forms.TextBox();
-			this.textBoxUser = new System.Windows.Forms.TextBox();
-			this.textBoxPassword = new System.Windows.Forms.TextBox();
-			this.labelUrl = new System.Windows.Forms.Label();
-			this.labelUser = new System.Windows.Forms.Label();
-			this.labelPassword = new System.Windows.Forms.Label();
-			this.gridListInfo = new System.Windows.Forms.DataGridView();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormListView));
+			this.buttonRun = new System.Windows.Forms.Button();
+			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.gridCsv = new System.Windows.Forms.DataGridView();
 			this.labelListName = new System.Windows.Forms.Label();
-			this.textBoxListName = new System.Windows.Forms.TextBox();
-			this.splitContainer = new System.Windows.Forms.SplitContainer();
-			this.listBoxMessage = new System.Windows.Forms.ListBox();
-			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			this.textLabelListName = new System.Windows.Forms.Label();
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.ファイルFToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.新規作成NToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,9 +52,6 @@
 			this.すべて選択AToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ツールTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.カスタマイズCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.インポートIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.フォルダToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.リストビューVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.オプションOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ヘルプHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.内容CToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,142 +59,60 @@
 			this.検索SToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.バージョン情報AToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.buttonLoad = new System.Windows.Forms.Button();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.カスタムリストLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.ディスカッション掲示板DToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			((System.ComponentModel.ISupportInitialize)(this.gridListInfo)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
-			this.splitContainer.Panel1.SuspendLayout();
-			this.splitContainer.Panel2.SuspendLayout();
-			this.splitContainer.SuspendLayout();
+			this.buttonCancel = new System.Windows.Forms.Button();
+			((System.ComponentModel.ISupportInitialize)(this.gridCsv)).BeginInit();
 			this.menuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// textBoxUrl
+			// buttonRun
 			// 
-			this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.buttonRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonRun.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.buttonRun.Enabled = false;
+			this.buttonRun.Location = new System.Drawing.Point(631, 412);
+			this.buttonRun.Name = "buttonRun";
+			this.buttonRun.Size = new System.Drawing.Size(75, 23);
+			this.buttonRun.TabIndex = 0;
+			this.buttonRun.Text = "実行";
+			this.buttonRun.UseVisualStyleBackColor = true;
+			// 
+			// openFileDialog
+			// 
+			this.openFileDialog.Filter = "CSVファイル(*.csv;*.txt)|*.csv;*.txt|すべてのファイル(*.*)|*.*";
+			this.openFileDialog.InitialDirectory = "C:\\PowerShell";
+			// 
+			// gridCsv
+			// 
+			this.gridCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxUrl.Location = new System.Drawing.Point(80, 29);
-			this.textBoxUrl.Name = "textBoxUrl";
-			this.textBoxUrl.Size = new System.Drawing.Size(472, 19);
-			this.textBoxUrl.TabIndex = 3;
-			// 
-			// textBoxUser
-			// 
-			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxUser.Location = new System.Drawing.Point(80, 54);
-			this.textBoxUser.Name = "textBoxUser";
-			this.textBoxUser.Size = new System.Drawing.Size(472, 19);
-			this.textBoxUser.TabIndex = 4;
-			// 
-			// textBoxPassword
-			// 
-			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxPassword.Location = new System.Drawing.Point(80, 79);
-			this.textBoxPassword.Name = "textBoxPassword";
-			this.textBoxPassword.PasswordChar = '*';
-			this.textBoxPassword.Size = new System.Drawing.Size(472, 19);
-			this.textBoxPassword.TabIndex = 5;
-			// 
-			// labelUrl
-			// 
-			this.labelUrl.AutoSize = true;
-			this.labelUrl.Location = new System.Drawing.Point(12, 32);
-			this.labelUrl.Name = "labelUrl";
-			this.labelUrl.Size = new System.Drawing.Size(27, 12);
-			this.labelUrl.TabIndex = 6;
-			this.labelUrl.Text = "URL";
-			// 
-			// labelUser
-			// 
-			this.labelUser.AutoSize = true;
-			this.labelUser.Location = new System.Drawing.Point(12, 57);
-			this.labelUser.Name = "labelUser";
-			this.labelUser.Size = new System.Drawing.Size(46, 12);
-			this.labelUser.TabIndex = 7;
-			this.labelUser.Text = "ユーザID";
-			// 
-			// labelPassword
-			// 
-			this.labelPassword.AutoSize = true;
-			this.labelPassword.Location = new System.Drawing.Point(12, 82);
-			this.labelPassword.Name = "labelPassword";
-			this.labelPassword.Size = new System.Drawing.Size(52, 12);
-			this.labelPassword.TabIndex = 8;
-			this.labelPassword.Text = "パスワード";
-			// 
-			// gridListInfo
-			// 
-			this.gridListInfo.AllowUserToAddRows = false;
-			this.gridListInfo.AllowUserToDeleteRows = false;
-			this.gridListInfo.AllowUserToOrderColumns = true;
-			this.gridListInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.gridListInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.gridListInfo.Location = new System.Drawing.Point(0, 0);
-			this.gridListInfo.Name = "gridListInfo";
-			this.gridListInfo.ReadOnly = true;
-			this.gridListInfo.RowTemplate.Height = 21;
-			this.gridListInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.gridListInfo.Size = new System.Drawing.Size(540, 148);
-			this.gridListInfo.TabIndex = 11;
-			this.gridListInfo.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridListInfo_RowEnter);
+			this.gridCsv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.gridCsv.Location = new System.Drawing.Point(14, 29);
+			this.gridCsv.Name = "gridCsv";
+			this.gridCsv.RowTemplate.Height = 21;
+			this.gridCsv.Size = new System.Drawing.Size(773, 377);
+			this.gridCsv.TabIndex = 11;
 			// 
 			// labelListName
 			// 
+			this.labelListName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelListName.AutoSize = true;
-			this.labelListName.Location = new System.Drawing.Point(12, 107);
+			this.labelListName.Location = new System.Drawing.Point(12, 417);
 			this.labelListName.Name = "labelListName";
 			this.labelListName.Size = new System.Drawing.Size(41, 12);
 			this.labelListName.TabIndex = 13;
 			this.labelListName.Text = "リスト名";
 			// 
-			// textBoxListName
+			// textLabelListName
 			// 
-			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.textLabelListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxListName.Location = new System.Drawing.Point(80, 104);
-			this.textBoxListName.Name = "textBoxListName";
-			this.textBoxListName.Size = new System.Drawing.Size(391, 19);
-			this.textBoxListName.TabIndex = 12;
-			// 
-			// splitContainer
-			// 
-			this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer.Location = new System.Drawing.Point(12, 133);
-			this.splitContainer.Name = "splitContainer";
-			this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer.Panel1
-			// 
-			this.splitContainer.Panel1.Controls.Add(this.gridListInfo);
-			// 
-			// splitContainer.Panel2
-			// 
-			this.splitContainer.Panel2.Controls.Add(this.listBoxMessage);
-			this.splitContainer.Size = new System.Drawing.Size(540, 297);
-			this.splitContainer.SplitterDistance = 148;
-			this.splitContainer.TabIndex = 14;
-			// 
-			// listBoxMessage
-			// 
-			this.listBoxMessage.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listBoxMessage.FormattingEnabled = true;
-			this.listBoxMessage.ItemHeight = 12;
-			this.listBoxMessage.Location = new System.Drawing.Point(0, 0);
-			this.listBoxMessage.Name = "listBoxMessage";
-			this.listBoxMessage.Size = new System.Drawing.Size(540, 145);
-			this.listBoxMessage.TabIndex = 22;
-			this.listBoxMessage.DoubleClick += new System.EventHandler(this.listBoxMessage_DoubleClick);
-			// 
-			// notifyIcon
-			// 
-			this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-			this.notifyIcon.Text = "端末装置制御";
+			this.textLabelListName.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.textLabelListName.Location = new System.Drawing.Point(80, 414);
+			this.textLabelListName.Name = "textLabelListName";
+			this.textLabelListName.Size = new System.Drawing.Size(545, 19);
+			this.textLabelListName.TabIndex = 12;
+			this.textLabelListName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// menuStrip
 			// 
@@ -217,8 +124,8 @@
 			this.menuStrip.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip.Name = "menuStrip";
 			this.menuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.menuStrip.Size = new System.Drawing.Size(564, 26);
-			this.menuStrip.TabIndex = 15;
+			this.menuStrip.Size = new System.Drawing.Size(799, 26);
+			this.menuStrip.TabIndex = 14;
 			this.menuStrip.Text = "menuStrip1";
 			// 
 			// ファイルFToolStripMenuItem1
@@ -240,18 +147,16 @@
 			// 
 			// 新規作成NToolStripMenuItem
 			// 
+			this.新規作成NToolStripMenuItem.Enabled = false;
 			this.新規作成NToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("新規作成NToolStripMenuItem.Image")));
 			this.新規作成NToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.新規作成NToolStripMenuItem.Name = "新規作成NToolStripMenuItem";
 			this.新規作成NToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
 			this.新規作成NToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
 			this.新規作成NToolStripMenuItem.Text = "新規作成(&N)";
-			this.新規作成NToolStripMenuItem.ToolTipText = "リストを新規作成します。";
-			this.新規作成NToolStripMenuItem.Click += new System.EventHandler(this.NewToolStripMenuItem_Click);
 			// 
 			// 開くOToolStripMenuItem
 			// 
-			this.開くOToolStripMenuItem.Enabled = false;
 			this.開くOToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("開くOToolStripMenuItem.Image")));
 			this.開くOToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.開くOToolStripMenuItem.Name = "開くOToolStripMenuItem";
@@ -394,47 +299,18 @@
 			// 
 			this.ツールTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.カスタマイズCToolStripMenuItem,
-            this.インポートIToolStripMenuItem,
-            this.フォルダToolStripMenuItem,
-            this.リストビューVToolStripMenuItem,
             this.オプションOToolStripMenuItem});
+			this.ツールTToolStripMenuItem.Enabled = false;
 			this.ツールTToolStripMenuItem.Name = "ツールTToolStripMenuItem";
 			this.ツールTToolStripMenuItem.Size = new System.Drawing.Size(74, 22);
 			this.ツールTToolStripMenuItem.Text = "ツール(&T)";
 			// 
 			// カスタマイズCToolStripMenuItem
 			// 
+			this.カスタマイズCToolStripMenuItem.Enabled = false;
 			this.カスタマイズCToolStripMenuItem.Name = "カスタマイズCToolStripMenuItem";
 			this.カスタマイズCToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
 			this.カスタマイズCToolStripMenuItem.Text = "カスタマイズ(&C)";
-			this.カスタマイズCToolStripMenuItem.ToolTipText = "リストの列構成を変更します。";
-			this.カスタマイズCToolStripMenuItem.Click += new System.EventHandler(this.CustomizeToolStripMenuItem_Click);
-			// 
-			// インポートIToolStripMenuItem
-			// 
-			this.インポートIToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.カスタムリストLToolStripMenuItem,
-            this.ディスカッション掲示板DToolStripMenuItem});
-			this.インポートIToolStripMenuItem.Name = "インポートIToolStripMenuItem";
-			this.インポートIToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-			this.インポートIToolStripMenuItem.Text = "インポート(&I)";
-			this.インポートIToolStripMenuItem.ToolTipText = "リストにデータを取り込みます。";
-			// 
-			// フォルダToolStripMenuItem
-			// 
-			this.フォルダToolStripMenuItem.Name = "フォルダToolStripMenuItem";
-			this.フォルダToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-			this.フォルダToolStripMenuItem.Text = "フォルダー(&F)";
-			this.フォルダToolStripMenuItem.ToolTipText = "指定されたリストにフォルダーを生成します。";
-			this.フォルダToolStripMenuItem.Click += new System.EventHandler(this.FolderToolStripMenuItem_Click);
-			// 
-			// リストビューVToolStripMenuItem
-			// 
-			this.リストビューVToolStripMenuItem.Name = "リストビューVToolStripMenuItem";
-			this.リストビューVToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-			this.リストビューVToolStripMenuItem.Text = "リストビュー(&V)";
-			this.リストビューVToolStripMenuItem.ToolTipText = "リストのデータを参照します。";
-			this.リストビューVToolStripMenuItem.Click += new System.EventHandler(this.ListViewToolStripMenuItem_Click);
 			// 
 			// オプションOToolStripMenuItem
 			// 
@@ -485,56 +361,35 @@
 			this.バージョン情報AToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
 			this.バージョン情報AToolStripMenuItem.Text = "バージョン情報(&A)...";
 			// 
-			// buttonLoad
+			// buttonCancel
 			// 
-			this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonLoad.Location = new System.Drawing.Point(477, 102);
-			this.buttonLoad.Name = "buttonLoad";
-			this.buttonLoad.Size = new System.Drawing.Size(75, 23);
-			this.buttonLoad.TabIndex = 16;
-			this.buttonLoad.Text = "一覧取得";
-			this.toolTip.SetToolTip(this.buttonLoad, "リストの一覧を取得します。");
-			this.buttonLoad.UseVisualStyleBackColor = true;
-			this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
+			this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.buttonCancel.Location = new System.Drawing.Point(712, 412);
+			this.buttonCancel.Name = "buttonCancel";
+			this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+			this.buttonCancel.TabIndex = 15;
+			this.buttonCancel.Text = "キャンセル";
+			this.buttonCancel.UseVisualStyleBackColor = true;
 			// 
-			// カスタムリストLToolStripMenuItem
+			// FormListView
 			// 
-			this.カスタムリストLToolStripMenuItem.Name = "カスタムリストLToolStripMenuItem";
-			this.カスタムリストLToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-			this.カスタムリストLToolStripMenuItem.Text = "カスタムリスト(&L)";
-			this.カスタムリストLToolStripMenuItem.Click += new System.EventHandler(this.CustomListToolStripMenuItem_Click);
-			// 
-			// ディスカッション掲示板DToolStripMenuItem
-			// 
-			this.ディスカッション掲示板DToolStripMenuItem.Name = "ディスカッション掲示板DToolStripMenuItem";
-			this.ディスカッション掲示板DToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-			this.ディスカッション掲示板DToolStripMenuItem.Text = "ディスカッション掲示板(&D)";
-			this.ディスカッション掲示板DToolStripMenuItem.Click += new System.EventHandler(this.DiscussionBBSToolStripMenuItem_Click);
-			// 
-			// FormMain
-			// 
+			this.AcceptButton = this.buttonRun;
 			this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(564, 442);
-			this.Controls.Add(this.buttonLoad);
-			this.Controls.Add(this.menuStrip);
-			this.Controls.Add(this.splitContainer);
+			this.CancelButton = this.buttonCancel;
+			this.ClientSize = new System.Drawing.Size(799, 447);
+			this.Controls.Add(this.buttonCancel);
 			this.Controls.Add(this.labelListName);
-			this.Controls.Add(this.textBoxListName);
-			this.Controls.Add(this.labelPassword);
-			this.Controls.Add(this.labelUser);
-			this.Controls.Add(this.labelUrl);
-			this.Controls.Add(this.textBoxPassword);
-			this.Controls.Add(this.textBoxUser);
-			this.Controls.Add(this.textBoxUrl);
-			this.Name = "FormMain";
-			this.Text = "リスト管理アプリケーション";
-			((System.ComponentModel.ISupportInitialize)(this.gridListInfo)).EndInit();
-			this.splitContainer.Panel1.ResumeLayout(false);
-			this.splitContainer.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
-			this.splitContainer.ResumeLayout(false);
+			this.Controls.Add(this.textLabelListName);
+			this.Controls.Add(this.gridCsv);
+			this.Controls.Add(this.buttonRun);
+			this.Controls.Add(this.menuStrip);
+			this.MainMenuStrip = this.menuStrip;
+			this.Name = "FormListView";
+			this.Text = "リストビュー";
+			((System.ComponentModel.ISupportInitialize)(this.gridCsv)).EndInit();
 			this.menuStrip.ResumeLayout(false);
 			this.menuStrip.PerformLayout();
 			this.ResumeLayout(false);
@@ -544,18 +399,11 @@
 
 		#endregion
 
-		private System.Windows.Forms.TextBox textBoxUrl;
-		private System.Windows.Forms.TextBox textBoxUser;
-		private System.Windows.Forms.TextBox textBoxPassword;
-		private System.Windows.Forms.Label labelUrl;
-		private System.Windows.Forms.Label labelUser;
-		private System.Windows.Forms.Label labelPassword;
-		private System.Windows.Forms.DataGridView gridListInfo;
+		private System.Windows.Forms.Button buttonRun;
+		private System.Windows.Forms.OpenFileDialog openFileDialog;
+		private System.Windows.Forms.DataGridView gridCsv;
 		private System.Windows.Forms.Label labelListName;
-		private System.Windows.Forms.TextBox textBoxListName;
-		private System.Windows.Forms.SplitContainer splitContainer;
-		private System.Windows.Forms.ListBox listBoxMessage;
-		private System.Windows.Forms.NotifyIcon notifyIcon;
+		private System.Windows.Forms.Label textLabelListName;
 		private System.Windows.Forms.MenuStrip menuStrip;
 		private System.Windows.Forms.ToolStripMenuItem ファイルFToolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem 新規作成NToolStripMenuItem;
@@ -586,13 +434,7 @@
 		private System.Windows.Forms.ToolStripMenuItem 検索SToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem バージョン情報AToolStripMenuItem;
-		private System.Windows.Forms.Button buttonLoad;
-		private System.Windows.Forms.ToolStripMenuItem インポートIToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem リストビューVToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem フォルダToolStripMenuItem;
-		private System.Windows.Forms.ToolTip toolTip;
-		private System.Windows.Forms.ToolStripMenuItem カスタムリストLToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ディスカッション掲示板DToolStripMenuItem;
+		private System.Windows.Forms.Button buttonCancel;
 	}
 }
 

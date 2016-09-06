@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 
 namespace CommonFeaturesLibrary {
 	/// <summary>
-	/// FileInfo を拡張するメソッドを提供します。
+	/// ファイルバージョンを管理するメソッドを提供するクラスです。
 	/// </summary>
-	public static partial class FileInfoExtension {
+	public static partial class FileVersionManager {
 		#region	定数
 
 		/// <summary>
@@ -118,9 +119,9 @@ namespace CommonFeaturesLibrary {
 		/// <summary>
 		/// バージョンファイル情報作成
 		/// </summary>
-		/// <param name="filePath"></param>
-		/// <param name="version"></param>
-		/// <returns></returns>
+		/// <param name="filePath">ファイルパス</param>
+		/// <param name="version">バージョン</param>
+		/// <returns>バージョン番号を付与したファイル名を返します。</returns>
 		private static string CreateVersionName(string filePath, uint version) {
 			var file = new FileInfo(filePath);
 			return file.GetVersionName(version);

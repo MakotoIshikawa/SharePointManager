@@ -1,25 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
-using SharePointManager.Extensions;
-using SharePointManager.Manager.Extensions;
+using SharepointListMngApp.Forms;
+using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
-using SharePointManager.Manager.Lists.Xml;
 
 namespace SharepointAttachmentFilesApp {
 	/// <summary>
 	/// フォーム
 	/// </summary>
-	public partial class FormAttachmentFiles : Form {
+	public partial class FormAttachmentFiles : FormEditText, IListEdit {
 		#region フィールド
 
 		/// <summary>ログ出力</summary>
-		private LogOutputter _log = new LogOutputter();
+		private Logger _log = new Logger();
 
 		#endregion
 
@@ -31,10 +29,10 @@ namespace SharepointAttachmentFilesApp {
 		public FormAttachmentFiles() {
 			this.InitializeComponent();
 #if true
-			this.textBoxUrl.Text = Properties.Settings.Default.URL;
-			this.textBoxUser.Text = Properties.Settings.Default.User;
-			this.textBoxPassword.Text = Properties.Settings.Default.Password;
-			this.textBoxListName.Text = Properties.Settings.Default.ListName;
+			this.Url = Properties.Settings.Default.URL;
+			this.UserName = Properties.Settings.Default.User;
+			this.Password = Properties.Settings.Default.Password;
+			this.ListName = Properties.Settings.Default.ListName;
 
 			this.LogRowLimit = Properties.Settings.Default.LogRowLimit;
 			this.UniqueKey = Properties.Settings.Default.UniqueKey;
@@ -44,6 +42,32 @@ namespace SharepointAttachmentFilesApp {
 		#endregion
 
 		#region プロパティ
+
+		/// <summary>SharePoint サイト URL</summary>
+		public string Url {
+			get { return this.textBoxUrl.Text.Trim(); }
+			set { this.textBoxUrl.Text = value; }
+		}
+
+		/// <summary>ユーザー</summary>
+		public string UserName {
+			get { return this.textBoxUser.Text.Trim(); }
+			set { this.textBoxUser.Text = value; }
+		}
+
+		/// <summary>パスワード</summary>
+		public string Password {
+			get { return this.textBoxPassword.Text.Trim(); }
+			set { this.textBoxPassword.Text = value; }
+		}
+
+		/// <summary>
+		/// リストパス
+		/// </summary>
+		public string ListName {
+			get { return this.textBoxListName.Text.Trim(); }
+			set { this.textBoxListName.Text = value; }
+		}
 
 		/// <summary>表示ログ最大行数</summary>
 		public int LogRowLimit { get; protected set; }
@@ -55,51 +79,15 @@ namespace SharepointAttachmentFilesApp {
 
 		#region イベントハンドラ
 
+		#region クリックイベント
+
 		/// <summary>
 		/// [実行]ボタンのクリックイベントです。
 		/// </summary>
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonRun_Click(object sender, EventArgs e) {
-			if (this.textBoxListName.Text.IsEmpty()) {
-				this.WriteLineMessage("リスト名を入力して下さい。");
-				return;
-			}
-
-			try {
-				this.Enabled = false;
-
-				var url = this.textBoxUrl.Text;
-				var username = this.textBoxUser.Text;
-				var password = this.textBoxPassword.Text;
-				var listName = this.textBoxListName.Text;
-
-				var m = new ListManager(url, username, password, listName);
-				m.ThrowSharePointException += (s, ea) => {
-					throw new Exception(ea.ErrorMessage);
-				};
-
-				var key = this.UniqueKey;
-				foreach (var row in this.gridDirectories.SelectedRows.Cast<DataGridViewRow>()) {
-					var fullPath = row.Cells["FullName"].Value.ToString();
-
-					var dir = new DirectoryInfo(fullPath);
-					this.WriteLineMessage("ファイルを添付します。 : " + dir.FullName);
-					var files = dir.EnumerateFiles();
-
-					var id = m.GetID(key, dir.Name);
-					m.AddAttachmentFile(id, files);
-
-					files.Select(f => f.Name).ToList()
-					.ForEach(f => {
-						this.WriteLineMessage(string.Format("ファイル名 : {0}", f));
-					});
-				}
-			} catch (Exception ex) {
-				this.WriteLineMessage(ex.ToString());
-			} finally {
-				this.Enabled = true;
-			}
+			this.Run();
 		}
 
 		/// <summary>
@@ -117,6 +105,37 @@ namespace SharepointAttachmentFilesApp {
 				break;
 			}
 		}
+
+		#endregion
+
+		#region ダブルクリックイベント
+
+		/// <summary>
+		/// ダブルクリックイベント
+		/// </summary>
+		/// <param name="sender">送信元</param>
+		/// <param name="e">イベントデータ</param>
+		/// <remarks>
+		/// ダブルクリックされたときに発生します。</remarks>
+		private void listBoxMessage_DoubleClick(object sender, EventArgs e) {
+			var ret = MessageBox.Show("ログをクリアしますか？", "確認"
+				, MessageBoxButtons.YesNo
+				, MessageBoxIcon.Question
+				, MessageBoxDefaultButton.Button2
+			);
+
+			switch (ret) {
+			case DialogResult.Yes:
+				this.listBoxMessage.Items.Clear();
+				break;
+			default:
+				break;
+			}
+		}
+
+		#endregion
+
+		#region テキストチェンジイベント
 
 		/// <summary>
 		/// [ファイルパス]テキストボックスの変更イベントです。
@@ -141,6 +160,10 @@ namespace SharepointAttachmentFilesApp {
 				this.WriteLineMessage(ex.Message);
 			}
 		}
+
+		#endregion
+
+		#region ドラックイベント
 
 		/// <summary>
 		/// オブジェクトがコントロールの境界内にドラッグされると発生します。
@@ -172,32 +195,66 @@ namespace SharepointAttachmentFilesApp {
 			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
-		/// <summary>
-		/// ダブルクリックイベント
-		/// </summary>
-		/// <param name="sender">送信元</param>
-		/// <param name="e">イベントデータ</param>
-		/// <remarks>
-		/// ダブルクリックされたときに発生します。</remarks>
-		private void listBoxMessage_DoubleClick(object sender, EventArgs e) {
-			var ret = MessageBox.Show("ログをクリアしますか？", "確認"
-				, MessageBoxButtons.YesNo
-				, MessageBoxIcon.Question
-				, MessageBoxDefaultButton.Button2
-			);
-
-			switch (ret) {
-			case DialogResult.Yes:
-				this.listBoxMessage.Items.Clear();
-				break;
-			default:
-				break;
-			}
-		}
+		#endregion
 
 		#endregion
 
 		#region メソッド
+
+		/// <summary>
+		/// 実行処理
+		/// </summary>
+		public void Run() {
+			if (this.ListName.IsEmpty()) {
+				this.WriteLineMessage("リスト名を入力して下さい。");
+				return;
+			}
+
+			try {
+				this.Enabled = false;
+
+				var url = this.Url;
+				var username = this.UserName;
+				var password = this.Password;
+
+				var listName = this.ListName;
+
+				var m = new ListManager(url, username, password, listName);
+				m.ThrowException += (s, e) => this.WriteException(e.Value);
+
+				var key = this.UniqueKey;
+				var rows = this.gridDirectories.SelectedRows.Cast<DataGridViewRow>();
+				foreach (var row in rows) {
+					var fullPath = row.Cells["FullName"].Value.ToString();
+
+					var dir = new DirectoryInfo(fullPath);
+					this.WriteLineMessage("ファイルを添付します。 : " + dir.FullName);
+					var files = dir.EnumerateFiles();
+
+					var id = m.GetID(key, dir.Name);
+					m.AddAttachmentFile(id, files);
+
+					files.Select(f => f.Name).ToList()
+					.ForEach(f => {
+						this.WriteLineMessage(string.Format("ファイル名 : {0}", f));
+					});
+				}
+			} catch (Exception ex) {
+				this.WriteException(ex);
+			} finally {
+				this.Enabled = true;
+			}
+		}
+
+		#region メッセージ出力
+
+		/// <summary>
+		/// 例外をログに残します。
+		/// </summary>
+		/// <param name="ex">例外</param>
+		protected void WriteException(Exception ex) {
+			this._log.WriteLog(ex.ToString());
+		}
 
 		/// <summary>
 		/// メッセージ書込
@@ -205,7 +262,7 @@ namespace SharepointAttachmentFilesApp {
 		/// <param name="message">メッセージ</param>
 		/// <remarks>
 		/// ユーザインターフェイスにメッセージを書き込む</remarks>
-		private void WriteLineMessage(string message) {
+		protected void WriteLineMessage(string message) {
 			try {
 				// 時刻ログ取得
 				var msg = message.GetTimeLog();
@@ -217,14 +274,16 @@ namespace SharepointAttachmentFilesApp {
 				this._log.WriteLog(message);
 #if true
 				// バルーン表示
-				if (this.notifyIcon1.Visible) {
-					this.notifyIcon1.ShowBalloonTip(500, "情報", msg, ToolTipIcon.Info);
+				if (this.notifyIcon.Visible) {
+					this.notifyIcon.ShowBalloonTip(500, "情報", msg, ToolTipIcon.Info);
 				}
 #endif
 			} catch (Exception ex) {
 				this._log.WriteLog(ex.ToString());
 			}
 		}
+
+		#endregion
 
 		#endregion
 	}

@@ -123,41 +123,6 @@ namespace ExtensionsLibrary.Extensions {
 		}
 		#endregion
 
-		#region 逆シリアル化
-
-		#region DeserializeFromXml (オーバーロード +1)
-
-		/// <summary>
-		/// XML 文字列を逆シリアル化します。
-		/// </summary>
-		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
-		/// <param name="this">XML 文字列</param>
-		/// <returns>逆シリアル化されたオブジェクト</returns>
-		public static TResult DeserializeFromXml<TResult>(this string @this) {
-			return @this.DeserializeFromXml<TResult>(Encoding.UTF8);
-		}
-
-		/// <summary>
-		/// XML 文字列を逆シリアル化します。
-		/// </summary>
-		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
-		/// <param name="this">XML 文字列</param>
-		/// <param name="encoding">エンコーディング</param>
-		/// <returns>逆シリアル化されたオブジェクト</returns>
-		public static TResult DeserializeFromXml<TResult>(this string @this, Encoding encoding) {
-			if (@this.IsEmpty()) {
-				return default(TResult);
-			}
-
-			using (var ms = @this.CreateStream(encoding)) {
-				return ms.DeserializeFromXml<TResult>();
-			}
-		}
-
-		#endregion
-
-		#endregion
-
 		#region Stream生成
 
 		/// <summary>

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +12,7 @@ using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
+using SP = Microsoft.SharePoint.Client;
 
 namespace UnitTestProject {
 	[TestClass]
@@ -20,27 +23,33 @@ namespace UnitTestProject {
 		private string _password = @"!QAZ2wsx";
 		private ListManager _mng = null;
 #else
-		private const int _ver = 11;
-		private string _rootUrl = String.Format(@"https://kariverification{0:00}.sharepoint.com", _ver);
-		private string _user = String.Format(@"root@KariVerification{0:00}.onmicrosoft.com", _ver);
-		private string _password = @"!QAZ2wsx";
-		private ListManager _mng = null;
+		private const int _ver = 12;
+		private static string _rootUrl = String.Format(@"https://kariverification{0:00}.sharepoint.com", _ver);
+		private static string _user = String.Format(@"root@KariVerification{0:00}.onmicrosoft.com", _ver);
+		private static string _password = @"!QAZ2wsx";
 #endif
+		private static string _siteUrl = _rootUrl + @"/sites/IDEA";
 
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
 		public UnitTestListsManager() {
-			//var title = "アイテムの権限変更テスト";
-			var title = "LimitOver";
-			var url = _rootUrl + @"/sites/DemoPortalOR";
-			//var url = _rootUrl + @"/sites/fsisupport";
+		}
 
-			_mng = new ListManager(url, _user, _password, title.Trim());
-			_mng.ThrowException += (sender, e) => {
+		#region メソッド
+
+		private ListManager CreateListManager(string title) {
+			var m = new ListManager(_siteUrl, _user, _password, title.Trim());
+			m.ThrowException += (sender, e) => {
 				throw e.Value;
 			};
-			_mng.ThrowSharePointException += (sender, e) => {
+			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
+			return m;
 		}
+
+		#endregion
 
 		#region サイトコンテンツ管理
 
@@ -101,12 +110,8 @@ namespace UnitTestProject {
 		[Owner("リスト管理")]
 		[TestCategory("追加")]
 		public void フィールド拡張() {
-			var title = "カスタムリスト-テスト";
-
-			var m = new ListManager(_rootUrl, _user, _password, title, false);
-			m.ThrowSharePointException += (sender, e) => {
-				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
-			};
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
 
 			m.AddField<FieldUrl>("UrlPath", "サイトURL");
 
@@ -120,32 +125,16 @@ namespace UnitTestProject {
 		[Owner("リスト管理")]
 		[TestCategory("追加")]
 		public void アイテム追加() {
-			var title = "カスタムリスト-テスト";
-
-			var m = new ListManager(_rootUrl, _user, _password, title);
-			m.ThrowSharePointException += (sender, e) => {
-				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
-			};
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
 
 			var num = m.ItemCount + 1;
 			var row = new Dictionary<string, object>();
 			row["タイトル"] = "Item" + num.ToString("000");
-			row["Field_Text"] = num.ToString();
-			row["Field_Number"] = num;
-			row["Field_DateTime"] = DateTime.Now.ToString();
-			row["Field_Note"] = @"<div>1行目</div><div>2行目</div><div>3行目</div>";
-			row["場所"] = "場所" + num.ToString("000");
-			row["サイトURL"] = @"/Shared Documents/ツール実施手順.txt";
+			row["本文"] = string.Format("本文です : {0:000}", num);
 
 			m.AddListItem(row);
-#if false
-			var file = new FileInfo(@"C:\Users\ishikawm\Documents\Works\link.txt");
-			using (var f = file.Open(FileMode.Open)) {
-				m.AddListItem(row, i => {
-					i.AddAttachmentFile(f);
-				});
-			}
-#endif
+
 			m.Reload();
 
 			var expected = num;
@@ -155,11 +144,91 @@ namespace UnitTestProject {
 
 		[TestMethod]
 		[Owner("リスト管理")]
+		[TestCategory("追加")]
+		public void ディスカッション項目追加() {
+			var listName = "DiscussionBBS";
+			var m = CreateListManager(listName);
+
+			var num = m.ItemCount;
+			num++;
+			var titel = string.Format("項目{0:000}", num);
+			m.AddListItem(new Dictionary<string, object> {
+				{ "件名", string.Format("討論 {0:000}", num) },
+				{ "本文", string.Format("討論の内容です。 : {0}", DateTime.Now) },
+				{ "質問", true },
+			}, isFolder: true);
+			m.Reload();
+
+			{// アイテム数確認
+				var expected = num;
+				var actual = m.ItemCount;
+				Assert.AreEqual(expected, actual);
+			}
+
+			num++;
+			m.AddListItem(new Dictionary<string, object> {
+				{ "件名", string.Format("返信 {0:000}", num) },
+				{ "本文", string.Format("討論への返信です。 : {0}", DateTime.Now) },
+			}, titel);
+
+			m.Reload();
+
+			{// アイテム数確認
+				var expected = num;
+				var actual = m.ItemCount;
+				Assert.AreEqual(expected, actual);
+			}
+		}
+
+		[TestMethod]
+		[Owner("リスト管理")]
+		[TestCategory("追加")]
+		public void 項目追加テスト() {
+			var listName = "DiscussionBBS";
+			var m = CreateListManager(listName);
+
+			var num = m.ItemCount + 1;
+			m.AddListItem(new Dictionary<string, object> {
+				//{ "Title", string.Format("返信 {0:000}", num) },
+				{ "Title", "返信" },
+				{ "本文", string.Format("討論への返信です。 : {0}", DateTime.Now) },
+				//{ "ContentTypeId", new Guid("CBEE9C472F3D864B9FFDCE275891BF73") },
+			}, "フォルダ008");
+
+			m.Reload();
+
+			var expected = num;
+			var actual = m.ItemCount;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
+		[Owner("リスト管理")]
+		[TestCategory("追加")]
+		public void フォルダ追加() {
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
+			m.FolderName = "フォルダ008/フォルダ012";
+
+			var num = m.ItemCount;
+			var count = 3;
+			m.AddFolders(Enumerable.Range(num + 1, count)
+				.Select(r => string.Format("フォルダ{0:000}", r)));
+
+			m.Reload();
+
+			var expected = num + count;
+			var actual = m.ItemCount;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
+		[Owner("リスト管理")]
 		[TestCategory("変換")]
 		public void 行データ変換() {
-			var title = "カスタムリスト-テスト";
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
 
-			var m = new ListManager(_rootUrl, _user, _password, title);
 			var fs = m.Fields;
 
 			var num = m.ItemCount + 1;
@@ -184,31 +253,31 @@ namespace UnitTestProject {
 
 		[TestMethod]
 		[Owner("リスト管理")]
-		[TestCategory("更新")]
-		public void ファイル添付() {
-			var title = "カスタムリスト-テスト";
+		[TestCategory("添付ファイル")]
+		public void 添付ファイル追加() {
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
 
-			var m = new ListManager(_rootUrl, _user, _password, title);
-			m.ThrowSharePointException += (sender, e) => {
-				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
-			};
+			var files = (new[] {
+				@"C:\Users\ishikawm\Documents\L.txt",
+				@"C:\Users\ishikawm\Documents\R.txt",
+			}).Select(s => new FileInfo(s)).ToList();
 
-#if false
-			var file = new FileInfo(@"C:\Users\ishikawm\Documents\dummy256MB.file");
-			using (var f = file.Open(FileMode.Open)) {
-				m.UpdateListItem(1, i => {
-					i.AddAttachmentFile(f);
-				});
+			var id = 1;
+			m.AddAttachmentFile(id, files);
+
+			var attachmentFiles = m.GetAttachmentFiles(id).ToList();
+
+			{// ファイル数確認
+				var expected = files.Count;
+				var actual = attachmentFiles.Count;
+				Assert.AreEqual(expected, actual);
 			}
-#else
-			var file1 = new FileInfo(@"C:\Users\ishikawm\Documents\L.txt");
-			var file2 = new FileInfo(@"C:\Users\ishikawm\Documents\R.txt");
-			//var file3 = new FileInfo(@"C:\Users\ishikawm\Documents\dummy200MB.file");
-			m.AddAttachmentFile(28, new[] { file1, file2 });
-#endif
-			//TODO: 検証内容検討
-			var ret = m.ListName;
-			Assert.AreEqual(ret, title);
+			{// ファイル名比較
+				var condition = files.Select(f => f.Name)
+					.SequenceEqual(attachmentFiles.Select(f => f.FileName));
+				Assert.IsTrue(condition);
+			}
 		}
 
 		[TestMethod]
@@ -241,7 +310,7 @@ namespace UnitTestProject {
 				l.Update();
 			});
 
-			//TODO: 検証内容検討
+			// TODO: 検証内容検討
 			var ret = m.ListName;
 			Assert.AreEqual(ret, title);
 		}
@@ -250,8 +319,11 @@ namespace UnitTestProject {
 		[Owner("リスト管理")]
 		[TestCategory("参照")]
 		public void アイテム参照() {
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
+
 			{
-				var rows = this._mng.GetAllItemsValues(1000);
+				var rows = m.GetAllItemsValues(1000);
 
 				var expected = "Title00609";
 				var actual = rows.First(row => Convert.ToInt32(row["ID"]) == 4)["Title"];
@@ -259,7 +331,7 @@ namespace UnitTestProject {
 			}
 			{// ID
 				int limit = 100;
-				var rows = this._mng.GetItemsValues(xml => 
+				var rows = m.GetItemsValues(xml => 
 					xml.AddQueryItems<QueryItemsAnd>(a => {
 						a.AddQuery<QueryOperatorGeq>("ID", 1);
 						a.AddQuery<QueryOperatorLt>("ID", 25);
@@ -272,7 +344,7 @@ namespace UnitTestProject {
 			}
 			{// 承認状況
 				int limit = 100;
-				var rows = this._mng.GetItemsValues(xml =>
+				var rows = m.GetItemsValues(xml =>
 					xml.AddQuery<QueryOperatorNeq>("_ModerationStatus", "承認済み")
 				, limit, "ID", "Title");
 				var expected = "Title00615";
@@ -281,7 +353,7 @@ namespace UnitTestProject {
 			}
 			{// 更新日
 				int limit = 5000;
-				var rows = this._mng.GetItemsValues(xml =>
+				var rows = m.GetItemsValues(xml =>
 					xml.AddQueryItems<QueryItemsAnd>(a => {
 						a.AddQuery<QueryOperatorGeq>("Modified", new DateTime(2016, 04, 05));
 						a.AddQuery<QueryOperatorLt>("Modified", new DateTime(2016, 04, 30));
@@ -291,12 +363,53 @@ namespace UnitTestProject {
 				var actual = rows.Count();
 				//Assert.AreEqual(expected, actual);
 			}
-			{
-				var key = "Title";
-				var val = "Title00615";
-				var id = this._mng.GetID(key, val);
+		}
 
-				var expected = 10;
+		[TestMethod]
+		[Owner("リスト管理")]
+		[TestCategory("参照")]
+		public void アイテムID参照() {
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
+
+			var key = "DocUniID";
+			{
+				var val = "10000001";
+				var id = m.GetID(key, val);
+
+				var expected = 1;
+				var actual = id;
+				Assert.AreEqual(expected, actual);
+			}
+			{
+				var val = "10000008";
+				var id = m.GetID(key, val);
+
+				var expected = 8;
+				var actual = id;
+				Assert.AreEqual(expected, actual);
+			}
+			{
+				var val = "10000012";
+				var id = m.GetID(key, val);
+
+				var expected = 12;
+				var actual = id;
+				Assert.AreEqual(expected, actual);
+			}
+			{
+				var val = "10000031";
+				var id = m.GetID(key, val);
+
+				var expected = 31;
+				var actual = id;
+				Assert.AreEqual(expected, actual);
+			}
+			{
+				var val = "10000035";
+				var id = m.GetID(key, val);
+
+				var expected = 35;
 				var actual = id;
 				Assert.AreEqual(expected, actual);
 			}
@@ -306,8 +419,11 @@ namespace UnitTestProject {
 		[Owner("リスト管理")]
 		[TestCategory("参照")]
 		public void 予定表参照() {
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
+
 			{
-				var rows = this._mng.GetAllItemsValues(1000);
+				var rows = m.GetAllItemsValues(1000);
 
 				var expected = "・建物物価の灯油価格の連絡";
 				var actual = rows.First(row => Convert.ToInt32(row["ID"]) == 4)["Title"];
@@ -315,7 +431,7 @@ namespace UnitTestProject {
 			}
 			{// 終了時刻
 				int limit = 5000;
-				var rows = this._mng.GetItemsValues(xml =>
+				var rows = m.GetItemsValues(xml =>
 					xml.AddQueryItems<QueryItemsAnd>(a => {
 						a.AddQuery<QueryOperatorGeq>("EndDate", new DateTime(2016, 4, 1, 0, 0, 0));
 						a.AddQuery<QueryOperatorLt>("EndDate", new DateTime(2016, 5, 1, 0, 0, 0));
@@ -331,50 +447,16 @@ namespace UnitTestProject {
 		[Owner("リスト管理")]
 		[TestCategory("参照")]
 		public void アイテム添付ファイル参照() {
+			var listName = "CustomList";
+			var m = CreateListManager(listName);
+
 			var id = 1;
 			var index = 0;
-			var ret1 = this._mng.GetAttachmentFiles(id).ToList();
-			var ret2 = this._mng.GetAttachmentFilesDictionary();
+			var ret1 = m.GetAttachmentFiles(id).ToList();
+			var ret2 = m.GetAttachmentFilesDictionary();
 			var expected = ret1[index].FileName;
 			var actual = ret2[id][index].FileName;
 			Assert.AreEqual(expected, actual);
-		}
-
-		[TestMethod]
-		[Owner("リスト管理")]
-		[TestCategory("更新")]
-		public void XML文字列確認() {
-			var xml = new XmlField() {
-				DisplayName = "テキスト",
-				Type = "Text",
-			};
-
-			var sb = new StringBuilder();
-			sb.Append(@"<Comment DateTime=""2015-04-23 12:30:00"" UserName=""ユーザー1"">コメント1行目です。
-コメント2行目です。
-コメント3行目です。</Comment>");
-			sb.Append(@"<Comment DateTime=""2015/04/15 21:55"" UserName=""さくら情報ﾃｽﾄ"" Category=""指示"" ShortMsg=""了解"">コメント１
-コメント２
-コメント３</Comment>");
-
-			var content = sb.ToString();
-
-			var str1 = content.ConvertXmlString<XmlComments>(c => c.ToString());
-
-			var expected = string.Empty;
-			var actual = str1;
-			Assert.AreNotEqual(expected, actual);
-		}
-
-		[TestMethod]
-		[Owner("その他")]
-		[TestCategory("変更")]
-		public void ファイル名変更() {
-			var file = new FileInfo(@"C:\Users\ishikawm\Documents\L.txt");
-			var fname0 = file.GetVersionName(0);
-			var fname1 = file.GetVersionName(1);
-
-			Assert.IsNotNull(fname0);
 		}
 	}
 }

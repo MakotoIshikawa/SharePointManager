@@ -47,11 +47,10 @@
     <Compile Include="Extensions\DateTimeExtension.cs" />
     <Compile Include="Extensions\DictionaryExtension.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
-    <Compile Include="Extensions\FileInfoExtension.cs" />
     <Compile Include="Extensions\GenericsExtension.cs" />
     <Compile Include="Extensions\ListBoxExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
-    <Compile Include="Extensions\DeserializeExtension.cs" />
+    <Compile Include="Extensions\Deserializer.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\TypeExtension.cs" />
     <Compile Include="Extensions\Win32WindowExtension.cs" />

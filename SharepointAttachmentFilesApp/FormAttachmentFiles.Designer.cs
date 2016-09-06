@@ -39,7 +39,7 @@
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.listBoxMessage = new System.Windows.Forms.ListBox();
-			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.gridDirectories)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -108,6 +108,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxPassword.Location = new System.Drawing.Point(80, 90);
 			this.textBoxPassword.Name = "textBoxPassword";
+			this.textBoxPassword.PasswordChar = '*';
 			this.textBoxPassword.Size = new System.Drawing.Size(427, 19);
 			this.textBoxPassword.TabIndex = 5;
 			// 
@@ -211,8 +212,8 @@
 			// 
 			// notifyIcon1
 			// 
-			this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-			this.notifyIcon1.Text = "端末装置制御";
+			this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+			this.notifyIcon.Text = "端末装置制御";
 			// 
 			// FormAttachmentFiles
 			// 
@@ -263,7 +264,7 @@
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.ListBox listBoxMessage;
-		private System.Windows.Forms.NotifyIcon notifyIcon1;
+		private System.Windows.Forms.NotifyIcon notifyIcon;
 	}
 }
 

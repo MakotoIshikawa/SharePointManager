@@ -1,5 +1,5 @@
-﻿namespace SharepointListMngApp {
-	partial class FormListMng {
+﻿namespace SharepointListMngApp.Forms {
+	partial class FormImport {
 		/// <summary>
 		/// 必要なデザイナー変数です。
 		/// </summary>
@@ -23,7 +23,7 @@
 		/// コード エディターで変更しないでください。
 		/// </summary>
 		private void InitializeComponent() {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormListMng));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormImport));
 			this.buttonRun = new System.Windows.Forms.Button();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.textBoxFilePath = new System.Windows.Forms.TextBox();

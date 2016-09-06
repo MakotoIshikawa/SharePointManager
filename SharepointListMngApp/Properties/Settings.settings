@@ -3,25 +3,25 @@
   <Profiles />
   <Settings>
     <Setting Name="URL" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">https://devorix.sharepoint.com/sites/fsisupport</Value>
+      <Value Profile="(Default)">https://kariverification12.sharepoint.com/sites/IDEA</Value>
     </Setting>
     <Setting Name="User" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">daisuke_karikomi@devorix.onmicrosoft.com</Value>
+      <Value Profile="(Default)">root@kariverification12.onmicrosoft.com</Value>
     </Setting>
     <Setting Name="Password" Type="System.String" Scope="Application">
       <Value Profile="(Default)">!QAZ2wsx</Value>
     </Setting>
     <Setting Name="ListName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">海外出張申請</Value>
     </Setting>
     <Setting Name="LogRowLimit" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="UniqueKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">OldID</Value>
+      <Value Profile="(Default)">DocUniID</Value>
     </Setting>
     <Setting Name="SelectCol" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">[旧式ID], [表題], [状態], [内容], [大項目], [中項目], [小項目], [備考]</Value>
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

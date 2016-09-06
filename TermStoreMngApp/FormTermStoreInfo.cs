@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using ObjectAnalysisProject.Extensions;
+using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
-using SharePointManager.Extensions;
+using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.TermStore;
 
 namespace TermStoreMngApp {

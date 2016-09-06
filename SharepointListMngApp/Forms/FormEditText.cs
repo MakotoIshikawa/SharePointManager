@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using SharePointManager.Extensions;
 
-namespace SharepointListMngApp {
+namespace SharepointListMngApp.Forms {
 	/// <summary>
 	/// テキストボックスのショートカット編集を実装したフォームです。
 	/// </summary>
@@ -12,7 +12,8 @@ namespace SharepointListMngApp {
 		/// <see cref="FormEditText"/> クラスの新しいインスタンスを初期化します。
 		/// </summary>
 		/// <remarks>継承クラスのみ呼び出すことができます。</remarks>
-		protected FormEditText() {
+		protected FormEditText()
+			: base() {
 		}
 
 		#endregion

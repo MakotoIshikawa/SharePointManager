@@ -2,12 +2,13 @@
 using System.IO;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
+using CommonFeaturesLibrary.Extensions;
 
 namespace CommonFeaturesLibrary {
 	/// <summary>
 	/// ログ出力クラス
 	/// </summary>
-	public class LogOutputter {
+	public class Logger {
 		#region コンストラクタ
 
 		/// <summary>
@@ -15,7 +16,7 @@ namespace CommonFeaturesLibrary {
 		/// </summary>
 		/// <remarks>
 		/// オブジェクトを生成します。</remarks>
-		public LogOutputter()
+		public Logger()
 			: this(AppLogFilePath) {
 		}
 
@@ -25,7 +26,7 @@ namespace CommonFeaturesLibrary {
 		/// <param name="filePath">ファイルパス</param>
 		/// <remarks>
 		/// オブジェクトを生成します。</remarks>
-		public LogOutputter(String filePath) {
+		public Logger(string filePath) {
 			this.FileInfo = new FileInfo(filePath);
 		}
 

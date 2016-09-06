@@ -7,8 +7,10 @@ namespace SharePointManager.Interface {
 	public interface IListEdit : ISignInInfo {
 		#region プロパティ
 
-		/// <summary>リスト名</summary>
-		string ListName { get; set; }
+		/// <summary>
+		/// リスト名
+		/// </summary>
+		string ListName { get; }
 
 		#endregion
 
