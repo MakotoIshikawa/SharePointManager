@@ -61,7 +61,7 @@ namespace SharepointHtmlInsertApp.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SCM規定管理DBテスト用")]
+        [global::System.Configuration.DefaultSettingValueAttribute("全社員用掲示板テスト用")]
         public string ListName {
             get {
                 return ((string)(this["ListName"]));
@@ -79,7 +79,7 @@ namespace SharepointHtmlInsertApp.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Replace {
             get {
                 return ((bool)(this["Replace"]));

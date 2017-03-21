@@ -8,6 +8,7 @@ using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.Lists.Xml;
+using XmlLibrary.Extensions;
 using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager.Extensions {

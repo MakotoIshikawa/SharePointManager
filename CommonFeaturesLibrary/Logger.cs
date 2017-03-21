@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using CommonFeaturesLibrary.Extensions;
+using ExtensionsLibrary.Extensions;
 
 namespace CommonFeaturesLibrary {
 	/// <summary>

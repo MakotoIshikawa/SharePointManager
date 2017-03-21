@@ -3,7 +3,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace ExtensionsLibrary.Extensions {
+namespace XmlLibrary.Extensions {
 	/// <summary>
 	/// XElement クラス拡張クラス
 	/// </summary>

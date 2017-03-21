@@ -4,8 +4,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using ExtensionsLibrary.Extensions;
 
-namespace ExtensionsLibrary.Extensions {
+namespace XmlLibrary.Extensions {
 	/// <summary>
 	/// 逆シリアル化を拡張するメソッドを提供します。
 	/// </summary>
@@ -122,6 +123,23 @@ namespace ExtensionsLibrary.Extensions {
 		}
 
 		#endregion
+
+		#endregion
+
+		#region XML ファイル逆シリアル化
+
+		/// <summary>
+		/// XML ファイルを逆シリアル化します。
+		/// </summary>
+		/// <typeparam name="TResult">逆シリアル化する型</typeparam>
+		/// <param name="this">XML ファイル情報</param>
+		/// <returns>逆シリアル化されたオブジェクト</returns>
+		public static TResult DeSerializeFromXml<TResult>(this FileInfo @this) {
+			// 読み込むファイルを開く
+			using (var fs = @this.OpenRead()) {
+				return fs.DeserializeFromXml<TResult>();
+			}
+		}
 
 		#endregion
 	}

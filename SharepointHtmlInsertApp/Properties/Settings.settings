@@ -15,13 +15,13 @@
       <Value Profile="(Default)">!QAZ2wsx</Value>
     </Setting>
     <Setting Name="ListName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">SCM規定管理DBテスト用</Value>
+      <Value Profile="(Default)">全社員用掲示板テスト用</Value>
     </Setting>
     <Setting Name="UniqueKey" Type="System.String" Scope="Application">
       <Value Profile="(Default)">DocUniID</Value>
     </Setting>
     <Setting Name="Replace" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

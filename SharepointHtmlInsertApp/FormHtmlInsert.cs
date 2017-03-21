@@ -245,6 +245,7 @@ namespace SharepointHtmlInsertApp {
 					UniqueKey = uniqueKey,
 				};
 				m.ThrowException += (s, e) => this.WriteException(e.Value);
+				m.UpdatedItem += (s, e) => this.WriteLineMessage($"{e.Message} 列名=[{e.Value.Keys.Join(", ")}]");
 
 				var rows = this.gridDirectories.GetSelectedRows();
 				var dirs = (
@@ -255,10 +256,10 @@ namespace SharepointHtmlInsertApp {
 
 				dirs.ForEach(dir => {
 					try {
-						this.WriteLineMessage($"ディレクトリ名 : {dir.FullName}");
-						m.UpdateRichText(dir);
+						this.WriteLineMessage($"ディレクトリ名 : {dir.Name}");
+						m.UpdateRichText(dir, this.Replace);
 					} catch (Exception ex) {
-						this.WriteException(ex);
+						this.WriteLineMessage($"HTML の取込に失敗しました。: {ex.Message}");
 					}
 				});
 			} catch (Exception ex) {

@@ -112,6 +112,8 @@ namespace SharePointManager.Manager.Lists {
 
 		#region イベント
 
+		#region フィールド操作イベント
+
 		#region フィールド追加
 
 		/// <summary>
@@ -122,15 +124,11 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// フィールド追加後に呼び出されます。
 		/// </summary>
-		/// <param name="message">メッセージ</param>
 		/// <param name="value">追加時の値を表す文字列</param>
-		protected virtual void OnAddedField(string message, string value = null) {
-			if (this.AddedField == null) {
-				return;
-			}
-
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnAddedField(string value, string message) {
 			var e = new ValueEventArgs<string>(value, message);
-			this.AddedField(this, e);
+			this.AddedField?.Invoke(this, e);
 		}
 
 		#endregion
@@ -140,23 +138,24 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// フィールド更新後のイベントです。
 		/// </summary>
-		public event EventHandler<ValueEventArgs<string>> UpdatedField;
+		public event EventHandler<ValueChangedEventArgs<string>> UpdatedField;
 
 		/// <summary>
 		/// フィールド更新後に呼び出されます。
 		/// </summary>
+		/// <param name="before">変更前の値を表す文字列</param>
+		/// <param name="after">変更後の値を表す文字列</param>
 		/// <param name="message">メッセージ</param>
-		/// <param name="value">変更時の値を表す文字列</param>
-		protected virtual void OnUpdatedField(string message, string value = null) {
-			if (this.UpdatedField == null) {
-				return;
-			}
-
-			var e = new ValueEventArgs<string>(value, message);
-			this.UpdatedField(this, e);
+		protected virtual void OnUpdatedField(string before, string after, string message) {
+			var e = new ValueChangedEventArgs<string>(before, after, message);
+			this.UpdatedField?.Invoke(this, e);
 		}
 
 		#endregion
+
+		#endregion
+
+		#region アイテム操作イベント
 
 		#region アイテム追加
 
@@ -168,16 +167,33 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// アイテム追加後に呼び出されます。
 		/// </summary>
-		/// <param name="message">メッセージ</param>
 		/// <param name="value">追加したアイテムの情報</param>
-		protected virtual void OnAddedItem(string message, Dictionary<string, object> value) {
-			if (this.AddedItem == null) {
-				return;
-			}
-
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnAddedItem(Dictionary<string, object> value, string message) {
 			var e = new ValueEventArgs<Dictionary<string, object>>(value, message);
-			this.AddedItem(this, e);
+			this.AddedItem?.Invoke(this, e);
 		}
+
+		#endregion
+
+		#region アイテム更新
+
+		/// <summary>
+		/// アイテム更新後のイベントです。
+		/// </summary>
+		public event EventHandler<ValueEventArgs<Dictionary<string, object>>> UpdatedItem;
+
+		/// <summary>
+		/// アイテム更新後に呼び出されます。
+		/// </summary>
+		/// <param name="value">変更したアイテムの情報</param>
+		/// <param name="message">メッセージ</param>
+		protected virtual void OnUpdatedItem(Dictionary<string, object> value, string message) {
+			var e = new ValueEventArgs<Dictionary<string, object>>(value, message);
+			this.UpdatedItem?.Invoke(this, e);
+		}
+
+		#endregion
 
 		#endregion
 
@@ -342,8 +358,8 @@ namespace SharePointManager.Manager.Lists {
 							cnt++;
 
 							var sb = new StringBuilder();
-							sb.AppendFormat("Title 列の表示名を[{0}]から[{1}]に変更しました。", fld.Title, r.表示名);
-							this.OnUpdatedField(sb.ToString(), r.表示名);
+							sb.Append($"Title 列の表示名を[{fld.Title}]から[{r.表示名}]に変更しました。");
+							this.OnUpdatedField(fld.Title, r.表示名, sb.ToString());
 						}
 					}
 				} catch (Exception ex) {
@@ -356,7 +372,7 @@ namespace SharePointManager.Manager.Lists {
 				if (cnt == 0) {
 					sb.Append("列の情報を変更しませんでした。");
 				} else {
-					sb.AppendFormat("{0}件の列の情報を変更しました。", cnt);
+					sb.Append($"{cnt}件の列の情報を変更しました。");
 				}
 
 				this.OnSuccess(sb.ToString());
@@ -434,8 +450,8 @@ namespace SharePointManager.Manager.Lists {
 			});
 
 			var sb = new StringBuilder();
-			sb.AppendFormat("[{0}]列を追加しました。", disp);
-			this.OnAddedField(sb.ToString(), disp);
+			sb.Append($"[{disp}]列を追加しました。");
+			this.OnAddedField(disp, sb.ToString());
 
 			return this;
 		}
@@ -538,11 +554,12 @@ namespace SharePointManager.Manager.Lists {
 
 			var sb = new StringBuilder();
 			sb.Append("[").Append(this.ListName);
-			if (!this.FolderName.IsEmpty())
-				sb.AppendFormat("/{0}", this.FolderName);
+			if (!this.FolderName.IsEmpty()) {
+				sb.Append($"/{this.FolderName}");
+			}
 			sb.Append("]");
-			sb.AppendFormat(" にフォルダを追加しました。 [{0}] ", title);
-			this.OnAddedItem(sb.ToString(), new Dictionary<string, object> { { "Title", title }, });
+			sb.Append($" にフォルダを追加しました。 [{title}] ");
+			this.OnAddedItem(new Dictionary<string, object> { { "Title", title }, }, sb.ToString());
 
 			return this;
 		}
@@ -571,11 +588,12 @@ namespace SharePointManager.Manager.Lists {
 
 			var sb = new StringBuilder();
 			sb.Append("[").Append(this.ListName);
-			if (!this.FolderName.IsEmpty())
-				sb.AppendFormat("/{0}", this.FolderName);
+			if (!this.FolderName.IsEmpty()) {
+				sb.Append($"/{this.FolderName}");
+			}
 			sb.Append("]");
-			sb.AppendFormat(" にアイテムを追加しました。 [{0}] ", title);
-			this.OnAddedItem(sb.ToString(), dic);
+			sb.Append($" にアイテムを追加しました。 [{title}] ");
+			this.OnAddedItem(dic, sb.ToString());
 
 			return this;
 		}
@@ -613,7 +631,7 @@ namespace SharePointManager.Manager.Lists {
 			if (cnt == 0) {
 				sb.Append("フォルダを追加しませんでした。");
 			} else {
-				sb.AppendFormat("{0}件のフォルダを追加しました。", cnt);
+				sb.Append($"{cnt}件のフォルダを追加しました。");
 			}
 
 			this.OnSuccess(sb.ToString());
@@ -644,7 +662,7 @@ namespace SharePointManager.Manager.Lists {
 			if (cnt == 0) {
 				sb.Append("アイテムを追加しませんでした。");
 			} else {
-				sb.AppendFormat("{0}件のアイテムを追加しました。", cnt);
+				sb.Append($"{cnt}件のアイテムを追加しました。");
 			}
 
 			this.OnSuccess(sb.ToString());
@@ -667,9 +685,17 @@ namespace SharePointManager.Manager.Lists {
 
 			this.Update(l => {
 				var item = l.GetItemById(id);
+
 				func(item);
 
+				var value = item.FieldValues;
+
 				item.Update();
+
+				if (value.Any()) {
+					var msg = $"ID={id} のアイテムを更新しました。";
+					this.OnUpdatedItem(value, msg);
+				}
 			});
 		}
 
@@ -989,17 +1015,21 @@ namespace SharePointManager.Manager.Lists {
 
 			var id = this.GetID(uniqueKey, dir.Name);
 
-			var attachments = this.GetAttachmentFiles(id).Select(a => new {
-				Attachment = a,
-				Info = new FileInfo(a.FileName)
-			});
-
 			var htmlFiles = dir.EnumerateFiles("*.html").Select(f => new {
 				Name = f.GetNameWithoutExtension(),
 				Body = f.ReadText(),
 			});
 
+			if (!htmlFiles.Any()) {
+				throw new ApplicationException($"HTML ファイルが格納されていません。");
+			}
+
 			if (replace) {
+				var attachments = this.GetAttachmentFiles(id).Select(a => new {
+					Attachment = a,
+					Info = new FileInfo(a.FileName)
+				});
+
 				var links = attachments.Where(f => !f.Info.IsImage()).Select(f => new {
 					Tag = $"[{f.Attachment.FileName}]",
 					Link = f.Attachment.ToLink(),
@@ -1058,14 +1088,21 @@ namespace SharePointManager.Manager.Lists {
 
 			var id = this.GetID(uniqueKey, dir.Name);
 
-			var attachments = this.GetAttachmentFiles(id).Select(a => new {
-				Attachment = a,
-				Info = new FileInfo(a.FileName)
+			var htmlFiles = dir.EnumerateFiles("*.html").Select(async f => new {
+				Name = f.GetNameWithoutExtension(),
+				Body = await f.ReadTextAsync(),
 			});
 
-			var htmlFiles = dir.EnumerateFiles("*.html");
+			if (!htmlFiles.Any()) {
+				throw new ApplicationException($"HTML ファイルが格納されていません。");
+			}
 
 			if (replace) {
+				var attachments = this.GetAttachmentFiles(id).Select(a => new {
+					Attachment = a,
+					Info = new FileInfo(a.FileName)
+				});
+
 				var links = attachments.Where(f => !f.Info.IsImage()).Select(f => new {
 					Tag = $"[{f.Attachment.FileName}]",
 					Link = f.Attachment.ToLink(),
@@ -1078,8 +1115,8 @@ namespace SharePointManager.Manager.Lists {
 
 				foreach (var htm in htmlFiles) {
 					try {
-						var name = htm.GetNameWithoutExtension();
-						var body = await htm.ReadTextAsync();
+						var name = (await htm).Name;
+						var body = (await htm).Body;
 
 						// リンク置換
 						links.ForEach(l => {
@@ -1099,8 +1136,8 @@ namespace SharePointManager.Manager.Lists {
 			} else {
 				foreach (var htm in htmlFiles) {
 					try {
-						var name = htm.GetNameWithoutExtension();
-						var body = await htm.ReadTextAsync();
+						var name = (await htm).Name;
+						var body = (await htm).Body;
 
 						this.UpdateItemById(id, item => item[name] = body);
 					} catch (Exception ex) {

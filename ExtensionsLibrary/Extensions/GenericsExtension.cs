@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace ExtensionsLibrary.Extensions {
 	/// <summary>
@@ -336,44 +332,6 @@ namespace ExtensionsLibrary.Extensions {
 					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString()), })
 					.Where(p => !p.Value.IsEmpty())
 					.Select(p => $"{p.Name} = {p.Value}").Join(", ");
-			}
-		}
-
-		#endregion
-
-		#region ToXmlString (オーバーロード +1)
-
-		/// <summary>
-		/// XML 文字列に変換します。
-		/// </summary>
-		/// <typeparam name="T">変化するインスタンスの型</typeparam>
-		/// <param name="this">変化するインスタンス</param>
-		/// <param name="useNamespace">名前空間を使用するかどうか</param>
-		/// <returns>XML 文字列をかえします。</returns>
-		public static string ToXmlString<T>(this T @this, bool useNamespace = true) {
-			return @this.ToXmlString(Encoding.UTF8, useNamespace);
-		}
-
-		/// <summary>
-		/// XML 文字列に変換します。
-		/// </summary>
-		/// <typeparam name="T">変化するインスタンスの型</typeparam>
-		/// <param name="this">変化するインスタンス</param>
-		/// <param name="encoding">文字エンコーディング</param>
-		/// <param name="useNamespace">名前空間を使用するかどうか</param>
-		/// <returns>XML 文字列をかえします。</returns>
-		public static string ToXmlString<T>(this T @this, Encoding encoding, bool useNamespace = true) {
-			using (var ms = new MemoryStream()) {
-				var xs = new XmlSerializer(typeof(T));
-
-				if (useNamespace) {
-					xs.Serialize(ms, @this);
-				} else {
-					var ns = new XmlSerializerNamespaces(new[] { new XmlQualifiedName() });
-					xs.Serialize(ms, @this, ns);
-				}
-
-				return encoding.GetString(ms.ToArray());
 			}
 		}
 

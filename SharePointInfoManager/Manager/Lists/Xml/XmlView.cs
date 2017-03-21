@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
+using XmlLibrary.Extensions;
 
 namespace SharePointManager.Manager.Lists.Xml {
 	/// <summary>

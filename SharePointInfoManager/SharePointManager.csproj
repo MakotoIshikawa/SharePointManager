@@ -88,6 +88,7 @@
     <Compile Include="Manager\Lists\Xml\XmlField.cs" />
     <Compile Include="MyEventArgs\MessageEventArgs.cs" />
     <Compile Include="MyEventArgs\ThrowSharePointExceptionEventArgs.cs" />
+    <Compile Include="MyEventArgs\ValueChangedEventArgs.cs" />
     <Compile Include="MyEventArgs\ValueEventArgs.cs" />
     <Compile Include="MyException\DuplicateException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -146,6 +147,10 @@
     <ProjectReference Include="..\ObjectAnalysisProject\ObjectAnalysisProject.csproj">
       <Project>{be1bb940-f59e-4440-add0-603bd9915a02}</Project>
       <Name>ObjectAnalysisProject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XmlLibrary\XmlLibrary.csproj">
+      <Project>{9050afb5-bcc8-4fb6-b578-527782a76ffa}</Project>
+      <Name>XmlLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
