@@ -7,22 +7,23 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using SharePointManager.Manager.Lists.Xml;
+using ExtensionsLibrary.Extensions;
 
 namespace UnitTestProject {
 	[TestClass]
 	public class UnitTestListsManager {
-#if false
-		private string _rootUrl = String.Format(@"https://devorix.sharepoint.com");
-		private string _user = String.Format(@"daisuke_karikomi@devorix.onmicrosoft.com");
-		private string _password = @"!QAZ2wsx";
-		private ListManager _mng = null;
+#if true
+		private static string _rootUrl = @"https://yamaverification01.sharepoint.com";
+		private static string _user = @"root@yamaverification01.onmicrosoft.com";
+		private static string _password = @"!QAZ2wsx";
+		private static string _siteUrl = _rootUrl + @"/sites/testSite";
 #else
 		private const int _ver = 12;
 		private static string _rootUrl = String.Format(@"https://kariverification{0:00}.sharepoint.com", _ver);
 		private static string _user = String.Format(@"root@KariVerification{0:00}.onmicrosoft.com", _ver);
 		private static string _password = @"!QAZ2wsx";
-#endif
 		private static string _siteUrl = _rootUrl + @"/sites/IDEA";
+#endif
 
 		/// <summary>
 		/// コンストラクタ
@@ -32,14 +33,18 @@ namespace UnitTestProject {
 
 		#region メソッド
 
-		private ListManager CreateListManager(string title) {
-			var m = new ListManager(_siteUrl, _user, _password, title.Trim());
+		private ListManager CreateListManager(string title, string uniqueKey = null) {
+			var m = new ListManager(_siteUrl, _user, _password, title.Trim()) {
+				UniqueKey = uniqueKey,
+			};
+
 			m.ThrowException += (sender, e) => {
 				throw e.Value;
 			};
 			m.ThrowSharePointException += (sender, e) => {
 				throw new Exception(e.ErrorMessage + " : " + e.ServerStackTrace);
 			};
+
 			return m;
 		}
 
@@ -198,6 +203,20 @@ namespace UnitTestProject {
 
 		[TestMethod]
 		[Owner("リスト管理")]
+		[TestCategory("更新")]
+		public void 本文追加テスト() {
+			var listName = "SCM規定管理DBテスト用";
+
+			var m = CreateListManager(listName, "DocUniID");
+
+			var root = new DirectoryInfo(@"C:\work\LSK");
+			root.EnumerateDirectories().ForEach(dir => {
+				m.UpdateRichText(dir);
+			});
+		}
+
+		[TestMethod]
+		[Owner("リスト管理")]
 		[TestCategory("追加")]
 		public void フォルダ追加() {
 			var listName = "CustomList";
@@ -258,7 +277,7 @@ namespace UnitTestProject {
 			}).Select(s => new FileInfo(s)).ToList();
 
 			var id = 1;
-			m.AddAttachmentFile(id, files);
+			m.AddAttachmentFiles(id, files);
 
 			var attachmentFiles = m.GetAttachmentFiles(id).ToList();
 
@@ -325,7 +344,7 @@ namespace UnitTestProject {
 			}
 			{// ID
 				int limit = 100;
-				var rows = m.GetItemsValues(xml => 
+				var rows = m.GetItemsValues(xml =>
 					xml.AddQueryItems<QueryItemsAnd>(a => {
 						a.AddQuery<QueryOperatorGeq>("ID", 1);
 						a.AddQuery<QueryOperatorLt>("ID", 25);
@@ -355,7 +374,7 @@ namespace UnitTestProject {
 				, limit);
 				var expected = 3;
 				var actual = rows.Count();
-				//Assert.AreEqual(expected, actual);
+				Assert.AreEqual(expected, actual);
 			}
 		}
 

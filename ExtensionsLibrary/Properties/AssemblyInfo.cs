@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
 
@@ -11,7 +10,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ExtensionsLibrary")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,7 +31,6 @@ using System.Resources;
 //
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を 
 // 既定値にすることができます:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.7.10")]
-[assembly: AssemblyFileVersion("1.0.7.10")]
-[assembly: NeutralResourcesLanguageAttribute("ja-JP")]
+[assembly: AssemblyVersion("1.2.*")]
+[assembly: AssemblyFileVersion("1.2.3.11")]
+[assembly: NeutralResourcesLanguage("ja-JP")]

@@ -32,15 +32,11 @@ namespace ExtensionsLibrary.Extensions {
 		private static IEnumerable<TFileSystemInfo> GetFileSystemInfos<TFileSystemInfo>(this IDataObject @this, Func<string[], IEnumerable<TFileSystemInfo>> conversion) where TFileSystemInfo : FileSystemInfo {
 			var format = DataFormats.FileDrop;
 			if (!@this.GetDataPresent(format)) {
-				throw new ArgumentException("ファイルドロップ形式には変換できません。", "DataFormats.FileDrop");
+				throw new ArgumentException("ファイルドロップ形式には変換できません。", nameof(DataFormats.FileDrop));
 			}
 
 			var paths = (string[])@this.GetData(format);
-			if (conversion == null) {
-				throw new ArgumentNullException("conversion");
-			}
-
-			return conversion(paths);
+			return conversion?.Invoke(paths);
 		}
 	}
 }

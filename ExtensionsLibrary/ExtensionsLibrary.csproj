@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExtensionsLibrary</RootNamespace>
     <AssemblyName>ExtensionsLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,26 +35,29 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompareSelector.cs" />
-    <Compile Include="Extensions\DataObjectExtension.cs" />
+    <Compile Include="Extensions\DataTableExtension.cs" />
     <Compile Include="Extensions\DateTimeExtension.cs" />
     <Compile Include="Extensions\DictionaryExtension.cs" />
+    <Compile Include="Extensions\DirectoryInfoExtension.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
+    <Compile Include="Extensions\FileInfoExtension.cs" />
     <Compile Include="Extensions\GenericsExtension.cs" />
-    <Compile Include="Extensions\ListBoxExtension.cs" />
+    <Compile Include="Extensions\ListExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="Extensions\Deserializer.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="Extensions\TupleExtension.cs" />
     <Compile Include="Extensions\TypeExtension.cs" />
-    <Compile Include="Extensions\Win32WindowExtension.cs" />
+    <Compile Include="Extensions\UriExtension.cs" />
     <Compile Include="Extensions\XElementExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

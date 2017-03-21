@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
+using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using ObjectAnalysisProject.Extensions;
+using SharePointManager.Extensions;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists.Xml;
 using SharePointManager.MyEventArgs;
@@ -46,13 +48,19 @@ namespace SharePointManager.Manager.Lists {
 
 		#region プロパティ
 
-		/// <summary>リスト名</summary>
+		/// <summary>
+		/// リスト名
+		/// </summary>
 		public string ListName { get; protected set; }
 
-		/// <summary>フィールド一覧</summary>
+		/// <summary>
+		/// フィールド一覧
+		/// </summary>
 		public List<SP.Field> Fields { get; protected set; }
 
-		/// <summary>アイテム数</summary>
+		/// <summary>
+		/// アイテム数
+		/// </summary>
 		public int ItemCount { get; protected set; }
 
 		/// <summary>
@@ -94,6 +102,11 @@ namespace SharePointManager.Manager.Lists {
 		/// 追加するアイテムがフォルダかどうかを取得、設定します。
 		/// </summary>
 		public bool IsFolder { get; set; }
+
+		/// <summary>
+		/// ID 列以外の固有キーとなる列名を取得、設定します。
+		/// </summary>
+		public string UniqueKey { get; set; }
 
 		#endregion
 
@@ -195,7 +208,7 @@ namespace SharePointManager.Manager.Lists {
 
 				return list.ItemCount;
 			});
-#if false	// コンテンツタイプ確認
+#if false    //TODO: コンテンツタイプ確認
 			var types = this.Extract(cn => {
 				var list = cn.Web.Lists.GetById(this.ListID);
 				cn.Load(list, l => l.ContentTypes.Include(Retrievals.RetrievalsOfContentType));
@@ -417,9 +430,7 @@ namespace SharePointManager.Manager.Lists {
 			}, f => {
 				f.Title = disp;
 
-				if (action != null) {
-					action(f);
-				}
+				action?.Invoke(f);
 			});
 
 			var sb = new StringBuilder();
@@ -450,9 +461,7 @@ namespace SharePointManager.Manager.Lists {
 				var l = cn.Web.Lists.GetByTitle(title);
 				var field = l.Fields.AddField(fieldInfo);
 				var fld = cn.CastTo<TField>(field);
-				if (action != null) {
-					action(fld);
-				}
+				action?.Invoke(fld);
 
 				fld.Update();
 			});
@@ -477,9 +486,7 @@ namespace SharePointManager.Manager.Lists {
 				var list = cn.Web.Lists.GetByTitle(title);
 				var field = list.Fields.GetByInternalNameOrTitle(name);
 				var fld = cn.CastTo<TField>(field);
-				if (action != null) {
-					action(fld);
-				}
+				action?.Invoke(fld);
 
 				fld.Update();
 			});
@@ -623,9 +630,7 @@ namespace SharePointManager.Manager.Lists {
 			var cnt = 0;
 			ls.ForEach(r => {
 				try {
-					if (convert != null) {
-						convert(r);
-					}
+					convert?.Invoke(r);
 
 					this.AddListItem(r, this.FolderName, this.IsFolder);
 
@@ -688,13 +693,31 @@ namespace SharePointManager.Manager.Lists {
 		#region ファイル添付
 
 		/// <summary>
-		/// 添付ファイル追加
+		/// 列名とその列に格納されている値を指定して、
+		/// 該当するリストアイテムに添付ファイルを追加します。
+		/// </summary>
+		/// <param name="value">列に格納されている値</param>
+		/// <param name="files">ファイル情報配列</param>
+		/// <returns>ListManager</returns>
+		public ListManager AddAttachmentFiles(string value, IEnumerable<FileInfo> files) {
+			var uniqueKey = this.UniqueKey;
+			if (uniqueKey.IsEmpty()) {
+				throw new ApplicationException($"{nameof(this.UniqueKey)} が設定されていません。");
+			}
+
+			var id = this.GetID(uniqueKey, value);
+			return this.AddAttachmentFiles(id, files);
+		}
+
+		/// <summary>
+		/// リストアイテムIDを指定して、
+		/// 該当するリストアイテムに添付ファイルを追加します。
 		/// </summary>
 		/// <param name="id">リストアイテムID</param>
 		/// <param name="files">ファイル情報配列</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddAttachmentFile(int id, IEnumerable<FileInfo> files) {
-			return AddAttachmentFile(l => l.GetItemById(id), files);
+		public ListManager AddAttachmentFiles(int id, IEnumerable<FileInfo> files) {
+			return AddAttachmentFiles(l => l.GetItemById(id), files);
 		}
 
 		/// <summary>
@@ -703,7 +726,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <param name="getItem">リストアイテム取得メソッド</param>
 		/// <param name="files">ファイル情報配列</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddAttachmentFile(Func<SP.List, SP.ListItem> getItem, IEnumerable<FileInfo> files) {
+		protected virtual ListManager AddAttachmentFiles(Func<SP.List, SP.ListItem> getItem, IEnumerable<FileInfo> files) {
 			var title = this.ListName;
 			this.ReferToContext(cn => {
 				var l = cn.Web.Lists.GetByTitle(title);
@@ -712,8 +735,7 @@ namespace SharePointManager.Manager.Lists {
 				// リストアイテム取得確認
 				cn.ExecuteQuery();
 
-				files.Where(f => f.Exists).ToList()
-				.ForEach(f => {
+				files.Where(f => f.Exists).ForEach(f => {
 					using (var fs = f.Open(FileMode.Open)) {
 						i.AddAttachmentFile(fs);
 						cn.ExecuteQuery();
@@ -814,9 +836,7 @@ namespace SharePointManager.Manager.Lists {
 				RecursiveAll = true,
 			};
 
-			if (setQueryParameters != null) {
-				setQueryParameters(xml);
-			}
+			setQueryParameters?.Invoke(xml);
 
 			return xml.CreateQuery();
 		}
@@ -873,6 +893,14 @@ namespace SharePointManager.Manager.Lists {
 			});
 		}
 
+		/// <summary>
+		/// リスト名と検索の式木コレクションを指定して、
+		/// アイテムのコレクションを取得します。
+		/// </summary>
+		/// <param name="limit">限界値を表す数値です。</param>
+		/// <param name="viewFields">取得するフィールド名の配列です。</param>
+		/// <param name="retrievals">検索の式木コレクション</param>
+		/// <returns>アイテムのコレクションを返します。</returns>
 		public IEnumerable<ListItem> GetAllItems(int limit, string[] viewFields, params Expression<Func<ListItem, object>>[] retrievals) {
 			var listName = this.ListName;
 			return this.Load(cn => {
@@ -895,7 +923,10 @@ namespace SharePointManager.Manager.Lists {
 				var id = Convert.ToInt32(row.First()[field]);
 				return id;
 			} catch (Exception ex) {
-				this.OnThrowException(ex);
+				var sb = new StringBuilder();
+				sb.AppendLine($"ID の取得に失敗しました。[{nameof(val)}={key}, {nameof(val)}={val}]")
+				.AppendLine("指定したキーが値と一致するアイテムが見つかりませんでした。");
+				this.OnThrowException(new ApplicationException(sb.ToString(), ex));
 				return int.MinValue;
 			}
 		}
@@ -941,6 +972,145 @@ namespace SharePointManager.Manager.Lists {
 			var path = Path.Combine(paths);
 			return path.Replace(@"\", "/");
 		}
+
+		#region リッチテキスト更新
+
+		/// <summary>
+		/// HTML ファイルが格納されたディレクトリを指定して、
+		/// リッチテキストの更新をします。
+		/// </summary>
+		/// <param name="dir">ディレクトリ情報</param>
+		/// <param name="replace">置換処理をするかどうか</param>
+		public void UpdateRichText(DirectoryInfo dir, bool replace = true) {
+			var uniqueKey = this.UniqueKey;
+			if (uniqueKey.IsEmpty()) {
+				throw new ApplicationException($"{nameof(this.UniqueKey)} が設定されていません。");
+			}
+
+			var id = this.GetID(uniqueKey, dir.Name);
+
+			var attachments = this.GetAttachmentFiles(id).Select(a => new {
+				Attachment = a,
+				Info = new FileInfo(a.FileName)
+			});
+
+			var htmlFiles = dir.EnumerateFiles("*.html").Select(f => new {
+				Name = f.GetNameWithoutExtension(),
+				Body = f.ReadText(),
+			});
+
+			if (replace) {
+				var links = attachments.Where(f => !f.Info.IsImage()).Select(f => new {
+					Tag = $"[{f.Attachment.FileName}]",
+					Link = f.Attachment.ToLink(),
+				});
+
+				var images = attachments.Where(f => f.Info.IsImage()).Select(f => new {
+					Name = $@"<img src=""image\{f.Attachment.FileName}"">",
+					FullName = $@"<img src=""{f.Attachment.ServerRelativeUrl}"">",
+				});
+
+				htmlFiles.ForEach(htm => {
+					try {
+						var name = htm.Name;
+						var body = htm.Body;
+
+						// リンク置換
+						links.ForEach(l => {
+							body = body.Replace(l.Tag, l.Link);
+						});
+
+						// イメージ置換
+						images.ForEach(l => {
+							body = body.Replace(l.Name, l.FullName);
+						});
+
+						this.UpdateItemById(id, item => item[name] = body);
+					} catch (Exception ex) {
+						this.OnThrowException(ex);
+					}
+				});
+			} else {
+				htmlFiles.ForEach(htm => {
+					try {
+						var name = htm.Name;
+						var body = htm.Body;
+
+						this.UpdateItemById(id, item => item[name] = body);
+					} catch (Exception ex) {
+						this.OnThrowException(ex);
+					}
+				});
+			}
+		}
+
+		/// <summary>
+		/// HTML ファイルが格納されたディレクトリを指定して、
+		/// リッチテキストの更新をします。
+		/// </summary>
+		/// <param name="dir">ディレクトリ情報</param>
+		/// <param name="replace">置換処理をするかどうか</param>
+		public async Task UpdateRichTextAsync(DirectoryInfo dir, bool replace = true) {
+			var uniqueKey = this.UniqueKey;
+			if (uniqueKey.IsEmpty()) {
+				throw new ApplicationException($"{nameof(this.UniqueKey)} が設定されていません。");
+			}
+
+			var id = this.GetID(uniqueKey, dir.Name);
+
+			var attachments = this.GetAttachmentFiles(id).Select(a => new {
+				Attachment = a,
+				Info = new FileInfo(a.FileName)
+			});
+
+			var htmlFiles = dir.EnumerateFiles("*.html");
+
+			if (replace) {
+				var links = attachments.Where(f => !f.Info.IsImage()).Select(f => new {
+					Tag = $"[{f.Attachment.FileName}]",
+					Link = f.Attachment.ToLink(),
+				});
+
+				var images = attachments.Where(f => f.Info.IsImage()).Select(f => new {
+					Name = $@"<img src=""image\{f.Attachment.FileName}"">",
+					FullName = $@"<img src=""{f.Attachment.ServerRelativeUrl}"">",
+				});
+
+				foreach (var htm in htmlFiles) {
+					try {
+						var name = htm.GetNameWithoutExtension();
+						var body = await htm.ReadTextAsync();
+
+						// リンク置換
+						links.ForEach(l => {
+							body = body.Replace(l.Tag, l.Link);
+						});
+
+						// イメージ置換
+						images.ForEach(l => {
+							body = body.Replace(l.Name, l.FullName);
+						});
+
+						this.UpdateItemById(id, item => item[name] = body);
+					} catch (Exception ex) {
+						this.OnThrowException(ex);
+					}
+				}
+			} else {
+				foreach (var htm in htmlFiles) {
+					try {
+						var name = htm.GetNameWithoutExtension();
+						var body = await htm.ReadTextAsync();
+
+						this.UpdateItemById(id, item => item[name] = body);
+					} catch (Exception ex) {
+						this.OnThrowException(ex);
+					}
+				}
+			}
+		}
+
+		#endregion
 
 		#endregion
 	}

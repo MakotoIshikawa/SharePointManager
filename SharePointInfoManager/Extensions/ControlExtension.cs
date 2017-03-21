@@ -17,9 +17,7 @@ namespace SharePointManager.Extensions {
 			try {
 				var text = @this.Text;
 
-				if (validate != null) {
-					validate(text);
-				}
+				validate?.Invoke(text);
 
 				errorProvider.Clear();
 				return true;

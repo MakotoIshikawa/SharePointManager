@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SharePointManager.Interface {
+﻿namespace SharePointManager.Interface {
 	/// <summary>
 	/// サインイン情報のインターフェイスです。
 	/// </summary>

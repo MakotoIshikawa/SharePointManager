@@ -5,16 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using CommonFeaturesLibrary;
+using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager;
+using WindowsFormsLibrary.Extensions;
 
 namespace SharePointGroupMngApp {
 	/// <summary>
 	/// フォーム
 	/// </summary>
-	public partial class FormGroupMng : System.Windows.Forms.Form {
+	public partial class FormGroupMng : Form {
 		#region コンストラクタ
 
 		/// <summary>

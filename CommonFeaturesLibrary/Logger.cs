@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
-using ExtensionsLibrary.Extensions;
+using System.Reflection;
 using CommonFeaturesLibrary.Extensions;
 
 namespace CommonFeaturesLibrary {
@@ -38,10 +37,16 @@ namespace CommonFeaturesLibrary {
 		public FileInfo FileInfo { get; protected set; }
 
 		/// <summary>アプリログファイルパス</summary>
-		public static String AppLogFilePath {
+		public static string AppLogFilePath {
 			get {
-				var info = new FileInfo(Application.ExecutablePath);
-				return info.ChangeExtension(".log");
+				try {
+					var assembly = Assembly.GetEntryAssembly();
+					var path = assembly.Location;
+					var info = new FileInfo(path);
+					return info.ChangeExtension(".log");
+				} catch (Exception) {
+					return $"{AppDomain.CurrentDomain.BaseDirectory}.log";
+				}
 			}
 		}
 
@@ -57,7 +62,7 @@ namespace CommonFeaturesLibrary {
 		/// <param name="message">メッセージ</param>
 		/// <remarks>
 		/// ログファイルにログを書き込む</remarks>
-		public void WriteLog(String message) {
+		public void WriteLog(string message) {
 			this.FileInfo.WriteLog(message);
 		}
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SharePointManager.Manager.TermStore {
+﻿namespace SharePointManager.Manager.TermStore {
 	/// <summary>
 	/// 用語情報クラス
 	/// </summary>

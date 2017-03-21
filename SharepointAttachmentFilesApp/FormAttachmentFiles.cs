@@ -5,9 +5,10 @@ using System.Windows.Forms;
 using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
-using SharepointListMngApp.Forms;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
+using WindowsFormsLibrary.Extensions;
+using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharepointAttachmentFilesApp {
 	/// <summary>
@@ -72,7 +73,9 @@ namespace SharepointAttachmentFilesApp {
 		/// <summary>表示ログ最大行数</summary>
 		public int LogRowLimit { get; protected set; }
 
-		/// <summary>固有キー</summary>
+		/// <summary>
+		/// ID 列以外の固有キーとなる列名を取得します。
+		/// </summary>
 		public string UniqueKey { get; protected set; }
 
 		#endregion
@@ -152,7 +155,18 @@ namespace SharepointAttachmentFilesApp {
 				var directory = new DirectoryInfo(tb.Text);
 				this.buttonRun.Enabled = directory.Exists;
 
-				var table = directory.EnumerateDirectories().ToDataTable();
+				var table = (
+					from d in directory.EnumerateDirectories()
+					let files = d.GetFileInfos(true)
+					let cnt = files.Count()
+					where files.Any()
+					select new {
+						Name = d.Name,
+						FullName = d.FullName,
+						FileCount = cnt
+					}
+				).ToDataTable();
+
 				this.gridDirectories.DataSource = table;
 			} catch (Exception ex) {
 				this.gridDirectories.DataSource = null;
@@ -219,26 +233,33 @@ namespace SharepointAttachmentFilesApp {
 
 				var listName = this.ListName;
 
-				var m = new ListManager(url, username, password, listName);
+				var uniqueKey = this.UniqueKey;
+				var m = new ListManager(url, username, password, listName) {
+					UniqueKey = uniqueKey,
+				};
 				m.ThrowException += (s, e) => this.WriteException(e.Value);
 
-				var key = this.UniqueKey;
-				var rows = this.gridDirectories.SelectedRows.Cast<DataGridViewRow>();
-				foreach (var row in rows) {
-					var fullPath = row.Cells["FullName"].Value.ToString();
+				var rows = this.gridDirectories.GetSelectedRows();
+				var dirs = (
+					from row in rows
+					let fullPath = row.Cells["FullName"].Value.ToString()
+					select new DirectoryInfo(fullPath)
+				);
 
-					var dir = new DirectoryInfo(fullPath);
-					this.WriteLineMessage("ファイルを添付します。 : " + dir.FullName);
-					var files = dir.EnumerateFiles();
+				dirs.ForEach(dir => {
+					var files = dir.GetFileInfos(true, ".htm", ".html");
+					if (!files.Any()) {
+						this.WriteLineMessage($"フォルダ内にファイルがありませんでした。");
+						return;
+					}
 
-					var id = m.GetID(key, dir.Name);
-					m.AddAttachmentFile(id, files);
+					this.WriteLineMessage($"ファイルを添付します。 : {dir.FullName}");
 
-					files.Select(f => f.Name).ToList()
-					.ForEach(f => {
-						this.WriteLineMessage(string.Format("ファイル名 : {0}", f));
-					});
-				}
+					m.AddAttachmentFiles(dir.Name, files);
+
+					files.Select(f => f.Name).ForEach(name
+						=> this.WriteLineMessage($"ファイル名 : {name}"));
+				});
 			} catch (Exception ex) {
 				this.WriteException(ex);
 			} finally {

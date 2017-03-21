@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -9,6 +8,8 @@ namespace ExtensionsLibrary.Extensions {
 	/// XElement クラス拡張クラス
 	/// </summary>
 	public static partial class XElementExtension {
+		#region メソッド
+
 		#region AttributeValue (オーバーロード +2)
 
 		/// <summary>
@@ -161,7 +162,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// <returns>
 		/// この要素のすべてのテキストコンテンツを格納している文字列を返します。</returns>
 		public static string GetString(this XElement @this) {
-			return (null != @this) ? @this.Value : string.Empty;
+			return @this?.Value ?? string.Empty;
 		}
 
 		/// <summary>
@@ -171,7 +172,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// <returns>
 		/// 現在の属性の値を格納している文字列を返します。</returns>
 		public static string GetString(this XAttribute @this) {
-			return (null != @this) ? @this.Value : string.Empty;
+			return @this?.Value ?? string.Empty;
 		}
 
 		#endregion
@@ -241,6 +242,8 @@ namespace ExtensionsLibrary.Extensions {
 
 		#endregion
 
+		#region 要素生成
+
 		/// <summary>
 		/// 指定した名前と内容を持つ XElement クラスの新しいインスタンスを生成します。
 		/// </summary>
@@ -248,12 +251,11 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="content">要素の内容。</param>
 		/// <returns>XElement クラスの新しいインスタンスを返します。</returns>
 		public static XElement CreateXElement(this XName name, string content) {
-			var sb = new StringBuilder()
-			.AppendFormat(@"<{0}>", name)
-			.Append(content)
-			.AppendFormat(@"</{0}>", name);
-
-			return XElement.Parse(sb.ToString());
+			return XElement.Parse($"<{name}>{content}</{name}>");
 		}
+
+		#endregion
+
+		#endregion
 	}
 }

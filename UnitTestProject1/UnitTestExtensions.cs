@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CommonFeaturesLibrary.Extensions;
+using ExtensionsLibrary.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists.Xml;
@@ -25,7 +27,9 @@ namespace UnitTestProject {
 			var fname0 = file.GetVersionName(0);
 			var fname1 = file.GetVersionName(1);
 
-			Assert.IsNotNull(fname0);
+			var expected = @"C:\Users\ishikawm\Documents\L (1).txt";
+			var actual = fname1;
+			Assert.AreNotEqual(expected, actual);
 		}
 
 		[TestMethod]
@@ -52,6 +56,19 @@ namespace UnitTestProject {
 			var expected = string.Empty;
 			var actual = str1;
 			Assert.AreNotEqual(expected, actual);
+		}
+
+		[TestMethod]
+		[Owner("その他")]
+		[TestCategory("確認")]
+		public void ディレクトリ内ファイル取得() {
+			var fullPath = $@"\\10.25.250.70\fileserver\H25\557_MS事業部\010_事業部共有\ＭＳ部資産\Personal\01_社員(L以上)\karikomi(刈込)\20160201_イデア\70_User\yamada\20170313 移行ツール用htmlファイル\ＳＣＭ規程管理ＤＢ\documents";
+			var dir = new DirectoryInfo(fullPath);
+			var files = dir.GetFileInfos(true, ".htm", ".html");
+
+			Assert.IsTrue(files.Any());
+			Assert.IsFalse(files.Any(f => f.Extension == ".htm"));
+			Assert.IsFalse(files.Any(f => f.Extension == ".html"));
 		}
 	}
 }

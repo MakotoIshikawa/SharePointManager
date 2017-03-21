@@ -3,10 +3,11 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CommonFeaturesLibrary;
+using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Manager.TermStore;
+using WindowsFormsLibrary.Extensions;
 
 namespace TermStoreMngApp {
 	/// <summary>

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ObjectAnalysisProject.Extensions;
-using SharePointManager.Manager.Lists.Xml;
 using ExtensionsLibrary.Extensions;
-using System.Reflection;
 using System.Data;
 
 namespace UnitTestProject {

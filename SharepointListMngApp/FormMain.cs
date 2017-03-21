@@ -7,6 +7,8 @@ using ExtensionsLibrary.Extensions;
 using SharepointListMngApp.Forms;
 using SharePointManager.Manager.Lists;
 using SharePointManager.MyException;
+using WindowsFormsLibrary.Extensions;
+using WindowsFormsLibrary.Forms.Primitives;
 using SP = Microsoft.SharePoint.Client;
 
 namespace SharepointListMngApp {

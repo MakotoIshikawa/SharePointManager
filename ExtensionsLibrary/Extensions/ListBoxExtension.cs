@@ -11,8 +11,8 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="this">ListBox</param>
 		/// <param name="message">メッセージ</param>
 		/// <param name="limit">最大行数</param>
-		public static void AddMessage(this ListBox @this, string message, int limit) {
-			if (@this.Visible == false) {
+		public static void AddMessage(this ListBox @this, string message, int limit = int.MaxValue) {
+			if (!(@this?.Visible ?? false)) {
 				// 非表示であれば何もしない
 				return;
 			}

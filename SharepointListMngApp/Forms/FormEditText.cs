@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using SharePointManager.Extensions;
+using WindowsFormsLibrary.Extensions;
 
 namespace SharepointListMngApp.Forms {
 	/// <summary>

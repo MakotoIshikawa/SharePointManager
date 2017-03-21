@@ -1,6 +1,8 @@
-﻿using System;
+﻿using System.Data;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
+using CommonFeaturesLibrary.Providers.Csv;
 using ExtensionsLibrary.Extensions;
 
 namespace CommonFeaturesLibrary.Extensions {
@@ -53,6 +55,17 @@ namespace CommonFeaturesLibrary.Extensions {
 			}
 		}
 
+		/// <summary>
+		/// 文字列を書き込み、続けて行終端記号を書き込みます。[非同期]
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <param name="message">メッセージ</param>
+		public static async Task WriteLineAsync(this FileInfo @this, string message) {
+			using (var sw = @this.AppendText()) {
+				await sw.WriteLineAsync(message);
+			}
+		}
+
 		#endregion
 
 		#region Clear
@@ -82,8 +95,10 @@ namespace CommonFeaturesLibrary.Extensions {
 				return @this.FullName;
 			}
 
+			var dir = @this.DirectoryName;
+			var ext = @this.Extension;
 			var name = @this.Name.CommentOut(@this.Extension);
-			return string.Format(@"{0}\{1} ({2}){3}", @this.DirectoryName, name, version, @this.Extension);
+			return $@"{dir}\{name} ({version}){ext}";
 		}
 
 		#endregion
@@ -103,6 +118,54 @@ namespace CommonFeaturesLibrary.Extensions {
 		}
 
 		#endregion
+
+		/// <summary>
+		/// 指定した Stream の内容をコピーします。
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <param name="stream">Stream</param>
+		public static async Task CopyAsync(this FileInfo @this, Stream stream) {
+			using (var fs = @this.OpenWrite()) {
+				await stream.CopyToAsync(fs);
+			}
+		}
+
+		/// <summary>
+		/// 追加方法とエンコーディングを指定して、
+		/// 新しいテキスト ファイルに書き込みを行う StreamWriter を作成します。
+		/// </summary>
+		/// <param name="tmpFile"></param>
+		/// <param name="append">
+		/// データをファイルに追加する場合は true、ファイルを上書きする場合は false。
+		/// <para>指定されたファイルが存在しない場合、このパラメーターは無効であり、コンストラクターは新しいファイルを作成します。</para>
+		/// </param>
+		/// <param name="encoding">使用する文字エンコーディング</param>
+		/// <returns>新しい StreamWriter を返します。</returns>
+		public static StreamWriter CreateText(this FileInfo tmpFile, bool append, Encoding encoding) {
+			return new StreamWriter(tmpFile.FullName, append, encoding);
+		}
+
+		/// <summary>
+		/// 拡張子なしのファイル名を取得します。
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <returns>拡張子なしのファイル名を返します。</returns>
+		public static string GetNameWithoutExtension(this FileInfo @this) {
+			return @this.Name.Remove(@this.Name.IndexOf(@this.Extension), @this.Extension.Length);
+		}
+
+		/// <summary>
+		/// CSV ファイルからデータを読み込みます。
+		/// </summary>
+		/// <param name="file"></param>
+		/// <returns>読み込んだデータテーブルを返します。</returns>
+		public static DataTable LoadDataTable(this FileInfo file) {
+			var csv = new CsvConnection(file);
+
+			var table = new DataTable();
+			csv.Connect(a => a.Fill(table));
+			return table;
+		}
 
 		#endregion
 	}

@@ -75,9 +75,7 @@ namespace SharePointManager.Manager.Extensions {
 					: FileSystemObjectType.File,
 			});
 
-			if (processItem != null) {
-				processItem(item);
-			}
+			processItem?.Invoke(item);
 
 			item.Update();
 		}

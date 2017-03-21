@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SharePointManager.Interface {
+﻿namespace SharePointManager.Interface {
 	/// <summary>
 	/// リストの編集に関するインターフェイスです。
 	/// </summary>

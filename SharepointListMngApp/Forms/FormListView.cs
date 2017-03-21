@@ -1,6 +1,6 @@
 ﻿using System;
-using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
+using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharepointListMngApp.Forms {
 	/// <summary>

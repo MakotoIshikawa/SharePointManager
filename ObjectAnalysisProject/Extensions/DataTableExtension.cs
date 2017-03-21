@@ -139,7 +139,7 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <returns>ソースシーケンスから作成されたデータテーブル。</returns>
 		public static void Shred<T>(this DataTable @this, IEnumerable<T> source, LoadOption? options) {
 			if (@this == null) {
-				throw new ArgumentNullException("@this", "データテーブルが null です。");
+				throw new ArgumentNullException(nameof(@this), "データテーブルが null です。");
 			}
 
 			// インスタンスのメンバ情報でテーブルのスキーマを拡張する。
@@ -158,11 +158,14 @@ namespace ObjectAnalysisProject.Extensions {
 		/// <param name="source">列挙子</param>
 		private static void ExtendSchema<T>(this DataTable table, IEnumerable<T> source) {
 			var members = source.SelectMany(i =>
-				i.GetMembers().ToDictionary(m => m.Item1, m => m.Item2)
+				i.GetMembers().Select(m => new {
+					Name = m.Item1,
+					Type = m.Item2,
+				})
 			).Distinct();
 
 			members.ForEach(m => {
-				table.AddColumn(m.Key, m.Value);
+				table.AddColumn(m.Name, m.Type);
 			});
 		}
 
@@ -180,14 +183,17 @@ namespace ObjectAnalysisProject.Extensions {
 		/// </returns>
 		public static DataColumn AddColumn(this DataTable @this, string name, Type type = null) {
 			if (!@this.Columns.Contains(name)) {
-				// 入力テーブルに Value 列が存在しない場合、新しい列を追加します。
 				if (type == null) {
 					return @this.Columns.Add(name);
-				} else {
-					return @this.Columns.Add(name, type);
 				}
+
+				if (type.IsNullable()) {
+					return @this.Columns.Add(name, type.GenericTypeArguments.First());
+				}
+
+				return @this.Columns.Add(name, type);
 			} else {
-				Debug.WriteLine("テーブルに既に列が存在します。name = {0}:{1}", name, type);
+				Debug.WriteLine($"テーブルに既に列が存在します。name = {name}:{type}");
 			}
 
 			return @this.Columns[name];

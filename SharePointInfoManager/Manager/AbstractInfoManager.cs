@@ -285,9 +285,7 @@ namespace SharePointManager.Manager {
 						tryAction(context);
 					}
 					using (scope.StartCatch()) {// Catch
-						if (catchAction != null) {
-							catchAction(context);
-						}
+						catchAction?.Invoke(context);
 					}
 					if (finallyAction != null) {
 						using (scope.StartFinally()) {// Finally

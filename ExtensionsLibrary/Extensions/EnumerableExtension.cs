@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 
 namespace ExtensionsLibrary.Extensions {
@@ -27,7 +29,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="func">アクション</param>
 		public static void ForEach<T>(this IEnumerable<T> source, Func<T, bool> func) {
 			foreach (T item in source) {
-				if (!func(item)) {
+				if (!(func?.Invoke(item) ?? false)) {
 					break;
 				}
 			}
@@ -39,9 +41,10 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="source">リスト</param>
 		/// <param name="action">アクション</param>
 		public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action) {
-			int counter = 0;
-			foreach (T item in source)
+			var counter = 0;
+			foreach (T item in source) {
 				action(item, counter++);
+			}
 		}
 
 		/// <summary>
@@ -50,9 +53,9 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="source">リスト</param>
 		/// <param name="func">アクション</param>
 		public static void ForEach<T>(this IEnumerable<T> source, Func<T, int, bool> func) {
-			int counter = 0;
+			var counter = 0;
 			foreach (T item in source) {
-				if (!func(item, counter++)) {
+				if (!(func?.Invoke(item, counter++) ?? false)) {
 					break;
 				}
 			}
@@ -67,10 +70,31 @@ namespace ExtensionsLibrary.Extensions {
 		/// </summary>
 		/// <typeparam name="T">コレクションの型</typeparam>
 		/// <param name="source">コレクション</param>
-		/// <param name="element">追加するコレクション</param>
+		/// <param name="items">追加する配列</param>
 		/// <returns>追加したコレクションを返します。</returns>
-		public static IEnumerable<T> AddRange<T>(this IEnumerable<T> source, params T[] element) {
-			return source.Concat(element);
+		public static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] items)
+			=> source.Concat(items);
+
+		/// <summary>
+		/// シーケンスの先頭に挿入します。
+		/// </summary>
+		/// <typeparam name="T">コレクションの型</typeparam>
+		/// <param name="source">コレクション</param>
+		/// <param name="items">追加する配列</param>
+		/// <returns>挿入したコレクションを返します。</returns>
+		public static IEnumerable<T> Prepend<T>(this IEnumerable<T> source, params T[] items)
+			=> items.Concat(source);
+
+		/// <summary>
+		/// コレクションに要素のコレクションを追加します。
+		/// </summary>
+		/// <typeparam name="T">コレクションの型</typeparam>
+		/// <param name="source">コレクション</param>
+		/// <param name="elements">追加する要素のコレクション</param>
+		/// <returns>追加したコレクションを返します。</returns>
+		public static IEnumerable<T> AddRange<T>(this Collection<T> source, IEnumerable<T> elements) {
+			elements.ForEach(i => source.Add(i));
+			return source;
 		}
 
 		#endregion
@@ -97,7 +121,7 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="source">変換関数を呼び出す対象となる値のシーケンス</param>
 		/// <param name="selector">各要素に適用する変換関数</param>
 		/// <param name="separator">区切り記号として使用する文字列</param>
-		/// <returns></returns>
+		/// <returns>連結したシーケンスを返します。</returns>
 		public static string Join<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, string separator = "") {
 			return source.Select(selector).Join(separator);
 		}
@@ -303,6 +327,104 @@ namespace ExtensionsLibrary.Extensions {
 		}
 
 		#endregion
+
+		#endregion
+
+		#region 内部結合
+
+		/// <summary>
+		/// 一致するインデックスに基づいて 2 つのシーケンスの要素を相互に関連付けます。
+		/// </summary>
+		/// <typeparam name="TOuter">元となるコレクション要素の型</typeparam>
+		/// <typeparam name="TInner">結合するコレクション要素の型く</typeparam>
+		/// <param name="outer">結合する最初のシーケンス。</param>
+		/// <param name="inner">最初のシーケンスに結合するシーケンス。</param>
+		/// <returns>2 つのシーケンスに対して内部結合を実行したシーケンスを返します。</returns>
+		public static IEnumerable<Tuple<TOuter, TInner>> JoinOnIndex<TOuter, TInner>(this IEnumerable<TOuter> outer, IEnumerable<TInner> inner) {
+			var query = (
+				from a in outer.Select((x, i) => new { x, i })
+				join b in inner.Select((x, i) => new { x, i })
+				  on a.i equals b.i
+				select Tuple.Create(a.x, b.x)
+			);
+
+			return query;
+		}
+
+		/// <summary>
+		/// 一致するインデックスに基づいて 2 つのシーケンスの要素を相互に関連付けます。
+		/// </summary>
+		/// <typeparam name="TOuter">元となるコレクション要素の型</typeparam>
+		/// <typeparam name="TInner">結合するコレクション要素の型く</typeparam>
+		/// <typeparam name="TResult">結果の要素の型</typeparam>
+		/// <param name="outer">結合する最初のシーケンス。</param>
+		/// <param name="inner">最初のシーケンスに結合するシーケンス。</param>
+		/// <param name="resultSelector">一致する 2 つの要素から結果の要素を作成する関数。</param>
+		/// <returns>2 つのシーケンスに対して内部結合を実行したシーケンスを返します。</returns>
+		public static IEnumerable<TResult> JoinOnIndex<TOuter, TInner, TResult>(this IEnumerable<TOuter> outer, IEnumerable<TInner> inner, Func<TOuter, TInner, TResult> resultSelector) {
+			return outer.JoinOnIndex(inner).Select(i => resultSelector(i.Item1, i.Item2));
+		}
+
+		#endregion
+
+		#region データテーブル変換
+
+		/// <summary>
+		/// 文字列コレクションの列挙をデータテーブルに変換します。
+		/// </summary>
+		/// <param name="rows">文字列コレクションの列挙</param>
+		/// <param name="tableName">テーブル名</param>
+		/// <returns>データテーブルを返します。</returns>
+		public static DataTable ToDataTable(this IEnumerable<IEnumerable<string>> rows, string tableName = null) {
+			var tbl = tableName.IsEmpty() ? new DataTable() : new DataTable(tableName);
+
+			var fixRow = rows.First();
+			tbl.Columns.AddRange(fixRow.Select(r => new DataColumn(r)).ToArray());
+
+			var colCount = tbl.Columns.Count;
+
+			var dataRows = rows.Skip(1);
+			try {
+				tbl.BeginLoadData();
+
+				dataRows.Select(r => r.Take(colCount).ToArray())
+					.ForEach(r => tbl.LoadDataRow(r, true));
+			} finally {
+				tbl.EndLoadData();
+			}
+
+			return tbl;
+		}
+
+		#endregion
+
+		#region 最大値、最小値
+
+		/// <summary>
+		/// 最大値を持つ要素を取得します。
+		/// </summary>
+		/// <typeparam name="TSource">collection の要素の型。</typeparam>
+		/// <typeparam name="TResult">selector によって返される値の型</typeparam>
+		/// <param name="source">変換関数を呼び出す対象となる値のシーケンス</param>
+		/// <param name="selector">各要素に適用する変換関数</param>
+		/// <returns>最大値を持つ要素を全て返します。</returns>
+		public static IEnumerable<TSource> MaxElementsBy<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
+			var value = source.Max(selector);
+			return source.Where(c => selector(c).Equals(value));
+		}
+
+		/// <summary>
+		/// 最小値を持つ要素を取得します。
+		/// </summary>
+		/// <typeparam name="TSource">collection の要素の型。</typeparam>
+		/// <typeparam name="TResult">selector によって返される値の型</typeparam>
+		/// <param name="source">変換関数を呼び出す対象となる値のシーケンス</param>
+		/// <param name="selector">各要素に適用する変換関数</param>
+		/// <returns>最小値を持つ要素を全て返します。</returns>
+		public static IEnumerable<TSource> MinElementsBy<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
+			var value = source.Min(selector);
+			return source.Where(c => selector(c).Equals(value));
+		}
 
 		#endregion
 	}

@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SharepointHtmlInsertApp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="LogRowLimit" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="URL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://yamaverification01.sharepoint.com/sites/testSite</Value>
+    </Setting>
+    <Setting Name="User" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">root@yamaverification01.onmicrosoft.com</Value>
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">!QAZ2wsx</Value>
+    </Setting>
+    <Setting Name="ListName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SCM規定管理DBテスト用</Value>
+    </Setting>
+    <Setting Name="UniqueKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">DocUniID</Value>
+    </Setting>
+    <Setting Name="Replace" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

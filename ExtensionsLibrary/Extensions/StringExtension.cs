@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Globalization;
 
 namespace ExtensionsLibrary.Extensions {
 	/// <summary>
@@ -18,8 +20,9 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="this">メッセージ</param>
 		/// <remarks>
 		/// 時刻を付加した文字列を取得します。</remarks>
-		public static String GetTimeLog(this String @this) {
-			return DateTime.Now.ToString("yyyy/MM/dd HH':'mm':'ss.fff ") + @this;
+		public static string GetTimeLog(this string @this) {
+			var milliSecond = DateTime.Now.ToMilliSecondString();
+			return $"{milliSecond} {@this}";
 		}
 
 		#endregion
@@ -68,17 +71,120 @@ namespace ExtensionsLibrary.Extensions {
 
 		#region Nullable 変換
 
+		#region short? に変換
+
+		/// <summary>
+		/// short? 型に変換します。
+		/// </summary>
+		/// <param name="s">文字列</param>
+		/// <returns>Nullable 値に変換した値を返します。</returns>
+		public static short? ToNullableShort(this string s) {
+			short result;
+			if (short.TryParse(s, out result)) {
+				return result;
+			}
+			return null;
+		}
+
+		#endregion
+
 		#region int? に変換
 
 		/// <summary>
-		/// int? に変換
+		/// int? 型に変換します。
 		/// </summary>
 		/// <param name="s">文字列</param>
 		/// <returns>Nullable 値に変換した値を返します。</returns>
 		public static int? ToNullableInt(this string s) {
-			int i;
-			if (int.TryParse(s, out i))
-				return i;
+			int result;
+			if (int.TryParse(s, out result)) {
+				return result;
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region long? に変換
+
+		/// <summary>
+		/// long? 型に変換します。
+		/// </summary>
+		/// <param name="s">文字列</param>
+		/// <returns>Nullable 値に変換した値を返します。</returns>
+		public static long? ToNullableLong(this string s) {
+			long result;
+			if (long.TryParse(s, out result)) {
+				return result;
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region uint? に変換
+
+		/// <summary>
+		/// uint? 型に変換します。
+		/// </summary>
+		/// <param name="s">文字列</param>
+		/// <returns>Nullable 値に変換した値を返します。</returns>
+		public static uint? ToNullableUint(this string s) {
+			uint result;
+			if (uint.TryParse(s, out result)) {
+				return result;
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region float? に変換
+
+		/// <summary>
+		/// float? 型に変換します。
+		/// </summary>
+		/// <param name="s">文字列</param>
+		/// <returns>Nullable 値に変換した値を返します。</returns>
+		public static float? ToNullableFloat(this string s) {
+			float result;
+			if (float.TryParse(s, out result)) {
+				return result;
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region double? に変換
+
+		/// <summary>
+		/// double? 型に変換します。
+		/// </summary>
+		/// <param name="s">文字列</param>
+		/// <returns>Nullable 値に変換した値を返します。</returns>
+		public static double? ToNullableDouble(this string s) {
+			double result;
+			if (double.TryParse(s, out result)) {
+				return result;
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region decimal? に変換
+
+		/// <summary>
+		/// decimal? 型に変換します。
+		/// </summary>
+		/// <param name="s">文字列</param>
+		/// <returns>Nullable 値に変換した値を返します。</returns>
+		public static decimal? ToNullableDecimal(this string s) {
+			decimal result;
+			if (decimal.TryParse(s, out result)) {
+				return result;
+			}
 			return null;
 		}
 
@@ -87,14 +193,15 @@ namespace ExtensionsLibrary.Extensions {
 		#region bool? に変換
 
 		/// <summary>
-		/// bool? に変換
+		/// bool? 型に変換します。
 		/// </summary>
 		/// <param name="s">文字列</param>
 		/// <returns>Nullable 値に変換した値を返します。</returns>
 		public static bool? ToNullableBool(this string s) {
-			bool b;
-			if (bool.TryParse(s, out b))
-				return b;
+			bool result;
+			if (bool.TryParse(s, out result)) {
+				return result;
+			}
 			return null;
 		}
 
@@ -170,6 +277,10 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="separator">区切り記号として使用する文字列</param>
 		/// <returns>separator 文字列で区切られた文字列を返します。</returns>
 		public static string Join(this IEnumerable<string> @this, string separator = "") {
+			if (!(@this?.Any() ?? false)) {
+				return null;
+			}
+
 			return string.Join(separator, @this);
 		}
 
@@ -227,62 +338,6 @@ namespace ExtensionsLibrary.Extensions {
 
 		#endregion
 
-		#region 列挙型変換
-
-		/// <summary>
-		/// 文字列を列挙型に変換します。
-		/// </summary>
-		/// <typeparam name="TResult">列挙型</typeparam>
-		/// <param name="this">文字列</param>
-		/// <param name="defaultValue">デフォルト値</param>
-		/// <returns>列挙型を返します。</returns>
-		public static TResult ToEnum<TResult>(this string @this, TResult? defaultValue = null) where TResult : struct {
-			if (@this.IsEmpty()) {
-				if (!defaultValue.HasValue) {
-					throw new ArgumentNullException("this", "指定された文字列が null または Empty です。");
-				}
-
-				return defaultValue.Value;
-			}
-
-			return (TResult)Enum.Parse(typeof(TResult), @this);
-		}
-
-		/// <summary>
-		/// 文字列を列挙型に変換します。
-		/// </summary>
-		/// <typeparam name="TResult">列挙型</typeparam>
-		/// <param name="this">数値(int)</param>
-		/// <param name="defaultValue">デフォルト値</param>
-		/// <returns>列挙型を返します。</returns>
-		public static TResult ToEnum<TResult>(this int @this, TResult? defaultValue = null) where TResult : struct {
-			return @this.ToString().ToEnum<TResult>();
-		}
-
-		/// <summary>
-		/// 文字列を列挙型に変換します。
-		/// </summary>
-		/// <typeparam name="TResult">列挙型</typeparam>
-		/// <param name="this">数値(short)</param>
-		/// <param name="defaultValue">デフォルト値</param>
-		/// <returns>列挙型を返します。</returns>
-		public static TResult ToEnum<TResult>(this short @this, TResult? defaultValue = null) where TResult : struct {
-			return @this.ToString().ToEnum<TResult>();
-		}
-
-		/// <summary>
-		/// 文字列を列挙型に変換します。
-		/// </summary>
-		/// <typeparam name="TResult">列挙型</typeparam>
-		/// <param name="this">数値(byte)</param>
-		/// <param name="defaultValue">デフォルト値</param>
-		/// <returns>列挙型を返します。</returns>
-		public static TResult ToEnum<TResult>(this byte @this, TResult? defaultValue = null) where TResult : struct {
-			return @this.ToString().ToEnum<TResult>();
-		}
-
-		#endregion
-
 		#region 値取得
 
 		/// <summary>
@@ -292,6 +347,78 @@ namespace ExtensionsLibrary.Extensions {
 		/// <returns>null 場合 string.Empty を返します。</returns>
 		public static string GetValueOrEmpty(this string @this) {
 			return @this.IsEmpty() ? string.Empty : @this;
+		}
+
+		#endregion
+
+		#region 切り出し
+
+		/// <summary>
+		/// 文字列の左端から指定された文字数分の文字列を取得します。
+		/// </summary>
+		/// <param name="this">string</param>
+		/// <param name="length">取り出す文字数</param>
+		/// <returns>取り出した文字列を返します。</returns>
+		public static string Left(this string @this, int length) {
+			return (new string(@this.Take(length).ToArray())).TrimEnd();
+		}
+
+		/// <summary>
+		/// 指定された位置から文字列を取得します。
+		/// </summary>
+		/// <param name="this">string</param>
+		/// <param name="start">開始位置</param>
+		/// <returns>取り出した文字列を返します。</returns>
+		public static string Mid(this string @this, int start) {
+			return (new string(@this.Skip(start - 1).ToArray())).TrimEnd();
+		}
+
+		/// <summary>
+		/// 指定された位置から、指定された文字数分の文字列を取得します。
+		/// </summary>
+		/// <param name="this">string</param>
+		/// <param name="start">開始位置</param>
+		/// <param name="length">取り出す文字数</param>
+		/// <returns>取り出した文字列を返します。</returns>
+		public static string Mid(this string @this, int start, int length) {
+			return (new string(@this.Skip(start - 1).Take(length).ToArray())).TrimEnd();
+		}
+
+		/// <summary>
+		/// 文字列の右端から指定された文字数分の文字列を取得します。
+		/// </summary>
+		/// <param name="this">string</param>
+		/// <param name="length">取り出す文字数</param>
+		/// <returns>取り出した文字列を返します。</returns>
+		public static string Right(this string @this, int length) {
+			var cnt = @this.Length - length;
+			return (new string(@this.Skip(cnt).ToArray())).Trim();
+		}
+
+		#endregion
+
+		#region 時刻変換
+
+		/// <summary>
+		/// 文字列を DateTime に変換します。
+		/// </summary>
+		/// <param name="this">string</param>
+		/// <param name="format">書式</param>
+		/// <returns>DateTime を返します。</returns>
+		public static DateTime? ToDateTime(this string @this, string format = null) {
+			if (format.IsEmpty()) {
+				DateTime result;
+				if (!DateTime.TryParse(@this, out result)) {
+					return null;
+				}
+				return result;
+			} else {
+				DateTime result;
+				if (!DateTime.TryParseExact(@this, format, null, DateTimeStyles.None, out result)) {
+					return null;
+				}
+				return result;
+			}
 		}
 
 		#endregion

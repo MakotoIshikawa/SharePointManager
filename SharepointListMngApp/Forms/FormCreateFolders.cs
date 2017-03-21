@@ -2,12 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CommonFeaturesLibrary;
+using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
+using WindowsFormsLibrary.Extensions;
+using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharepointListMngApp.Forms {
 	/// <summary>

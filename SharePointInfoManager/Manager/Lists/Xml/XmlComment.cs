@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
-using SharePointManager.Interface;
 
 namespace SharePointManager.Manager.Lists.Xml {
 	/// <summary>コメントリストのXMLデータ形式です。</summary>

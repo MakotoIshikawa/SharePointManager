@@ -16,9 +16,7 @@ namespace SharePointManager.Extensions {
 		/// <returns>TermSet を返します。</returns>
 		public static TermSet AddTerm(this TermSet @this, string name, int lcid, Action<Term> action = null) {
 			var tm = @this.CreateTerm(name, lcid, Guid.NewGuid());
-			if (action != null) {
-				action(tm);
-			}
+			action?.Invoke(tm);
 
 			return @this;
 		}

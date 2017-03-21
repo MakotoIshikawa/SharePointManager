@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.SharePoint.Client;
-using Microsoft.SharePoint.Client.Taxonomy;
 using SharePointManager.Extensions;
 using SPC = Microsoft.SharePoint.Client;
 
@@ -160,9 +158,7 @@ namespace SharePointManager.Manager {
 		public GroupManager AddGroup(string name, string description, Action<Group> action = null) {
 			this.TryExecute(cn => {// Try
 				var g = cn.Web.SiteGroups.Add(name, description);
-				if (action != null) {
-					action(g);
-				}
+				action?.Invoke(g);
 			}, cn => {// Catch
 			}, cn => {// Finally
 			});

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -117,5 +116,14 @@ namespace ExtensionsLibrary.Extensions {
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Nullable かどうかを判定します。
+		/// </summary>
+		/// <param name="this"></param>
+		/// <returns>Nullable かどうかを返します。</returns>
+		public static bool IsNullable(this Type @this) {
+			return @this.IsGenericType && @this.GetGenericTypeDefinition() == typeof(Nullable<>);
+		}
 	}
 }

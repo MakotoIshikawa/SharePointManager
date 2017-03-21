@@ -12,6 +12,8 @@ namespace ExtensionsLibrary.Extensions {
 	/// ジェネリックスを拡張するメソッドを提供します。
 	/// </summary>
 	public static partial class GenericsExtension {
+		#region メソッド
+
 		#region 値取得
 
 		#region GetValueOrDefault (オーバーロード +2)
@@ -39,12 +41,12 @@ namespace ExtensionsLibrary.Extensions {
 		/// <returns>null かどうかを判定して値を返します。</returns>
 		public static TResult GetValueOrDefault<T, TResult>(this T @this, Func<T, TResult> func, TResult defaultValue) {
 			try {
-				if (@this == null) {
-					return defaultValue;
+				if (func == null) {
+					throw new NullReferenceException();
 				}
 
 				return func(@this);
-			} catch (Exception) {
+			} catch {
 				return defaultValue;
 			}
 		}
@@ -60,12 +62,11 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="func">値を取得するメソッド</param>
 		/// <returns>null かどうかを判定してコレクションを返します。</returns>
 		public static IEnumerable<TResult> GetCollection<T, TResult>(this T @this, Func<T, IEnumerable<TResult>> func) {
-			var result = @this.GetValueOrDefault(v => func(v));
-			if (result == null) {
+			try {
+				return @this.GetValueOrDefault(v => func(v)) ?? Enumerable.Empty<TResult>();
+			} catch {
 				return Enumerable.Empty<TResult>();
 			}
-
-			return result;
 		}
 
 		/// <summary>
@@ -76,7 +77,11 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="func">文字列を取得するメソッド</param>
 		/// <returns>null かどうかを判定して文字列を返します。</returns>
 		public static string GetString<T>(this T @this, Func<T, string> func) {
-			return @this.GetValueOrDefault(func, string.Empty).GetValueOrEmpty();
+			try {
+				return func?.Invoke(@this) ?? string.Empty;
+			} catch {
+				return string.Empty;
+			}
 		}
 
 		#endregion
@@ -159,7 +164,8 @@ namespace ExtensionsLibrary.Extensions {
 				return;
 			}
 
-			info.SetValue(@this, value);
+			var val = (value as IConvertible)?.ChangeType(info.PropertyType) ?? value;
+			info.SetValue(@this, val);
 		}
 
 		#endregion
@@ -173,6 +179,19 @@ namespace ExtensionsLibrary.Extensions {
 		public static IEnumerable<PropertyInfo> GetProperties<T>(this T @this) {
 			var type = @this.GetType();
 			return type.GetProperties();
+		}
+
+		/// <summary>
+		/// プロパティ名と値の KeyValuePair のコレクションを指定して、
+		/// 対象のインスタンスのプロパティに値を設定します。
+		/// </summary>
+		/// <typeparam name="T">対象のインスタンスの型</typeparam>
+		/// <param name="this">T</param>
+		/// <param name="properties">プロパティ名と値の KeyValuePair のコレクション</param>
+		/// <returns>プロパティを設定した値を返します。</returns>
+		public static T SetProperties<T>(this T @this, IEnumerable<KeyValuePair<string, object>> properties) {
+			properties.ForEach(p => @this.SetPropertyValue(p.Key, p.Value));
+			return @this;
 		}
 
 		/// <summary>
@@ -198,12 +217,12 @@ namespace ExtensionsLibrary.Extensions {
 			if (nullShow) {
 				return dic
 					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString(), "null"), })
-					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
+					.Select(p => $"{p.Name} = {p.Value}").Join(", ");
 			} else {
 				return dic
 					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString()), })
 					.Where(p => !p.Value.IsEmpty())
-					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
+					.Select(p => $"{p.Name} = {p.Value}").Join(", ");
 			}
 		}
 
@@ -258,7 +277,8 @@ namespace ExtensionsLibrary.Extensions {
 				return;
 			}
 
-			info.SetValue(@this, value);
+			var val = (value as IConvertible)?.ChangeType(info.FieldType) ?? value;
+			info.SetValue(@this, val);
 		}
 
 		#endregion
@@ -272,6 +292,19 @@ namespace ExtensionsLibrary.Extensions {
 		public static IEnumerable<FieldInfo> GetFields<T>(this T @this) {
 			var type = @this.GetType();
 			return type.GetFields();
+		}
+
+		/// <summary>
+		/// フィールド名と値の KeyValuePair のコレクションを指定して、
+		/// 対象のインスタンスのフィールドに値を設定します。
+		/// </summary>
+		/// <typeparam name="T">対象のインスタンスの型</typeparam>
+		/// <param name="this">T</param>
+		/// <param name="fields">フィールド名と値の KeyValuePair のコレクション</param>
+		/// <returns>フィールドを設定した値を返します。</returns>
+		public static T SetFields<T>(this T @this, IEnumerable<KeyValuePair<string, object>> fields) {
+			fields.ForEach(p => @this.SetFieldValue(p.Key, p.Value));
+			return @this;
 		}
 
 		/// <summary>
@@ -297,12 +330,12 @@ namespace ExtensionsLibrary.Extensions {
 			if (nullShow) {
 				return dic
 					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString(), "null"), })
-					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
+					.Select(p => $"{p.Name} = {p.Value}").Join(", ");
 			} else {
 				return dic
 					.Select(p => new { Name = p.Key, Value = p.Value.GetValueOrDefault(v => v.ToString()), })
 					.Where(p => !p.Value.IsEmpty())
-					.Select(p => string.Format("{0} = {1}", p.Name, p.Value)).Join(", ");
+					.Select(p => $"{p.Name} = {p.Value}").Join(", ");
 			}
 		}
 
@@ -343,6 +376,40 @@ namespace ExtensionsLibrary.Extensions {
 				return encoding.GetString(ms.ToArray());
 			}
 		}
+
+		#endregion
+
+		#region ChangeType
+
+		/// <summary>
+		/// 指定されたオブジェクトと等しい値を持つ、指定された型のオブジェクトを返します。
+		/// </summary>
+		/// <typeparam name="TConvertible">IConvertible 型</typeparam>
+		/// <param name="this">IConvertible インターフェイスを実装するオブジェクト。</param>
+		/// <param name="conversionType">返すオブジェクトの型。</param>
+		/// <returns>型が conversionType であり、@this と等価の値を持つオブジェクト。</returns>
+		public static TConvertible ChangeType<TConvertible>(this TConvertible @this, Type conversionType)
+			where TConvertible : IConvertible {
+			if (conversionType.IsNullable()) {
+				return (TConvertible)Convert.ChangeType(@this, conversionType.GenericTypeArguments.First());
+			}
+
+			return (TConvertible)Convert.ChangeType(@this, conversionType);
+		}
+
+		/// <summary>
+		/// 指定したオブジェクトに等しい値を持つ指定した型のオブジェクトを返します。
+		/// </summary>
+		/// <typeparam name="TConvertible">IConvertible 型</typeparam>
+		/// <param name="this">IConvertible インターフェイスを実装するオブジェクト。</param>
+		/// <param name="typeCode">返すオブジェクトの型。</param>
+		/// <returns>基になる型が typeCode であり、@this と等価の値を持つオブジェクト。</returns>
+		public static TConvertible ChangeType<TConvertible>(this TConvertible @this, TypeCode typeCode)
+			where TConvertible : IConvertible {
+			return (TConvertible)Convert.ChangeType(@this, typeCode);
+		}
+
+		#endregion
 
 		#endregion
 	}

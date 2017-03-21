@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
 using SharePointManager.Extensions;
-using SharePointManager.Manager;
 
 namespace SharePointManager.Manager.TermStore {
 	/// <summary>

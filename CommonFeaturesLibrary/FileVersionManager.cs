@@ -1,6 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 
@@ -35,11 +35,22 @@ namespace CommonFeaturesLibrary {
 		/// </summary>
 		/// <param name="this">ファイル情報</param>
 		/// <param name="message">メッセージ</param>
-		public static void WriteLog(this FileInfo @this, String message) {
+		public static void WriteLog(this FileInfo @this, string message) {
 			lock (@this) {
 				@this.CheckCapacity((long)message.Length);
 				@this.WriteLine(message.GetTimeLog());
 			}
+		}
+
+		/// <summary>
+		/// ファイルバージョンを管理して、
+		/// ログファイルにメッセージを書き込みます。[非同期]
+		/// </summary>
+		/// <param name="this">ファイル情報</param>
+		/// <param name="message">メッセージ</param>
+		public static async Task WriteLogAsync(this FileInfo @this, string message) {
+			@this.CheckCapacity((long)message.Length);
+			await @this.WriteLineAsync(message.GetTimeLog());
 		}
 
 		#endregion
@@ -103,9 +114,9 @@ namespace CommonFeaturesLibrary {
 		/// 世代ファイル管理状況
 		/// </summary>
 		private static uint StateSelection(string filePath, uint ver) {
-			uint nState = 0;
+			var nState = 0u;
 			for (var i = 1u; i <= ver; i++) {// 世代ファイルが存在するか確認
-				string fName = CreateVersionName(filePath, i);
+				var fName = CreateVersionName(filePath, i);
 				var fileInfo = new FileInfo(fName);
 				if (!fileInfo.Exists) {// ファイルが存在しない
 					return nState;
@@ -113,6 +124,7 @@ namespace CommonFeaturesLibrary {
 					nState = i;
 				}
 			}
+
 			return nState;
 		}
 
@@ -141,7 +153,7 @@ namespace CommonFeaturesLibrary {
 
 			File.Move(oldName, newName);
 
-			Debug.WriteLine("{0}を{1}に改名\n", oldName, newName);
+			Debug.WriteLine($"{oldName}を{newName}に改名");
 		}
 
 		#endregion

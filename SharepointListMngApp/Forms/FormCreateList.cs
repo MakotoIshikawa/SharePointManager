@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Data;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
-using ObjectAnalysisProject.Extensions;
-using SharePointManager.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.Manager.Lists;
-using SharePointManager.MyException;
+using WindowsFormsLibrary.Extensions;
+using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharepointListMngApp.Forms {
 	/// <summary>

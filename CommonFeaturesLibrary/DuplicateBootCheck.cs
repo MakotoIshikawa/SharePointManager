@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace CommonFeaturesLibrary {
 	/// <summary>
 	/// 重複起動チェッククラス
 	/// </summary>
-	public class DuplicateBootCheck {
+	public static class DuplicateBootCheck {
 		#region	メンバ変数
 
 		/// <summary>Mutex</summary>
@@ -14,79 +13,60 @@ namespace CommonFeaturesLibrary {
 
 		#endregion
 
-		#region	IsRunning
+		#region	重複起動チェック
 
 		/// <summary>
-		/// 重複起動チェック
+		/// 重複起動しているかどうかを返します。
 		/// </summary>
-		/// <param name="mutexName">Mutex名</param>
-		/// <returns>重複起動チェック結果</returns>
+		/// <param name="mutexName">Mutex 名</param>
 		/// <remarks>
-		/// 重複起動の判定をします
-		/// 同じ Mutex 名を持つプロセスは起動しない</remarks>
-		public static void CheckRunning(String mutexName) {
+		/// 同じ Mutex 名を持つプロセス重複起動の判定をします
+		/// </remarks>
+		/// <returns>判定結果を返します。</returns>
+		public static bool IsRunning(string mutexName) {
 			// Mutex 生成
 			_mutex = new Mutex(false, mutexName);
 
-			if (!_mutex.WaitOne(0, false)) {// Mutex 取得
-				Application.Exit();
-
-				var msg = "既に起動しています！\n\n" + mutexName;
-				throw new ArgumentException(msg, "mutexName");
-			}
+			var ret = !_mutex.WaitOne(0, false);
+			return ret;
 		}
 
 		/// <summary>
-		/// 重複起動チェック
+		/// 重複起動しているかどうかを判定します。
 		/// </summary>
-		/// <returns>重複起動チェック結果</returns>
+		/// <param name="running">重複起動時に呼ばれるメソッド</param>
 		/// <remarks>
-		/// 重複起動の判定をします
-		/// 同じ Mutex 名を持つプロセスは起動しない
-		/// 注) パス違いなら「同一」実行ファイルでも起動する</remarks>
-		public static bool IsRunning() {
+		/// <para>ファイルパスを元に重複起動の判定をします。</para>
+		/// <para>注) パス違いなら「同一」実行ファイルでも重複とは判定しません。</para>
+		/// </remarks>
+		public static void CheckRunning(Action<string> running) {
 			var path = Environment.GetCommandLineArgs()[0];
 
 			// Note: Mutex名に '\' を含めてはダメ（例外が発生する）。
 			var mutexName = "[C#]" + path.Replace("\\", "/");
-
-			try {
-				CheckRunning(mutexName);
-
-				return true;
-			} catch (Exception) {
-#if DEBUG
-				var caption = "重複起動";
-				var msg = "すでに起動しています！\n\n" + path;
-				MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-#endif
-				return false;
+			var ret = IsRunning(mutexName);
+			if (ret) {
+				running?.Invoke(path);
 			}
 		}
 
+
 		/// <summary>
-		/// 重複起動チェック
+		/// 重複起動しているかどうかを判定します。
 		/// </summary>
 		/// <returns>重複起動チェック結果</returns>
 		/// <param name="appNum">アプリケーション番号</param>
+		/// <param name="running">重複起動時に呼ばれるメソッド</param>
 		/// <remarks>
-		/// 重複起動の判定をします
-		/// 同じ Mutex 名を持つプロセスは起動しない
-		/// 注) アプリ番号違いなら「同一」実行ファイルでも起動する</remarks>
-		public static bool IsRunning(int appNum) {
+		/// <para>アプリ番号を元に重複起動の判定をします。</para>
+		/// <para>注) アプリ番号違いなら「同一」実行ファイルでも重複とは判定しません。</para>
+		/// </remarks>
+		public static void CheckRunning(int appNum, Action<string> running) {
 			var mutexName = "APP" + appNum.ToString();
 
-			try {
-				CheckRunning(mutexName);
-
-				return true;
-			} catch (Exception) {
-#if DEBUG
-				var caption = "重複起動";
-				var msg = "すでに起動しています！\n\n" + mutexName;
-				MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-#endif
-				return false;
+			var ret = IsRunning(mutexName);
+			if (ret) {
+				running?.Invoke(mutexName);
 			}
 		}
 
