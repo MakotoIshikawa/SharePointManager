@@ -722,17 +722,28 @@ namespace SharePointManager.Manager.Lists {
 		/// 列名とその列に格納されている値を指定して、
 		/// 該当するリストアイテムに添付ファイルを追加します。
 		/// </summary>
-		/// <param name="value">列に格納されている値</param>
-		/// <param name="files">ファイル情報配列</param>
+		/// <param name="directory">ディレクトリ情報</param>
+		/// <param name="excludes">除外パターン</param>
 		/// <returns>ListManager</returns>
-		public ListManager AddAttachmentFiles(string value, IEnumerable<FileInfo> files) {
+		public ListManager AddAttachmentFiles(DirectoryInfo directory, params string[] excludes) {
+			var files = directory.GetFileInfos(true, excludes);
+			if (!files.Any()) {
+				throw new ApplicationException($"フォルダ内にファイルがありませんでした。[{directory.Name}]");
+			}
+
 			var uniqueKey = this.UniqueKey;
 			if (uniqueKey.IsEmpty()) {
 				throw new ApplicationException($"{nameof(this.UniqueKey)} が設定されていません。");
 			}
 
+			var value = directory.Name;
 			var id = this.GetID(uniqueKey, value);
-			return this.AddAttachmentFiles(id, files);
+			this.AddAttachmentFiles(id, files);
+
+			files.Select(f => f.Name).ForEach(name
+				=> this.OnSuccess($"ファイル名 : {name}"));
+
+			return this;
 		}
 
 		/// <summary>
@@ -1035,88 +1046,21 @@ namespace SharePointManager.Manager.Lists {
 					Link = f.Attachment.ToLink(),
 				});
 
-				var images = attachments.Where(f => f.Info.IsImage()).Select(f => new {
-					Name = $@"<img src=""image\{f.Attachment.FileName}"">",
-					FullName = $@"<img src=""{f.Attachment.ServerRelativeUrl}"">",
+				var query = attachments.Where(f => f.Info.IsImage());
+				var images = query.Select(f => new {
+					Name = $@"image\{f.Attachment.FileName}",
+					FullName = $@"{f.Attachment.ServerRelativeUrl}",
 				});
 
-				htmlFiles.ForEach(htm => {
-					try {
-						var name = htm.Name;
-						var body = htm.Body;
-
-						// リンク置換
-						links.ForEach(l => {
-							body = body.Replace(l.Tag, l.Link);
-						});
-
-						// イメージ置換
-						images.ForEach(l => {
-							body = body.Replace(l.Name, l.FullName);
-						});
-
-						this.UpdateItemById(id, item => item[name] = body);
-					} catch (Exception ex) {
-						this.OnThrowException(ex);
-					}
-				});
-			} else {
-				htmlFiles.ForEach(htm => {
-					try {
-						var name = htm.Name;
-						var body = htm.Body;
-
-						this.UpdateItemById(id, item => item[name] = body);
-					} catch (Exception ex) {
-						this.OnThrowException(ex);
-					}
-				});
-			}
-		}
-
-		/// <summary>
-		/// HTML ファイルが格納されたディレクトリを指定して、
-		/// リッチテキストの更新をします。
-		/// </summary>
-		/// <param name="dir">ディレクトリ情報</param>
-		/// <param name="replace">置換処理をするかどうか</param>
-		public async Task UpdateRichTextAsync(DirectoryInfo dir, bool replace = true) {
-			var uniqueKey = this.UniqueKey;
-			if (uniqueKey.IsEmpty()) {
-				throw new ApplicationException($"{nameof(this.UniqueKey)} が設定されていません。");
-			}
-
-			var id = this.GetID(uniqueKey, dir.Name);
-
-			var htmlFiles = dir.EnumerateFiles("*.html").Select(async f => new {
-				Name = f.GetNameWithoutExtension(),
-				Body = await f.ReadTextAsync(),
-			});
-
-			if (!htmlFiles.Any()) {
-				throw new ApplicationException($"HTML ファイルが格納されていません。");
-			}
-
-			if (replace) {
-				var attachments = this.GetAttachmentFiles(id).Select(a => new {
-					Attachment = a,
-					Info = new FileInfo(a.FileName)
-				});
-
-				var links = attachments.Where(f => !f.Info.IsImage()).Select(f => new {
+				var imagelinks = query.Select(f => new {
 					Tag = $"[{f.Attachment.FileName}]",
-					Link = f.Attachment.ToLink(),
+					Link = f.Attachment.ToImageLink(),
 				});
 
-				var images = attachments.Where(f => f.Info.IsImage()).Select(f => new {
-					Name = $@"<img src=""image\{f.Attachment.FileName}"">",
-					FullName = $@"<img src=""{f.Attachment.ServerRelativeUrl}"">",
-				});
-
-				foreach (var htm in htmlFiles) {
+				htmlFiles.ForEach(htm => {
 					try {
-						var name = (await htm).Name;
-						var body = (await htm).Body;
+						var name = htm.Name;
+						var body = htm.Body;
 
 						// リンク置換
 						links.ForEach(l => {
@@ -1128,23 +1072,30 @@ namespace SharePointManager.Manager.Lists {
 							body = body.Replace(l.Name, l.FullName);
 						});
 
-						this.UpdateItemById(id, item => item[name] = body);
-					} catch (Exception ex) {
-						this.OnThrowException(ex);
-					}
-				}
-			} else {
-				foreach (var htm in htmlFiles) {
-					try {
-						var name = (await htm).Name;
-						var body = (await htm).Body;
+						// イメージリンク置換
+						imagelinks.ForEach(l => {
+							body = body.Replace(l.Tag, l.Link);
+						});
 
 						this.UpdateItemById(id, item => item[name] = body);
 					} catch (Exception ex) {
 						this.OnThrowException(ex);
 					}
-				}
+				});
+			} else {
+				htmlFiles.ForEach(htm => {
+					try {
+						var name = htm.Name;
+						var body = htm.Body;
+
+						this.UpdateItemById(id, item => item[name] = body);
+					} catch (Exception ex) {
+						this.OnThrowException(ex);
+					}
+				});
 			}
+
+			this.OnSuccess($"HTML の取込に成功しました。 : {htmlFiles.Select(h => h.Name).Join(", ")}");
 		}
 
 		#endregion

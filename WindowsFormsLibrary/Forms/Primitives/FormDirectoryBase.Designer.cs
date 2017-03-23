@@ -1,5 +1,5 @@
-﻿namespace SharepointHtmlInsertApp {
-	partial class FormHtmlInsert {
+﻿namespace WindowsFormsLibrary {
+	partial class FormDirectoryBase {
 		/// <summary>
 		/// 必要なデザイナー変数です。
 		/// </summary>
@@ -62,8 +62,8 @@
 			// textBoxFilePath
 			// 
 			this.textBoxFilePath.AllowDrop = true;
-			this.textBoxFilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxFilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxFilePath.Location = new System.Drawing.Point(12, 12);
 			this.textBoxFilePath.Name = "textBoxFilePath";
 			this.textBoxFilePath.Size = new System.Drawing.Size(495, 19);
@@ -86,8 +86,8 @@
 			// 
 			// textBoxUrl
 			// 
-			this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxUrl.Location = new System.Drawing.Point(80, 38);
 			this.textBoxUrl.Name = "textBoxUrl";
 			this.textBoxUrl.Size = new System.Drawing.Size(427, 19);
@@ -95,8 +95,8 @@
 			// 
 			// textBoxUser
 			// 
-			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxUser.Location = new System.Drawing.Point(80, 64);
 			this.textBoxUser.Name = "textBoxUser";
 			this.textBoxUser.Size = new System.Drawing.Size(427, 19);
@@ -104,8 +104,8 @@
 			// 
 			// textBoxPassword
 			// 
-			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxPassword.Location = new System.Drawing.Point(80, 90);
 			this.textBoxPassword.Name = "textBoxPassword";
 			this.textBoxPassword.PasswordChar = '*';
@@ -166,8 +166,8 @@
 			// 
 			// textBoxListName
 			// 
-			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxListName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxListName.Location = new System.Drawing.Point(80, 409);
 			this.textBoxListName.Name = "textBoxListName";
 			this.textBoxListName.Size = new System.Drawing.Size(391, 19);
@@ -181,9 +181,9 @@
 			// 
 			// splitContainer1
 			// 
-			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.splitContainer1.Location = new System.Drawing.Point(12, 115);
 			this.splitContainer1.Name = "splitContainer1";
 			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -210,12 +210,12 @@
 			this.listBoxMessage.TabIndex = 22;
 			this.listBoxMessage.DoubleClick += new System.EventHandler(this.listBoxMessage_DoubleClick);
 			// 
-			// notifyIcon
+			// notifyIcon1
 			// 
 			this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
 			this.notifyIcon.Text = "端末装置制御";
 			// 
-			// FormAttachmentFiles
+			// FormDirectoryBase
 			// 
 			this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -233,8 +233,8 @@
 			this.Controls.Add(this.buttonReference);
 			this.Controls.Add(this.textBoxFilePath);
 			this.Controls.Add(this.buttonRun);
-			this.Name = "FormAttachmentFiles";
-			this.Text = "HTML 本文更新";
+			this.Name = "FormDirectoryBase";
+			this.Text = "ディレクトリ管理";
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.obj_DragDrop);
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.obj_DragEnter);
 			((System.ComponentModel.ISupportInitialize)(this.gridDirectories)).EndInit();

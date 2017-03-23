@@ -20,5 +20,8 @@
     <Setting Name="UniqueKey" Type="System.String" Scope="Application">
       <Value Profile="(Default)">DocUniID</Value>
     </Setting>
+    <Setting Name="Excludes" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">htm,html,mht</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -6,6 +6,7 @@ using ExtensionsLibrary.Extensions;
 using SharePointManager.Extensions;
 using SharePointManager.Interface;
 using SharePointManager.MyEventArgs;
+using WindowsFormsLibrary.Interface;
 using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager {
@@ -56,13 +57,9 @@ namespace SharePointManager.Manager {
 		/// 成功時に呼び出されます。
 		/// </summary>
 		/// <param name="message">メッセージ</param>
-		protected virtual void OnSuccess(string message) {
-			if (this.Success == null) {
-				return;
-			}
-
+		protected virtual void OnSuccess(string message = null) {
 			var e = new MessageEventArgs(message);
-			this.Success(this, e);
+			this.Success?.Invoke(this, e);
 		}
 
 		#endregion
@@ -204,7 +201,7 @@ namespace SharePointManager.Manager {
 		public void Execute(Action<SP.ClientContext> action) {
 			Execute(this.Url, this.UserName, this.Password, action);
 
-			this.OnSuccess("処理に成功しました。");
+			this.OnSuccess();
 		}
 
 		/// <summary>
@@ -219,6 +216,48 @@ namespace SharePointManager.Manager {
 			ReferToContext(url, username, password, cn => {
 				action(cn);
 				cn.ExecuteQuery();
+			});
+		}
+
+		#endregion
+
+		#region TryExecute
+
+		/// <summary>
+		/// SharePoint ClientContext に対して処理を試行します。
+		/// </summary>
+		/// <param name="tryAction">試行するメソッド</param>
+		/// <param name="catchAction">例外発生時に実行するメソッド</param>
+		/// <param name="finallyAction">最終的に実行するメソッド</param>
+		/// <remarks>例外発生時と最終的に実行する処理を指定できます。</remarks>
+		public void TryExecute(Action<SP.ClientContext> tryAction, Action<SP.ClientContext> catchAction = null, Action<SP.ClientContext> finallyAction = null) {
+			if (tryAction == null) {
+				throw new ArgumentNullException(nameof(tryAction));
+			}
+
+			this.ReferToContext(cn => {
+				var scope = new SP.ExceptionHandlingScope(cn);
+				using (scope.StartScope()) {
+					using (scope.StartTry()) {// Try
+						tryAction?.Invoke(cn);
+					}
+					using (scope.StartCatch()) {// Catch
+						catchAction?.Invoke(cn);
+					}
+					using (scope.StartFinally()) {// Finally
+						finallyAction?.Invoke(cn);
+					}
+				}
+
+				cn.ExecuteQuery();
+
+				// 例外判定
+				if (!scope.ErrorMessage.IsEmpty()) {
+					this.OnThrowSharePointException(scope);
+					return;
+				}
+
+				this.OnSuccess();
 			});
 		}
 
@@ -247,62 +286,13 @@ namespace SharePointManager.Manager {
 		/// action の処理の中で明示的に ExecuteQuery を実行して下さい。</remarks>
 		protected static void ReferToContext(string url, string username, string password, Action<SP.ClientContext> action) {
 			if (action == null) {
-				throw new ArgumentNullException("action");
+				throw new ArgumentNullException(nameof(action));
 			}
 
 			using (var cn = new SP.ClientContext(url) {
 				Credentials = new SP.SharePointOnlineCredentials(username, new SecureString().SetString(password)),
 			}) {
 				action(cn);
-			}
-		}
-
-		#endregion
-
-		#region TryExecute
-
-		/// <summary>
-		/// SharePoint ClientContext に対して処理を試行します。
-		/// </summary>
-		/// <param name="tryAction">試行するメソッド</param>
-		/// <param name="catchAction">例外発生時に実行するメソッド</param>
-		/// <param name="finallyAction">最終的に実行するメソッド</param>
-		/// <remarks>例外発生時と最終的に実行する処理を指定できます。</remarks>
-		public void TryExecute(Action<SP.ClientContext> tryAction, Action<SP.ClientContext> catchAction = null, Action<SP.ClientContext> finallyAction = null) {
-			if (tryAction == null) {
-				throw new ArgumentNullException("tryAction");
-			}
-
-			string url = this.Url;
-			string username = this.UserName;
-			string password = this.Password;
-			using (var context = new SP.ClientContext(url) {
-				Credentials = new SP.SharePointOnlineCredentials(username, new SecureString().SetString(password)),
-			}) {
-				var scope = new SP.ExceptionHandlingScope(context);
-				using (scope.StartScope()) {
-					using (scope.StartTry()) {// Try
-						tryAction(context);
-					}
-					using (scope.StartCatch()) {// Catch
-						catchAction?.Invoke(context);
-					}
-					if (finallyAction != null) {
-						using (scope.StartFinally()) {// Finally
-							finallyAction(context);
-						}
-					}
-				}
-
-				context.ExecuteQuery();
-
-				// 例外判定
-				if (!string.IsNullOrEmpty(scope.ErrorMessage)) {
-					this.OnThrowSharePointException(scope);
-					return;
-				}
-
-				this.OnSuccess("処理の試行に成功しました。");
 			}
 		}
 

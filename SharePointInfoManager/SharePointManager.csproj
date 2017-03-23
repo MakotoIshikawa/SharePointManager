@@ -70,15 +70,13 @@
   <ItemGroup>
     <Compile Include="Extensions\AttachmentExtension.cs" />
     <Compile Include="Extensions\GroupCollectionExtension.cs" />
-    <Compile Include="Interface\IListEdit.cs" />
-    <Compile Include="Interface\ISignInInfo.cs" />
+    <Compile Include="Interface\IClientSideObjectModel.cs" />
     <Compile Include="Manager\AbstractInfoManager.cs" />
     <Compile Include="Extensions\ClientContextExtension.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Extensions\TermSetExtension.cs" />
     <Compile Include="Manager\Extensions\SharePointExtension.cs" />
     <Compile Include="Manager\GroupManager.cs" />
-    <Compile Include="Interface\IClientSideObjectModel.cs" />
     <Compile Include="Manager\Lists\ListManager.cs" />
     <Compile Include="Manager\Lists\ListCollectionManager.cs" />
     <Compile Include="Manager\Lists\Retrievals.cs" />
@@ -147,6 +145,10 @@
     <ProjectReference Include="..\ObjectAnalysisProject\ObjectAnalysisProject.csproj">
       <Project>{be1bb940-f59e-4440-add0-603bd9915a02}</Project>
       <Name>ObjectAnalysisProject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowsFormsLibrary\WindowsFormsLibrary.csproj">
+      <Project>{d2bdb1cb-dc00-413e-a895-30075f92edb4}</Project>
+      <Name>WindowsFormsLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\XmlLibrary\XmlLibrary.csproj">
       <Project>{9050afb5-bcc8-4fb6-b578-527782a76ffa}</Project>

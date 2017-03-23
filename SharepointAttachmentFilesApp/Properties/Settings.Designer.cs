@@ -76,5 +76,14 @@ namespace SharepointAttachmentFilesApp.Properties {
                 return ((string)(this["UniqueKey"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("htm,html,mht")]
+        public string Excludes {
+            get {
+                return ((string)(this["Excludes"]));
+            }
+        }
     }
 }

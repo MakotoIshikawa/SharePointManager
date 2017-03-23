@@ -68,12 +68,34 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="excludes">除外パターン</param>
 		/// <returns>ファイル情報の列挙を返します。</returns>
 		public static IEnumerable<FileInfo> GetFileInfos(this DirectoryInfo @this, bool all, params string[] excludes) {
-			var files = @this.GetFileInfos(searchOption: all ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-			if (!excludes.Any()) {
+			var files = @this.GetFileInfos(searchOption: all ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+				.Where(fi => !fi.IsHidden());
+
+			if (!(excludes?.Any() ?? false)) {
 				return files;
 			}
 
 			return files.Where(f => !excludes.Contains(f.Extension));
+		}
+
+		/// <summary>
+		/// 隠しファイルかどうかを判定します。
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <returns>隠しファイル属性であれば true を返します。</returns>
+		public static bool IsHidden(this FileSystemInfo @this) {
+			var atr = FileAttributes.Hidden;
+			return HasAttribute(@this, atr);
+		}
+
+		/// <summary>
+		/// 指定した属性を持っているか判定します。
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <param name="attribute">属性</param>
+		/// <returns>属性を持っていれば true を返します。</returns>
+		public static bool HasAttribute(this FileSystemInfo @this, FileAttributes attribute) {
+			return (@this.Attributes & attribute) == attribute;
 		}
 
 		#endregion

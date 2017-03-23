@@ -39,50 +39,7 @@ namespace TermStoreMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonRun_Click(object sender, EventArgs e) {
-			try {
-				this.Enabled = false;
-
-				var url = this.textBoxUrl.Text;
-				var username = this.textBoxUser.Text;
-				var password = this.textBoxPassword.Text;
-				var groupName = this.textBoxGroup.Text;
-
-				var tm = new TermStoreManager(url, username, password, groupName) {
-					DefaultLcID = 1041,
-				};
-
-				var tbl = this.gridCsv.ToDataTable();
-				tbl.Select(r => new {
-					セット名 = r[0].ToString().Trim(),
-					セット説明 = r[1].ToString().Trim(),
-					公開 = r[2].ToBoolean(),
-					タグ = r[3].ToBoolean(),
-					用語 = r[4].ToString().Trim(),
-					説明 = r[5].ToString().Trim(),
-				}).GroupBy(r => new {
-					r.セット名,
-					r.セット説明,
-					r.公開,
-				}).ToList().ForEach(v => {
-					var row = v.Select(x => new TermInfo(x.用語) {
-						IsAvailableForTagging = x.タグ,
-						Description = x.説明,
-					}).ToArray();
-
-					var info = new TermSetInfo(v.Key.セット名, row) {
-						IsOpenForTermCreation = v.Key.公開,
-						Description = v.Key.セット説明,
-					};
-
-					tm.AddTerm(info);
-				});
-
-				MessageBox.Show("用語セットを登録しました。");
-			} catch (Exception ex) {
-				MessageBox.Show(ex.ToString());
-			} finally {
-				this.Enabled = true;
-			}
+			this.RunAction(this.Run);
 		}
 
 		/// <summary>
@@ -106,22 +63,16 @@ namespace TermStoreMngApp {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void textBoxFilePath_TextChanged(object sender, EventArgs e) {
-			var tb = (sender as TextBox);
-			if (tb == null) {
-				return;
-			}
-
-			try {
-				var file = new FileInfo(tb.Text);
+			this.RunAction<TextBox>(sender, tx => {
+				var file = new FileInfo(tx.Text);
 				this.buttonRun.Enabled = file.Exists;
 
 				var table = GetCsvTable(file);
 				this.gridCsv.DataSource = table;
-			} catch (Exception ex) {
+			}, () => {
 				this.gridCsv.DataSource = null;
-
-				MessageBox.Show(ex.Message);
-			}
+				this.buttonRun.Enabled = false;
+			});
 		}
 
 		/// <summary>
@@ -157,6 +108,45 @@ namespace TermStoreMngApp {
 		#endregion
 
 		#region メソッド
+
+		private void Run() {
+			var url = this.textBoxUrl.Text;
+			var username = this.textBoxUser.Text;
+			var password = this.textBoxPassword.Text;
+			var groupName = this.textBoxGroup.Text;
+
+			var tm = new TermStoreManager(url, username, password, groupName) {
+				DefaultLcID = 1041,
+			};
+
+			var tbl = this.gridCsv.ToDataTable();
+			tbl.Select(r => new {
+				セット名 = r[0].ToString().Trim(),
+				セット説明 = r[1].ToString().Trim(),
+				公開 = r[2].ToBoolean(),
+				タグ = r[3].ToBoolean(),
+				用語 = r[4].ToString().Trim(),
+				説明 = r[5].ToString().Trim(),
+			}).GroupBy(r => new {
+				r.セット名,
+				r.セット説明,
+				r.公開,
+			}).ToList().ForEach(v => {
+				var row = v.Select(x => new TermInfo(x.用語) {
+					IsAvailableForTagging = x.タグ,
+					Description = x.説明,
+				}).ToArray();
+
+				var info = new TermSetInfo(v.Key.セット名, row) {
+					IsOpenForTermCreation = v.Key.公開,
+					Description = v.Key.セット説明,
+				};
+
+				tm.AddTerm(info);
+			});
+
+			this.ShowMessageBox("用語セットを登録しました。");
+		}
 
 		/// <summary>
 		/// CSVファイルのデータを加工してテーブルに格納します。

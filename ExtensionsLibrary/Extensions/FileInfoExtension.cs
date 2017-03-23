@@ -74,7 +74,8 @@ namespace ExtensionsLibrary.Extensions {
 				".tif", ".tiff", ".nsk",
 				".cgm",
 				".pct", ".pic", ".pict",
-				".pcx"
+				".pcx",
+				".ico"
 			);
 		}
 

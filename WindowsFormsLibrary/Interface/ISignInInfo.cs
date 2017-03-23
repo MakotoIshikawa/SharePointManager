@@ -1,4 +1,4 @@
-﻿namespace SharePointManager.Interface {
+﻿namespace WindowsFormsLibrary.Interface {
 	/// <summary>
 	/// サインイン情報のインターフェイスです。
 	/// </summary>

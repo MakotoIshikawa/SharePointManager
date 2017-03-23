@@ -1,4 +1,4 @@
-﻿namespace SharePointManager.Interface {
+﻿namespace WindowsFormsLibrary.Interface {
 	/// <summary>
 	/// リストの編集に関するインターフェイスです。
 	/// </summary>

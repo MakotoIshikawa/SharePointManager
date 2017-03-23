@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.SharePoint.Client;
 using SharePointManager.Extensions;
-using SPC = Microsoft.SharePoint.Client;
 
 namespace SharePointManager.Manager {
 	/// <summary>
@@ -38,19 +37,13 @@ namespace SharePointManager.Manager {
 		/// </summary>
 		/// <returns>グループ情報の列挙を返します。</returns>
 		protected IEnumerable<Group> GetSiteGroups(bool full = false) {
-			if (full) {
-				return this.Load(cn => {
-					return cn.Web.SiteGroups.Include(RetrievalsOfGroup);
-				});
-			} else {
-				return this.Load(cn => {
-					return cn.Web.SiteGroups.Include(
-						g => g.Id
-						, g => g.Title
-						, g => g.Description
-					);
-				});
-			}
+			return full
+				? this.GetSiteGroups(RetrievalsOfGroup)
+				: this.GetSiteGroups(
+					 g => g.Id
+					 , g => g.Title
+					 , g => g.Description
+				);
 		}
 
 		/// <summary>
@@ -58,12 +51,8 @@ namespace SharePointManager.Manager {
 		/// </summary>
 		/// <param name="retrievals">データを取得するプロパティ</param>
 		/// <returns>グループ情報の列挙を返します。</returns>
-		public IEnumerable<Group> GetSiteGroups(params Expression<Func<SPC.Group, object>>[] retrievals) {
-			var ret = this.Load(cn => {
-				return cn.Web.SiteGroups.Include(retrievals);
-			});
-
-			return ret;
+		protected IEnumerable<Group> GetSiteGroups(params Expression<Func<Group, object>>[] retrievals) {
+			return this.Load(cn => cn.Web.SiteGroups?.Include(retrievals));
 		}
 
 		#endregion
@@ -74,25 +63,17 @@ namespace SharePointManager.Manager {
 		/// サイトユーザー情報の列挙を取得します。
 		/// </summary>
 		/// <returns>取得したサイトユーザー情報の列挙を返します。</returns>
-		protected IEnumerable<SPC.User> GetSiteUsers(bool full = false) {
-			if (full) {
-				return this.Load(cn => {
-					var us = cn.Web.SiteUsers;
-					return us.Include(RetrievalsOfUser);
-				});
-			} else {
-				return this.Load(cn => {
-					var us = cn.Web.SiteUsers;
-					return us.Include(
-						u => u.Id
-						, u => u.Title
-						, u => u.LoginName
-						, u => u.Email
-						, u => u.PrincipalType
-						, u => u.IsSiteAdmin
-					);
-				});
-			}
+		protected IEnumerable<User> GetSiteUsers(bool full = false) {
+			return full
+				? this.GetSiteUsers(RetrievalsOfUser)
+				: this.GetSiteUsers(
+					u => u.Id
+					, u => u.Title
+					, u => u.LoginName
+					, u => u.Email
+					, u => u.PrincipalType
+					, u => u.IsSiteAdmin
+				);
 		}
 
 		/// <summary>
@@ -100,11 +81,8 @@ namespace SharePointManager.Manager {
 		/// </summary>
 		/// <param name="retrievals">データを取得するプロパティ</param>
 		/// <returns>取得したサイトユーザー情報の列挙を返します。</returns>
-		public IEnumerable<SPC.User> GetSiteUsers(params Expression<Func<SPC.User, object>>[] retrievals) {
-			return this.Load(cn => {
-				var us = cn.Web.SiteUsers;
-				return us.Include(retrievals);
-			});
+		protected IEnumerable<User> GetSiteUsers(params Expression<Func<User, object>>[] retrievals) {
+			return this.Load(cn => cn.Web.SiteUsers?.Include(retrievals));
 		}
 
 		#endregion
@@ -124,7 +102,7 @@ namespace SharePointManager.Manager {
 		/// </summary>
 		/// <param name="name">グループ名</param>
 		/// <returns>ユーザー情報の列挙を返します。</returns>
-		public IEnumerable<SPC.User> GetUsersByName(string name) {
+		public IEnumerable<User> GetUsersByName(string name) {
 			return this.Load(cn => {
 				var us = cn.Web.SiteGroups.GetByName(name).Users;
 				return us.Include(RetrievalsOfUser);
@@ -137,7 +115,7 @@ namespace SharePointManager.Manager {
 		/// <param name="name">グループ名</param>
 		/// <param name="retrievals">データを取得するプロパティ</param>
 		/// <returns>ユーザー情報の列挙を返します。</returns>
-		public IEnumerable<SPC.User> GetUsersByName(string name, params Expression<Func<SPC.User, object>>[] retrievals) {
+		public IEnumerable<User> GetUsersByName(string name, params Expression<Func<User, object>>[] retrievals) {
 			return this.Load(cn => {
 				var us = cn.Web.SiteGroups.GetByName(name).Users;
 				return us.Include(retrievals);
@@ -177,7 +155,7 @@ namespace SharePointManager.Manager {
 		/// <param name="groupName">グループ名</param>
 		/// <param name="member">メンバー</param>
 		/// <returns>this</returns>
-		public GroupManager AddMember(string groupName, SPC.User member) {
+		public GroupManager AddMember(string groupName, User member) {
 			this.TryExecute(cn => {// Try
 				var g = cn.Web.SiteGroups.GetByName(groupName);
 				g.Users.AddUser(cn.Web.SiteUsers.GetById(member.Id));
@@ -239,18 +217,18 @@ namespace SharePointManager.Manager {
 		#region プロパティ
 
 		/// <summary>サイトグループリスト</summary>
-		public List<SPC.Group> SiteGroups { get; protected set; }
+		public List<Group> SiteGroups { get; protected set; }
 
 		/// <summary>サイトユーザーリスト</summary>
-		public List<SPC.User> SiteUsers { get; protected set; }
+		public List<User> SiteUsers { get; protected set; }
 
 		/// <summary>グループ別のユーザー情報リスト</summary>
 		public Dictionary<string, List<User>> GroupUsers { get; protected set; }
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.Group, object>>[] RetrievalsOfGroup {
+		protected static Expression<Func<Group, object>>[] RetrievalsOfGroup {
 			get {
-				return new Expression<Func<SPC.Group, object>>[] {
+				return new Expression<Func<Group, object>>[] {
 					p => p.Id
 					, p => p.IsHiddenInUI
 					, p => p.LoginName
@@ -273,9 +251,9 @@ namespace SharePointManager.Manager {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.User, object>>[] RetrievalsOfUser {
+		protected static Expression<Func<User, object>>[] RetrievalsOfUser {
 			get {
-				return new Expression<Func<SPC.User, object>>[] {
+				return new Expression<Func<User, object>>[] {
 					p => p.Id
 					, p => p.IsHiddenInUI
 					, p => p.LoginName
@@ -290,9 +268,9 @@ namespace SharePointManager.Manager {
 		}
 
 		/// <summary>参照プロパティ配列</summary>
-		protected static Expression<Func<SPC.Principal, object>>[] RetrievalsOfPrincipal {
+		protected static Expression<Func<Principal, object>>[] RetrievalsOfPrincipal {
 			get {
-				return new Expression<Func<SPC.Principal, object>>[] {
+				return new Expression<Func<Principal, object>>[] {
 					p => p.Id
 					, p => p.IsHiddenInUI
 					, p => p.LoginName
