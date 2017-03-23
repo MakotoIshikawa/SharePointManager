@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -69,6 +70,22 @@ namespace UnitTestProject {
 			Assert.IsTrue(files.Any());
 			Assert.IsFalse(files.Any(f => f.Extension == ".htm"));
 			Assert.IsFalse(files.Any(f => f.Extension == ".html"));
+		}
+
+		[TestMethod]
+		[Owner("その他")]
+		[TestCategory("判定")]
+		public void ファイル種別判定() {
+			Assert.IsTrue(new FileInfo("aaaaa.JPG").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.jpg").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.JPEG").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.jpeg").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.xls").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.doc").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.xlsm").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.docm").IsSharePointIcon());
+			Assert.IsTrue(new FileInfo("aaaaa.htm").IsSharePointIcon());
+			Assert.IsFalse(new FileInfo("aaaaa.html").IsSharePointIcon());
 		}
 	}
 }

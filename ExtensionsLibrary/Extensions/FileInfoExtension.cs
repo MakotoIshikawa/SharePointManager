@@ -1,6 +1,6 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExtensionsLibrary.Extensions {
@@ -67,15 +67,47 @@ namespace ExtensionsLibrary.Extensions {
 		/// <returns>イメージファイルであれば true を返します。</returns>
 		public static bool IsImage(this FileInfo @this) {
 			return @this.ContainsAtExtension(
-				".gif",
-				".jpg", ".jpeg", ".jpe", ".jfif",
-				".png",
-				".bmp", ".dib", ".rle",
-				".tif", ".tiff", ".nsk",
-				".cgm",
-				".pct", ".pic", ".pict",
-				".pcx",
-				".ico"
+				"gif",
+				"jpg", "jpeg", "jpe", "jfif",
+				"png",
+				"bmp", "dib", "rle",
+				"tif", "tiff", "nsk",
+				"cgm",
+				"pct", "pic", "pict",
+				"pcx",
+				"ico"
+			);
+		}
+
+		/// <summary>
+		/// SharePoint の icon に対応しているファイルかどうかを判定します。
+		/// </summary>
+		/// <param name="this">FileInfo</param>
+		/// <returns>SharePoint の icon に対応しているファイルであれば true を返します。</returns>
+		public static bool IsSharePointIcon(this FileInfo @this) {
+			return @this.ContainsAtExtension(
+				"ASP", "ASPX",
+				"CSS",
+				"DOC", "DOCM", "DOCX",
+				"GEN",
+				"GIF",
+				"HTM",
+				"INI",
+				"JPEG", "JPG",
+				"JS",
+				"LOG",
+				"PDF",
+				"PPT", "PPTM", "PPTX",
+				"PUB",
+				"RTF",
+				"STP",
+				"TIF", "TIFF",
+				"TXT", "WMA",
+				"XLS", "XLSM", "XLSX",
+				"XML",
+				"XPS",
+				"XSD", "XSL",
+				"ZIP"
 			);
 		}
 
@@ -86,8 +118,9 @@ namespace ExtensionsLibrary.Extensions {
 		/// <param name="exts">拡張子の配列</param>
 		/// <returns>該当する拡張子があれば true を返します。それ以外は false</returns>
 		public static bool ContainsAtExtension(this FileInfo @this, params string[] exts) {
-			var ext = @this.Extension.ToLower();
-			return exts.Contains(ext);
+			var gp = exts.Join("|");
+			var rx = new Regex($@"\.({gp})$", RegexOptions.IgnoreCase);
+			return rx.IsMatch(@this.Name);
 		}
 
 		#endregion
