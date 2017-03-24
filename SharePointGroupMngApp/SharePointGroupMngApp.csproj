@@ -35,12 +35,20 @@
     <DocumentationFile>bin\Release\SharePointGroupMngApp.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonFeaturesLibrary">
+      <HintPath>..\..\lib\CommonFeaturesLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ExtensionsLibrary">
+      <HintPath>..\..\lib\ExtensionsLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="ObjectAnalysisProject">
+      <HintPath>..\..\lib\ObjectAnalysisProject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -48,6 +56,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsFormsLibrary">
+      <HintPath>..\..\lib\WindowsFormsLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormGroupMng.cs">
@@ -85,25 +96,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonFeaturesLibrary\CommonFeaturesLibrary.csproj">
-      <Project>{666330c0-b3f9-489a-ab39-4217d18728c7}</Project>
-      <Name>CommonFeaturesLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ExtensionsLibrary\ExtensionsLibrary.csproj">
-      <Project>{d37920d6-23c2-42a2-a593-32f8687fd320}</Project>
-      <Name>ExtensionsLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ObjectAnalysisProject\ObjectAnalysisProject.csproj">
-      <Project>{be1bb940-f59e-4440-add0-603bd9915a02}</Project>
-      <Name>ObjectAnalysisProject</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharePointInfoManager\SharePointManager.csproj">
       <Project>{c5dbedf8-f96a-4c85-83f2-71f462efb15f}</Project>
       <Name>SharePointManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowsFormsLibrary\WindowsFormsLibrary.csproj">
-      <Project>{d2bdb1cb-dc00-413e-a895-30075f92edb4}</Project>
-      <Name>WindowsFormsLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

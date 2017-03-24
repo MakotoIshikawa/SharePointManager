@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

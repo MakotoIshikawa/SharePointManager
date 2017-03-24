@@ -53,9 +53,21 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonFeaturesLibrary, Version=1.2.6292.27847, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\CommonFeaturesLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ExtensionsLibrary, Version=1.2.6291.27103, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ExtensionsLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="ObjectAnalysisProject, Version=1.2.6291.27103, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ObjectAnalysisProject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -66,6 +78,14 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsFormsLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\WindowsFormsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="XmlLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\XmlLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\AttachmentExtension.cs" />
@@ -132,28 +152,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CommonFeaturesLibrary\CommonFeaturesLibrary.csproj">
-      <Project>{666330C0-B3F9-489A-AB39-4217D18728C7}</Project>
-      <Name>CommonFeaturesLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ExtensionsLibrary\ExtensionsLibrary.csproj">
-      <Project>{d37920d6-23c2-42a2-a593-32f8687fd320}</Project>
-      <Name>ExtensionsLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ObjectAnalysisProject\ObjectAnalysisProject.csproj">
-      <Project>{be1bb940-f59e-4440-add0-603bd9915a02}</Project>
-      <Name>ObjectAnalysisProject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowsFormsLibrary\WindowsFormsLibrary.csproj">
-      <Project>{d2bdb1cb-dc00-413e-a895-30075f92edb4}</Project>
-      <Name>WindowsFormsLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XmlLibrary\XmlLibrary.csproj">
-      <Project>{9050afb5-bcc8-4fb6-b578-527782a76ffa}</Project>
-      <Name>XmlLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
