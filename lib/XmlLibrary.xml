@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>XmlLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:XmlLibrary.Extensions.Deserializer">
+            <summary>
+            逆シリアル化を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.DeserializeFromXml``1(System.IO.Stream)">
+            <summary>
+            指定した Stream に格納されている
+            XML ドキュメントを逆シリアル化します。
+            </summary>
+            <typeparam name="TResult">逆シリアル化する型</typeparam>
+            <param name="this">逆シリアル化する XML ドキュメントを格納している Stream。</param>
+            <returns>逆シリアル化されたオブジェクトを返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.DeserializeFromXml``1(System.IO.TextReader)">
+            <summary>
+            指定した TextReader に格納されている
+            XML ドキュメントを逆シリアル化します。
+            </summary>
+            <typeparam name="TResult">逆シリアル化する型</typeparam>
+            <param name="this">逆シリアル化する XML ドキュメントを格納している TextReader。</param>
+            <returns>逆シリアル化されたオブジェクトを返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.Deserialize``1(System.Xml.Linq.XNode)">
+            <summary>
+            XML ノードを逆シリアル化します。
+            </summary>
+            <typeparam name="TResult">逆シリアル化する型</typeparam>
+            <param name="this">this</param>
+            <returns>逆シリアル化されたオブジェクトを返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.Deserialize``1(System.Xml.XmlReader)">
+            <summary>
+            指定した XmlReader に格納されている
+            XML ドキュメントを逆シリアル化します。
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="this">逆シリアル化する XML ドキュメントを格納している XmlReader。</param>
+            <returns>逆シリアル化されたオブジェクトを返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.DeserializeFromXml``1(System.String)">
+            <summary>
+            XML 文字列を逆シリアル化します。
+            </summary>
+            <typeparam name="TResult">逆シリアル化する型</typeparam>
+            <param name="this">XML 文字列</param>
+            <returns>逆シリアル化されたオブジェクト</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.DeserializeFromXml``1(System.String,System.Text.Encoding)">
+            <summary>
+            XML 文字列を逆シリアル化します。
+            </summary>
+            <typeparam name="TResult">逆シリアル化する型</typeparam>
+            <param name="this">XML 文字列</param>
+            <param name="encoding">エンコーディング</param>
+            <returns>逆シリアル化されたオブジェクト</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Deserializer.DeSerializeFromXml``1(System.IO.FileInfo)">
+            <summary>
+            XML ファイルを逆シリアル化します。
+            </summary>
+            <typeparam name="TResult">逆シリアル化する型</typeparam>
+            <param name="this">XML ファイル情報</param>
+            <returns>逆シリアル化されたオブジェクト</returns>
+        </member>
+        <member name="T:XmlLibrary.Extensions.Serializer">
+            <summary>
+            シリアル化を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Serializer.ToXmlString``1(``0,System.Boolean)">
+            <summary>
+            XML 文字列に変換します。
+            </summary>
+            <typeparam name="T">変化するインスタンスの型</typeparam>
+            <param name="this">変化するインスタンス</param>
+            <param name="useNamespace">名前空間を使用するかどうか</param>
+            <returns>XML 文字列をかえします。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.Serializer.ToXmlString``1(``0,System.Text.Encoding,System.Boolean)">
+            <summary>
+            XML 文字列に変換します。
+            </summary>
+            <typeparam name="T">変化するインスタンスの型</typeparam>
+            <param name="this">変化するインスタンス</param>
+            <param name="encoding">文字エンコーディング</param>
+            <param name="useNamespace">名前空間を使用するかどうか</param>
+            <returns>XML 文字列をかえします。</returns>
+        </member>
+        <member name="T:XmlLibrary.Extensions.TypeExtension">
+            <summary>
+            Type を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:XmlLibrary.Extensions.TypeExtension.GetElementName(System.Type)">
+            <summary>
+            指定した型宣言から、要素名を取得します。
+            </summary>
+            <param name="this">型宣言</param>
+            <returns>要素名を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.TypeExtension.GetAttribute``1(System.Type)">
+            <summary>
+            指定した型宣言から、属性オブジェクトを取得します。
+            </summary>
+            <typeparam name="TAttribute">Attribute を継承する型</typeparam>
+            <param name="this">型宣言</param>
+            <returns>属性オブジェクトを返します。</returns>
+        </member>
+        <member name="T:XmlLibrary.Extensions.XElementExtension">
+            <summary>
+            XElement クラス拡張クラス
+            </summary>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.AttributeValue(System.Xml.Linq.XElement,System.String)">
+            <summary>
+            指定した XName を持つ、この XElement の XML 属性 の文字列を返します。
+            </summary>
+            <param name="this">XML 要素</param>
+            <param name="name">取得する XML 属性 の XName</param>
+            <returns>指定した名前 XName を持つ XML 属性 の文字列。
+            指定した名前を持つ属性がない場合は string.Empty を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.AttributeValue``1(System.Xml.Linq.XElement,System.String)">
+            <summary>
+            指定した XName を持つ、この XElement の XML 属性 の値を返します。
+            </summary>
+            <typeparam name="T">XML 属性の型</typeparam>
+            <param name="this">XML 要素</param>
+            <param name="name">取得する XML 属性 の XName</param>
+            <returns>指定した名前 XName を持つ XML 属性。
+            指定した名前を持つ属性がない場合は T 型の default 値を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.AttributeValue``1(System.Xml.Linq.XElement,System.String,``0)">
+            <summary>
+            指定した XName を持つ、この XElement の XML 属性 の値を返します。
+            </summary>
+            <typeparam name="T">XML 属性の型</typeparam>
+            <param name="this">XML 要素</param>
+            <param name="name">取得する XML 属性 の XName</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>指定した名前 XName を持つ XML 属性。
+            指定した名前を持つ属性がない場合は defaultValue を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.ElementValue(System.Xml.Linq.XElement,System.String)">
+            <summary>
+            指定した XName の最初の子要素から連結されたテキストコンテンツを取得します。
+            </summary>
+            <param name="this">XElement</param>
+            <param name="name">照合する対象の XName</param>
+            <returns>指定した要素のすべてのテキストコンテンツを格納している文字列を返します。
+            複数のテキスト ノードがある場合は、連結されます。
+            XElement が null の場合、string.Empty を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.ElementValue``1(System.Xml.Linq.XElement,System.String)">
+            <summary>
+            指定した XName の最初の子要素から連結されたテキストコンテンツを取得します。
+            </summary>
+            <typeparam name="T">戻り値の型</typeparam>
+            <param name="this">XElement</param>
+            <param name="name">照合する対象の XName</param>
+            <returns>指定した要素のすべてのテキストコンテンツを格納している文字列を返します。
+            複数のテキスト ノードがある場合は、連結されます。
+            XElement が null の場合、T 型の default 値を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.ElementValue``1(System.Xml.Linq.XElement,System.String,``0)">
+            <summary>
+            指定した XName の最初の子要素から連結されたテキストコンテンツを取得します。
+            </summary>
+            <typeparam name="T">戻り値の型</typeparam>
+            <param name="this">XElement</param>
+            <param name="name">照合する対象の XName</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>指定した要素のすべてのテキストコンテンツを格納している文字列を返します。
+            複数のテキスト ノードがある場合は、連結されます。
+            XElement が null の場合、defaultValue を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.XPathSelectElementValue(System.Xml.Linq.XNode,System.String)">
+            <summary>
+            XPath 式を使用して XML 要素の文字列を取得します。
+            </summary>
+            <param name="this">XPath 式の評価対象となる XML ノード</param>
+            <param name="expression">XPath 式を含む文字列</param>
+            <returns>
+            XML 要素の文字列を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.XPathSelectElementValue(System.Xml.Linq.XNode,System.String,System.Xml.IXmlNamespaceResolver)">
+            <summary>
+            XPath 式を使用して XML 要素の文字列を取得します。
+            このとき、指定された IXmlNamespaceResolver を使用して名前空間プレフィックスを解決します。
+            </summary>
+            <param name="this">XPath 式の評価対象となる XML ノード</param>
+            <param name="expression">XPath 式を含む文字列</param>
+            <param name="resolver">XPath 式の名前空間プレフィックスの解決に使用する IXmlNamespaceResolver</param>
+            <returns>
+            XML 要素の文字列を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.XPathSelectElementValue``1(System.Xml.Linq.XNode,System.String)">
+            <summary>
+            XPath 式を使用して XML 要素の値を取得します。
+            </summary>
+            <typeparam name="T">戻り値の型</typeparam>
+            <param name="this">XPath 式の評価対象となる XML ノード</param>
+            <param name="expression">XPath 式を含む文字列</param>
+            <returns>
+            XML 要素の文字列を T 型に変換して返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.XPathSelectElementValue``1(System.Xml.Linq.XNode,System.String,``0)">
+            <summary>
+            XPath 式を使用して XML 要素の値を取得します。
+            </summary>
+            <typeparam name="T">戻り値の型</typeparam>
+            <param name="this">XPath 式の評価対象となる XML ノード</param>
+            <param name="expression">XPath 式を含む文字列</param>
+            <param name="defaultValue">default 値</param>
+            <returns>
+            XML 要素の文字列を T 型に変換して返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.GetString(System.Xml.Linq.XElement)">
+            <summary>
+            この要素の連結された文字列を取得します。
+            </summary>
+            <param name="this">XML 要素</param>
+            <returns>
+            この要素のすべてのテキストコンテンツを格納している文字列を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.GetString(System.Xml.Linq.XAttribute)">
+            <summary>
+            現在の属性の文字列を取得します。
+            </summary>
+            <param name="this">XML 属性</param>
+            <returns>
+            現在の属性の値を格納している文字列を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.GetValue``1(System.Xml.Linq.XElement,``0)">
+            <summary>
+            この要素の連結された値を取得します。
+            </summary>
+            <typeparam name="T">戻り値の型</typeparam>
+            <param name="this">XML 要素</param>
+            <param name="defaultValue">default 値</param>
+            <returns>
+            この要素のすべてのテキストコンテンツを格納している文字列を T 型に変換して返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.GetValue``1(System.Xml.Linq.XAttribute,``0)">
+            <summary>
+            現在の属性の値を取得します。
+            </summary>
+            <typeparam name="T">戻り値の型</typeparam>
+            <param name="this">XML 属性</param>
+            <param name="defaultValue">default 値</param>
+            <returns>
+            現在の属性の値を格納している文字列を T 型に変換して返します。
+            属性が null の場合、defaultValue を返します。</returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.ChangeType``1(System.Object)">
+            <summary>
+            指定されたオブジェクトと等しい値を持つ、指定された型のオブジェクトを返します。
+            </summary>
+            <typeparam name="T">返すオブジェクトの型</typeparam>
+            <param name="this">System.IConvertible インターフェイスを実装するオブジェクト。</param>
+            <returns>型が T であり、value と等価の値を持つオブジェクト。
+            または value が null で、T が値型ではない場合は、null 参照。
+            </returns>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.Set(System.Xml.Linq.XElement,System.Xml.Linq.XName,System.Object)">
+            <summary>
+            属性の値の設定、属性の追加、または属性の削除を行います。
+            </summary>
+            <param name="this">XML 要素</param>
+            <param name="name">変更する属性の名前を格納する XName</param>
+            <param name="value">属性に代入する値</param>
+            <returns>属性の値の設定をした XML 要素を返します。</returns>
+            <remarks>
+            値が null の場合は属性が削除されます。
+            それ以外の場合は、値が文字列形式に変換され、属性の XAttribute.Value プロパティに代入されます。
+            </remarks>
+        </member>
+        <member name="M:XmlLibrary.Extensions.XElementExtension.CreateXElement(System.Xml.Linq.XName,System.String)">
+            <summary>
+            指定した名前と内容を持つ XElement クラスの新しいインスタンスを生成します。
+            </summary>
+            <param name="this">要素名を格納する XName。</param>
+            <param name="content">要素の内容。</param>
+            <returns>XElement クラスの新しいインスタンスを返します。</returns>
+        </member>
+    </members>
+</doc>

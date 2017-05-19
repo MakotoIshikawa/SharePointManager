@@ -1,0 +1,339 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WindowsFormsLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:WindowsFormsLibrary.Extensions.ControlExtension">
+            <summary>
+            Control を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.ControlExtension.IsValidated(System.Windows.Forms.Control,System.Windows.Forms.ErrorProvider,System.Action{System.String})">
+            <summary>
+            コントロールに関連付けられているテキストが有効かどうか検証します。
+            </summary>
+            <param name="this">コントロール</param>
+            <param name="errorProvider">ErrorProvider</param>
+            <param name="validate">検証メソッド</param>
+            <returns>有効かどうかを返します。</returns>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.ControlExtension.GetActiveControl(System.Windows.Forms.ContainerControl)">
+            <summary>
+            アクティブコントロールを取得する
+            </summary>
+            <param name="this">アクティブコントロールを探す元のコンテナコントロール</param>
+            <returns>アクティブコントロール</returns>
+            <example>
+            自分自身のフォームのアクティブコントロールを取得する例
+            <code>
+            var c = this.GetRealActiveControl();
+            </code>
+            </example>
+        </member>
+        <member name="T:WindowsFormsLibrary.Extensions.DataGridViewExtension">
+            <summary>
+            DataGridView を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataGridViewExtension.GetSelectedRows(System.Windows.Forms.DataGridView)">
+            <summary>
+            選択中の行コレクションを取得します。
+            </summary>
+            <param name="this">DataGridView</param>
+            <returns>DataGridViewRow のコレクションを返します。</returns>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataGridViewExtension.ToGeneric(System.Windows.Forms.DataGridViewSelectedRowCollection)">
+            <summary>
+            ジェネリック型のコレクションに変換します。
+            </summary>
+            <param name="this">DataGridViewSelectedRowCollection</param>
+            <returns>DataGridViewRow のコレクションを返します。</returns>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataGridViewExtension.ToDataTable(System.Windows.Forms.DataGridView)">
+            <summary>
+            DataGridView のデータソースを、
+            データテーブルに変換します。</summary>
+            <param name="this">DataGridView</param>
+            <returns>データテーブルのインスタンスを返します。</returns>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataGridViewExtension.AddColumns(System.Data.DataTable,System.Windows.Forms.DataGridViewColumnCollection)">
+            <summary>
+            DataGridView の列コレクションを指定して、
+            データテーブルに列を追加します。</summary>
+            <param name="this">データテーブル</param>
+            <param name="columns">列コレクション</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataGridViewExtension.AddRows(System.Data.DataTable,System.Windows.Forms.DataGridViewRowCollection)">
+            <summary>
+            DataGridView の行コレクションを指定して、
+            データテーブルに行データを追加します。</summary>
+            <param name="this">データテーブル</param>
+            <param name="rows">行コレクション</param>
+        </member>
+        <member name="T:WindowsFormsLibrary.Extensions.DataObjectExtension">
+            <summary>
+            DataObject を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataObjectExtension.GetDirectories(System.Windows.Forms.IDataObject)">
+            <summary>
+            ディレクトリ情報の列挙を取得します。
+            </summary>
+            <param name="this">DataObject</param>
+            <returns>ディレクトリ情報の列挙を</returns>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.DataObjectExtension.GetFiles(System.Windows.Forms.IDataObject)">
+            <summary>
+            ファイル情報の列挙を取得します。
+            </summary>
+            <param name="this">DataObject</param>
+            <returns>ファイル情報の列挙を</returns>
+        </member>
+        <member name="T:WindowsFormsLibrary.Extensions.FormExtension">
+            <summary>
+            Form を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.FormExtension.RunAction(System.Windows.Forms.Form,System.Action,System.Action)">
+            <summary>
+            処理を実行する共通メソッド
+            </summary>
+            <param name="this">Form</param>
+            <param name="action">処理</param>
+            <param name="catchAction">例外処理</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.FormExtension.RunAction``1(System.Windows.Forms.Form,System.Object,System.Action{``0},System.Action)">
+            <summary>
+            処理を実行する共通メソッド
+            </summary>
+            <param name="this">Form</param>
+            <param name="sender">送信元</param>
+            <param name="action">処理</param>
+            <param name="catchAction">例外処理</param>
+        </member>
+        <member name="T:WindowsFormsLibrary.Extensions.ListBoxExtension">
+            <summary>
+            ListBox を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.ListBoxExtension.AddMessage(System.Windows.Forms.ListBox,System.String,System.Int32)">
+            <summary>
+            メッセージ追加
+            </summary>
+            <param name="this">ListBox</param>
+            <param name="message">メッセージ</param>
+            <param name="limit">最大行数</param>
+        </member>
+        <member name="T:WindowsFormsLibrary.Extensions.Win32WindowExtension">
+            <summary>
+            IWin32Window を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.Win32WindowExtension.ShowMessageBox(System.Windows.Forms.IWin32Window,System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon,System.Windows.Forms.MessageBoxDefaultButton)">
+            <summary>
+            指定したオブジェクトの前に、指定したテキスト、キャプション、ボタン、アイコン、および既定のボタンを表示する
+            メッセージ ボックスを表示します。
+            </summary>
+            <param name="this">モーダル ダイアログ ボックスを所有する IWin32Window の実装。</param>
+            <param name="text">メッセージ ボックスに表示するテキスト。</param>
+            <param name="caption">メッセージ ボックスのタイトル バーに表示するテキスト。</param>
+            <param name="buttons">メッセージ ボックスに表示されるボタンを指定する。</param>
+            <param name="icon">メッセージ ボックスに表示されるアイコンを指定する。</param>
+            <param name="defaultButton">メッセージ ボックスの既定のボタンを指定する。</param>
+            <returns>DialogResult 値のいずれか。</returns>
+        </member>
+        <member name="M:WindowsFormsLibrary.Extensions.Win32WindowExtension.ShowErrorMessage(System.Windows.Forms.IWin32Window,System.Exception,System.Boolean)">
+            <summary>
+            エラーを知らせるメッセージ ボックスを表示します。
+            </summary>
+            <param name="this">モーダル ダイアログ ボックスを所有する IWin32Window の実装。</param>
+            <param name="ex">例外</param>
+            <param name="detailed">詳細に表示するか</param>
+            <returns>DialogResult 値のいずれか。</returns>
+        </member>
+        <member name="T:WindowsFormsLibrary.FormDirectoryBase">
+            <summary>
+            フォーム
+            </summary>
+        </member>
+        <member name="F:WindowsFormsLibrary.FormDirectoryBase._log">
+            <summary>ログ出力</summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.FormDirectoryBase.Url">
+            <summary>
+            SharePoint サイト URL
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.FormDirectoryBase.UserName">
+            <summary>
+            ユーザー
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.FormDirectoryBase.Password">
+            <summary>
+            パスワード
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.FormDirectoryBase.ListName">
+            <summary>
+            リストパス
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.FormDirectoryBase.LogRowLimit">
+            <summary>
+            表示ログ最大行数
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.FormDirectoryBase.SelectedRows">
+            <summary>
+            選択中の行コレクションを取得します。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.buttonRun_Click(System.Object,System.EventArgs)">
+            <summary>
+            [実行]ボタンのクリックイベントです。
+            </summary>
+            <param name="sender">送信元</param>
+            <param name="e">イベントデータ</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.buttonReference_Click(System.Object,System.EventArgs)">
+            <summary>
+            [参照]ボタンのクリックイベントです。
+            </summary>
+            <param name="sender">送信元</param>
+            <param name="e">イベントデータ</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.listBoxMessage_DoubleClick(System.Object,System.EventArgs)">
+            <summary>
+            ダブルクリックイベント
+            </summary>
+            <param name="sender">送信元</param>
+            <param name="e">イベントデータ</param>
+            <remarks>
+            ダブルクリックされたときに発生します。</remarks>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.textBoxFilePath_TextChanged(System.Object,System.EventArgs)">
+            <summary>
+            [ファイルパス]テキストボックスの変更イベントです。
+            </summary>
+            <param name="sender">送信元</param>
+            <param name="e">イベントデータ</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.obj_DragEnter(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            オブジェクトがコントロールの境界内にドラッグされると発生します。
+            </summary>
+            <param name="sender">送信元</param>
+            <param name="e">イベントデータ</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.obj_DragDrop(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            ドラッグ アンド ドロップ操作が完了したときに発生します。
+            </summary>
+            <param name="sender">送信元</param>
+            <param name="e">イベントデータ</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.Run">
+            <summary>
+            実行処理
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.ValidationCheck">
+            <summary>
+            バリデーションチェック
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.RunCore">
+            <summary>
+            実行処理の中核です。オーバーライドできます。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.WriteException(System.Exception)">
+            <summary>
+            例外をログに残します。
+            </summary>
+            <param name="ex">例外</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.WriteLineMessage(System.String)">
+            <summary>
+            メッセージ書込
+            </summary>
+            <param name="message">メッセージ</param>
+            <remarks>
+            ユーザインターフェイスにメッセージを書き込む</remarks>
+        </member>
+        <member name="F:WindowsFormsLibrary.FormDirectoryBase.components">
+            <summary>
+            必要なデザイナー変数です。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.Dispose(System.Boolean)">
+            <summary>
+            使用中のリソースをすべてクリーンアップします。
+            </summary>
+            <param name="disposing">マネージ リソースが破棄される場合 true、破棄されない場合は false です。</param>
+        </member>
+        <member name="M:WindowsFormsLibrary.FormDirectoryBase.InitializeComponent">
+            <summary>
+            デザイナー サポートに必要なメソッドです。このメソッドの内容を
+            コード エディターで変更しないでください。
+            </summary>
+        </member>
+        <member name="T:WindowsFormsLibrary.Forms.Primitives.FormEditText">
+            <summary>
+            テキストボックスのショートカット編集を実装したフォームです。
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Forms.Primitives.FormEditText.#ctor">
+            <summary>
+            <see cref="T:WindowsFormsLibrary.Forms.Primitives.FormEditText"/> クラスの新しいインスタンスを初期化します。
+            </summary>
+            <remarks>継承クラスのみ呼び出すことができます。</remarks>
+        </member>
+        <member name="M:WindowsFormsLibrary.Forms.Primitives.FormEditText.ProcessCmdKey(System.Windows.Forms.Message@,System.Windows.Forms.Keys)">
+            <summary>
+            コマンド キーを処理します。(オーバーライド)
+            </summary>
+            <param name="msg">処理する Win32 メッセージを表す、参照渡しされた <see cref="T:System.Windows.Forms.Message" />。</param>
+            <param name="keyData">処理するキーを表す <see cref="T:System.Windows.Forms.Keys" /> 値の 1 つ。</param>
+            <returns>
+            キーストロークがコントロールによって処理および使用された場合は true。キーストロークをさらに処理できるようにする場合は false。
+            </returns>
+        </member>
+        <member name="T:WindowsFormsLibrary.Interface.IListEdit">
+            <summary>
+            リストの編集に関するインターフェイスです。
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.Interface.IListEdit.ListName">
+            <summary>
+            リスト名
+            </summary>
+        </member>
+        <member name="M:WindowsFormsLibrary.Interface.IListEdit.Run">
+            <summary>
+            実行
+            </summary>
+        </member>
+        <member name="T:WindowsFormsLibrary.Interface.ISignInInfo">
+            <summary>
+            サインイン情報のインターフェイスです。
+            </summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.Interface.ISignInInfo.Url">
+            <summary>SharePoint サイト URL</summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.Interface.ISignInInfo.UserName">
+            <summary>ユーザー</summary>
+        </member>
+        <member name="P:WindowsFormsLibrary.Interface.ISignInInfo.Password">
+            <summary>パスワード</summary>
+        </member>
+    </members>
+</doc>
