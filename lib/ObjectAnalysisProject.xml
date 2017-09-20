@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ObjectAnalysisProject</name>
+    </assembly>
+    <members>
+        <member name="T:ObjectAnalysisProject.Extensions.DataTableExtension">
+            <summary>
+            DataTable を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.Select``1(System.Data.DataTable,System.Func{System.Data.DataRow,System.Int32,``0})">
+            <summary>
+            データテーブルのデータ行を新しいフォームに射影します。
+            </summary>
+            <typeparam name="TResult">selector によって返される値の型。</typeparam>
+            <param name="this">データテーブル</param>
+            <param name="selector">各要素に適用する変換関数。</param>
+            <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む IEnumerable(T)</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.Select``1(System.Data.DataTable,System.Func{System.Data.DataRow,``0})">
+            <summary>
+            データテーブルのデータ行を新しいフォームに射影します。
+            </summary>
+            <typeparam name="TResult">selector によって返される値の型。</typeparam>
+            <param name="this">データテーブル</param>
+            <param name="selector">各要素に適用する変換関数。</param>
+            <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む IEnumerable(T)</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.Where(System.Data.DataTable,System.Func{System.Data.DataRow,System.Boolean})">
+            <summary>
+            述語に基づいて値のデータテーブルのデータ行をフィルター処理します。
+            </summary>
+            <param name="this">データテーブル</param>
+            <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+            <returns>条件を満たす、入力シーケンスの要素を含む IEnumerable(DataRow)</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.Where(System.Data.DataTable,System.Func{System.Data.DataRow,System.Int32,System.Boolean})">
+            <summary>
+            述語に基づいて値のデータテーブルのデータ行をフィルター処理します。
+            </summary>
+            <param name="this">データテーブル</param>
+            <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+            <returns>条件を満たす、入力シーケンスの要素を含む IEnumerable(DataRow)</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.GetColumns(System.Data.DataTable,System.Int32)">
+            <summary>
+            列インデックスを指定して、
+            データテーブルから列データの列挙を取得します。</summary>
+            <param name="this">データテーブル</param>
+            <param name="columnIndex">列インデックス</param>
+            <returns>列データの列挙を返します。</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.GetColumns(System.Data.DataTable,System.String)">
+            <summary>
+            列の名前を指定して、
+            データテーブルから列データの列挙を取得します。</summary>
+            <param name="this">データテーブル</param>
+            <param name="columnName">列名</param>
+            <returns>列データの列挙を返します。</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.GetColumns(System.Data.DataTable,System.Data.DataColumn)">
+            <summary>
+            列スキーマを指定して、
+            データテーブルから列データの列挙を取得します。</summary>
+            <param name="this">データテーブル</param>
+            <param name="column">列スキーマ</param>
+            <returns>列データの列挙を返します。</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.Shred``1(System.Data.DataTable,System.Collections.Generic.IEnumerable{``0},System.Nullable{System.Data.LoadOption})">
+            <summary>
+            オブジェクトを細断処理します。
+            オブジェクトの配列からデータテーブルにデータをロードします。</summary>
+            <param name="this">データテーブル</param>
+            <param name="source">オブジェクトの順序は、データテーブルにロードします。</param>
+            <param name="options">指定ソース配列からの値がテーブル内の既存の行に適用されますか。</param>
+            <returns>ソースシーケンスから作成されたデータテーブル。</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.ExtendSchema``1(System.Data.DataTable,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            テーブルのスキーマを拡張します。</summary>
+            <typeparam name="T">データ型</typeparam>
+            <param name="this">データテーブル</param>
+            <param name="source">列挙子</param>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.AddColumn(System.Data.DataTable,System.String,System.Type)">
+            <summary>
+            名前と型を指定して、列を追加します。
+            </summary>
+            <param name="this">this</param>
+            <param name="name">列の名前(System.Data.DataColumn.ColumnName)</param>
+            <param name="type">列の型(System.Data.DataColumn.DataType)</param>
+            <returns>
+            新たに作成した列を返します。
+            列コレクション内に同名の列が既に存在する場合は、その列を返します。
+            </returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.LoadData(System.Data.DataTable,System.Collections.Generic.IEnumerable{System.Object[]},System.Nullable{System.Data.LoadOption})">
+            <summary>
+            テーブルにデータを読み込みます。</summary>
+            <param name="this">データテーブル</param>
+            <param name="dataRows">行データ</param>
+            <param name="options">
+            配列値を既存の行にある対応する値に適用する方法を決定するために使用します。
+            null を指定できます。</param>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.LoadDataRow(System.Data.DataTable,System.Object[],System.Nullable{System.Data.LoadOption})">
+            <summary>
+            特定の行を検索し、更新します。
+            一致する行が見つからない場合は、指定した値を使用して新しい行が作成されます。</summary>
+            <param name="this"></param>
+            <param name="values">新しい行の作成に使用する値の配列。</param>
+            <param name="options">配列値を既存の行にある対応する値に適用する方法を決定するために使用します。</param>
+            <returns>新しい System.Data.DataRow。</returns>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.DataTableExtension.ConvertInsertedArray``1(``0,System.Data.DataColumnCollection)">
+            <summary>
+            列コレクションを指定して、
+            列インデックスをキーとするインスタンス値の配列を取得します。
+            </summary>
+            <typeparam name="T">データ型</typeparam>
+            <param name="this">インスタンス</param>
+            <param name="columns">列コレクション</param>
+            <returns>列をキーとするインスタンス値の配列を返します。</returns>
+        </member>
+        <member name="T:ObjectAnalysisProject.Extensions.EnumerableExtension">
+            <summary>
+            Enumerable を拡張メソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ObjectAnalysisProject.Extensions.EnumerableExtension.ToDataTable``1(System.Collections.Generic.IEnumerable{``0},System.Nullable{System.Data.LoadOption})">
+            <summary>
+            指定した入力 IEnumerable オブジェクトに応じて、
+            オブジェクトのコピーを格納する DataTableを返します。
+            </summary>
+            <typeparam name="T">ソース シーケンス内のオブジェクトの型。</typeparam>
+            <param name="this">ソース IEnumerable シーケンス。</param>
+            <param name="options">DataTable 読み込みオプションを指定する LoadOption 列挙体。</param>
+            <returns>オブジェクト型の入力シーケンスを格納する DataTable。</returns>
+        </member>
+    </members>
+</doc>
