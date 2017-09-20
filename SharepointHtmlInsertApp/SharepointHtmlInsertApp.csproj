@@ -35,13 +35,26 @@
     <DocumentationFile>bin\Release\SharepointHtmlInsertApp.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExtensionsLibrary">
-      <HintPath>..\..\lib\ExtensionsLibrary.dll</HintPath>
+    <Reference Include="CommonFeaturesLibrary">
+      <HintPath>..\lib\CommonFeaturesLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="ExtensionsLibrary">
+      <HintPath>..\lib\ExtensionsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharePoint.Client.15.0.0\lib\Microsoft.SharePoint.Client\Microsoft.SharePoint.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharePoint.Client.Runtime.15.0.0\lib\Microsoft.SharePoint.Client.Runtime\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharePoint.Client.Taxonomy.15.0.0\lib\Microsoft.SharePoint.Client.Taxonomy\Microsoft.SharePoint.Client.Taxonomy.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SharePoint.Taxonomy.dll.15.0.4867.1000\lib\Microsoft.SharePoint.Taxonomy\Microsoft.SharePoint.Taxonomy.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectAnalysisProject">
-      <HintPath>..\..\lib\ObjectAnalysisProject.dll</HintPath>
+      <HintPath>..\lib\ObjectAnalysisProject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,7 +67,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsFormsLibrary">
-      <HintPath>..\..\lib\WindowsFormsLibrary.dll</HintPath>
+      <HintPath>..\lib\WindowsFormsLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +87,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
