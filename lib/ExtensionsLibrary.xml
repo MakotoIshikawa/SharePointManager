@@ -401,6 +401,16 @@
             <param name="tableName">テーブル名</param>
             <returns>データテーブルを返します。</returns>
         </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MaxBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            最大値を持つ最初の要素を取得します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <returns>最大値を持つ最初の要素を返します。</returns>
+        </member>
         <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MaxElementsBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
             <summary>
             最大値を持つ要素を取得します。
@@ -410,6 +420,16 @@
             <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
             <param name="selector">各要素に適用する変換関数</param>
             <returns>最大値を持つ要素を全て返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MinBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            最大値を持つ最初の要素を取得します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <returns>最大値を持つ最初の要素を返します。</returns>
         </member>
         <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MinElementsBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
             <summary>

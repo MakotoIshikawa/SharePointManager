@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
+using Microsoft.SharePoint.Utilities;
 using XmlLibrary.Extensions;
 
 namespace SharePointManager.Manager.Lists.Xml {
@@ -155,17 +156,23 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <typeparam name="TOperator">条件型</typeparam>
 		/// <param name="name">参照フィールド名</param>
 		/// <param name="value">比較値</param>
-		public void AddQuery<TOperator>(string name, DateTime value) where TOperator : QueryOperator, new() {
+		/// <param name="includeTime">時刻を含めて判定するかどうか</param>
+		/// <param name="isUtc">協定世界時 (UTC) で判定するかどうか</param>
+		public void AddQuery<TOperator>(string name, DateTime value, bool includeTime = true, bool isUtc = true) where TOperator : QueryOperator, new() {
 			this.AddQueryItem(new TOperator() {
 				FieldRef = new FieldRef() { Name = name },
 				Value = new ViewValue() {
 					Type = "DateTime",
-					Value = value.ToString("s"),
-					//StorageTZ = "TRUE",
-					//IncludeTimeValue = "TRUE",
+					Value = isUtc
+						? SPUtility.CreateISO8601DateTimeFromSystemDateTime(TimeZoneInfo.ConvertTimeToUtc(value))
+						: SPUtility.CreateISO8601DateTimeFromSystemDateTime(value),
+					IsUtc = isUtc,
+					IncludeTime = includeTime,
 				},
 			});
 		}
+
+		#endregion
 
 		/// <summary>
 		/// クエリ項目追加
@@ -181,8 +188,6 @@ namespace SharePointManager.Manager.Lists.Xml {
 
 			this.Query.Items.Add(item);
 		}
-
-		#endregion
 
 		/// <summary>
 		/// クエリ項目追加
@@ -320,14 +325,18 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <typeparam name="TOperator">条件型</typeparam>
 		/// <param name="name">参照フィールド名</param>
 		/// <param name="value">比較値</param>
-		public void AddQuery<TOperator>(string name, DateTime value) where TOperator : QueryOperator, new() {
+		/// <param name="includeTime">時刻を含めて判定するかどうか</param>
+		/// <param name="isUtc">協定世界時 (UTC) で判定するかどうか</param>
+		public void AddQuery<TOperator>(string name, DateTime value, bool includeTime = true, bool isUtc = true) where TOperator : QueryOperator, new() {
 			this.AddOperatorItem(new TOperator() {
 				FieldRef = new FieldRef() { Name = name },
 				Value = new ViewValue() {
 					Type = "DateTime",
-					Value = value.ToString("s"),
-					StorageTZ = "TRUE",
-					IncludeTimeValue = "TRUE",
+					Value = isUtc
+						? SPUtility.CreateISO8601DateTimeFromSystemDateTime(TimeZoneInfo.ConvertTimeToUtc(value))
+						: SPUtility.CreateISO8601DateTimeFromSystemDateTime(value),
+					IsUtc = isUtc,
+					IncludeTime = includeTime,
 				},
 			});
 		}
@@ -405,6 +414,24 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// <summary></summary>
 		[XmlAttribute]
 		public string IncludeTimeValue { get; set; }
+
+		/// <summary>
+		/// 協定世界時 (UTC) で判定するかどうかを取得、設定します。
+		/// </summary>
+		[XmlIgnore]
+		public bool IsUtc {
+			get => this.StorageTZ == true.ToString().ToUpper();
+			set => this.StorageTZ = value.ToString().ToUpper();
+		}
+
+		/// <summary>
+		/// 時刻を含めて判定するかどうかを取得、設定します。
+		/// </summary>
+		[XmlIgnore]
+		public bool IncludeTime {
+			get => this.IncludeTimeValue == true.ToString().ToUpper();
+			set => this.IncludeTimeValue = value.ToString().ToUpper();
+		}
 	}
 
 	/// <summary></summary>
