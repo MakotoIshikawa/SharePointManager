@@ -6,6 +6,7 @@ using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Utilities;
 using XmlLibrary.Extensions;
+using static SharePointManager.Manager.Lists.Xml.ViewValue;
 
 namespace SharePointManager.Manager.Lists.Xml {
 	/// <summary>
@@ -420,8 +421,8 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// </summary>
 		[XmlIgnore]
 		public bool IsUtc {
-			get => this.StorageTZ == true.ToString().ToUpper();
-			set => this.StorageTZ = value.ToString().ToUpper();
+			get { return this.StorageTZ == true.ToString().ToUpper(); }
+			set { this.StorageTZ = value.ToString().ToUpper(); }
 		}
 
 		/// <summary>
@@ -429,8 +430,8 @@ namespace SharePointManager.Manager.Lists.Xml {
 		/// </summary>
 		[XmlIgnore]
 		public bool IncludeTime {
-			get => this.IncludeTimeValue == true.ToString().ToUpper();
-			set => this.IncludeTimeValue = value.ToString().ToUpper();
+			get { return this.IncludeTimeValue == true.ToString().ToUpper(); }
+			set { this.IncludeTimeValue = value.ToString().ToUpper(); }
 		}
 	}
 

@@ -117,7 +117,7 @@ namespace SharePointManager.Manager.Lists {
 		/// <summary>
 		/// サイトコンテンツのリストの列挙を取得します。
 		/// </summary>
-		protected IEnumerable<String> GetTitles() {
+		protected IEnumerable<string> GetTitles() {
 			return this.GetLists(
 				l => l.Title
 			).Select(l => l.Title);
