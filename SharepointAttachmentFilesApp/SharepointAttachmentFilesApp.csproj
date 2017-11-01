@@ -41,18 +41,7 @@
     <Reference Include="ExtensionsLibrary">
       <HintPath>..\lib\ExtensionsLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharePoint.Client.15.0.0\lib\Microsoft.SharePoint.Client\Microsoft.SharePoint.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharePoint.Client.Runtime.15.0.0\lib\Microsoft.SharePoint.Client.Runtime\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharePoint.Client.Taxonomy.15.0.0\lib\Microsoft.SharePoint.Client.Taxonomy\Microsoft.SharePoint.Client.Taxonomy.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePoint.Taxonomy.dll.15.0.4867.1000\lib\Microsoft.SharePoint.Taxonomy\Microsoft.SharePoint.Taxonomy.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="ObjectAnalysisProject">
       <HintPath>..\lib\ObjectAnalysisProject.dll</HintPath>
     </Reference>
@@ -92,7 +81,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -107,9 +95,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharePointInfoManager\SharePointManager.csproj">
+    <ProjectReference Include="..\SharePointOnlineLibrary\SharePointOnlineLibrary.csproj">
       <Project>{c5dbedf8-f96a-4c85-83f2-71f462efb15f}</Project>
-      <Name>SharePointManager</Name>
+      <Name>SharePointOnlineLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

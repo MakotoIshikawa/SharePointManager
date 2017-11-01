@@ -4,7 +4,7 @@ using System.Linq;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharepointAttachmentFilesApp.Properties;
-using SharePointManager.Manager.Lists;
+using SharePointOnlineLibrary.Manager.Lists;
 using WindowsFormsLibrary;
 
 namespace SharepointAttachmentFilesApp {

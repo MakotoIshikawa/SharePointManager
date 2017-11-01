@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharePointManager.Manager;
+using SharePointOnlineLibrary.Manager;
 
 namespace UnitTestProject {
 	[TestClass]

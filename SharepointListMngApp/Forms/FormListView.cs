@@ -1,5 +1,5 @@
 ﻿using System;
-using SharePointManager.Manager.Lists;
+using SharePointOnlineLibrary.Manager.Lists;
 using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharepointListMngApp.Forms {

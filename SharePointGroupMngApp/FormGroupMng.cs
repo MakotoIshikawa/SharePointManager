@@ -9,7 +9,7 @@ using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharePointGroupMngApp.Properties;
-using SharePointManager.Manager;
+using SharePointOnlineLibrary.Manager;
 using WindowsFormsLibrary.Extensions;
 
 namespace SharePointGroupMngApp {

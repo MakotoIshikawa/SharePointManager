@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
-using SharePointManager.Manager.TermStore;
+using SharePointOnlineLibrary.Manager.TermStore;
 using WindowsFormsLibrary.Extensions;
 
 namespace TermStoreMngApp {

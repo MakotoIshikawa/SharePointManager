@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharePointManager.Manager.Extensions;
-using SharePointManager.Manager.Lists;
-using SharePointManager.Manager.Lists.Xml;
+using SharePointOnlineLibrary.Manager.Extensions;
+using SharePointOnlineLibrary.Manager.Lists;
+using SharePointOnlineLibrary.Manager.Lists.Xml;
 using ExtensionsLibrary.Extensions;
 
 namespace UnitTestProject {

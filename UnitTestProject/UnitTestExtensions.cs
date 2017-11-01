@@ -5,8 +5,8 @@ using System.Text;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharePointManager.Manager.Extensions;
-using SharePointManager.Manager.Lists.Xml;
+using SharePointOnlineLibrary.Manager.Extensions;
+using SharePointOnlineLibrary.Manager.Lists.Xml;
 
 namespace UnitTestProject {
 	[TestClass]
