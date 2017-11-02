@@ -4,8 +4,8 @@ using System.Linq;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
 using SharepointHtmlInsertApp.Properties;
+using SharePointOnlineLibrary.Forms.Primitives;
 using SharePointOnlineLibrary.Manager.Lists;
-using WindowsFormsLibrary;
 
 namespace SharepointHtmlInsertApp {
 	/// <summary>

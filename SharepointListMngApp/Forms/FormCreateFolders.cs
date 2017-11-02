@@ -5,11 +5,11 @@ using System.Windows.Forms;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
+using SharePointOnlineLibrary.Interface;
 using SharePointOnlineLibrary.Manager.Extensions;
 using SharePointOnlineLibrary.Manager.Lists;
 using WindowsFormsLibrary.Extensions;
 using WindowsFormsLibrary.Forms.Primitives;
-using WindowsFormsLibrary.Interface;
 
 namespace SharepointListMngApp.Forms {
 	/// <summary>

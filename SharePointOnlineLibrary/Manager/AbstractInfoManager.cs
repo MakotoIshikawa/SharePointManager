@@ -6,7 +6,6 @@ using ExtensionsLibrary.Extensions;
 using SharePointOnlineLibrary.Extensions;
 using SharePointOnlineLibrary.Interface;
 using SharePointOnlineLibrary.MyEventArgs;
-using WindowsFormsLibrary.Interface;
 using SP = Microsoft.SharePoint.Client;
 
 namespace SharePointOnlineLibrary.Manager {

@@ -6,7 +6,6 @@ using ExtensionsLibrary.Extensions;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Utilities;
 using XmlLibrary.Extensions;
-using static SharePointOnlineLibrary.Manager.Lists.Xml.ViewValue;
 
 namespace SharePointOnlineLibrary.Manager.Lists.Xml {
 	/// <summary>
