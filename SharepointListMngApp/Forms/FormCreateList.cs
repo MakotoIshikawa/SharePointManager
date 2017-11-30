@@ -4,16 +4,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ExtensionsLibrary.Extensions;
+using InterfaceLibrary.SharePoint.Interface;
 using SharePointOnlineLibrary.Interface;
 using SharePointOnlineLibrary.Manager.Lists;
 using WindowsFormsLibrary.Extensions;
 using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharepointListMngApp.Forms {
-    /// <summary>
-    /// フォーム
-    /// </summary>
-    public partial class FormCreateList : FormEditText, IListEdit, ISignInInfo {
+	/// <summary>
+	/// フォーム
+	/// </summary>
+	public partial class FormCreateList : FormEditText, IListEdit, ISignInInfo {
 		#region コンストラクタ
 
 		/// <summary>

@@ -1,4 +1,6 @@
-﻿namespace SharePointOnlineLibrary.Interface {
+﻿using InterfaceLibrary.SharePoint.Interface;
+
+namespace SharePointOnlineLibrary.Interface {
 	/// <summary>
 	/// サインイン情報のインターフェイスです。
 	/// </summary>

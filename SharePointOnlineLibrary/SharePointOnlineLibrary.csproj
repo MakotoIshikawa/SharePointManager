@@ -97,9 +97,7 @@
       <DependentUpon>FormDirectoryBase.cs</DependentUpon>
     </Compile>
     <Compile Include="Interface\IClientSideObjectModel.cs" />
-    <Compile Include="Interface\IListEdit.cs" />
     <Compile Include="Interface\ISignInInfo.cs" />
-    <Compile Include="Interface\ISiteUrl.cs" />
     <Compile Include="Manager\AbstractInfoManager.cs" />
     <Compile Include="Extensions\ClientContextExtension.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
@@ -164,6 +162,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InterfaceLibrary\InterfaceLibrary.csproj">
+      <Project>{a8450ecd-aada-4f72-8eeb-7d21269ebbf1}</Project>
+      <Name>InterfaceLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
-using SharePointOnlineLibrary.Interface;
+using InterfaceLibrary.SharePoint.Interface;
 using WindowsFormsLibrary.Extensions;
 using WindowsFormsLibrary.Forms.Primitives;
 
