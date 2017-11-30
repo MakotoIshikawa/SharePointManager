@@ -14,7 +14,7 @@ namespace SharepointListMngApp.Forms {
 	/// <summary>
 	/// インポート処理用のフォームです。
 	/// </summary>
-	public partial class FormImport : FormEditText, IListEdit {
+	public partial class FormImport : FormEditText, IListEdit, ISignInInfo {
 		#region コンストラクタ
 
 		/// <summary>

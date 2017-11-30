@@ -2,11 +2,8 @@
 	/// <summary>
 	/// サインイン情報のインターフェイスです。
 	/// </summary>
-	public interface ISignInInfo {
+	public interface ISignInInfo : ISiteUrl {
 		#region プロパティ
-
-		/// <summary>SharePoint サイト URL</summary>
-		string Url { get; set; }
 
 		/// <summary>ユーザー</summary>
 		string UserName { get; set; }

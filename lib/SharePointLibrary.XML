@@ -1,0 +1,426 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SharePointLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:SharePointLibrary.Enums.BatchCommandTyps">
+            <summary>
+            バッチコマンドの種類
+            </summary>
+        </member>
+        <member name="F:SharePointLibrary.Enums.BatchCommandTyps.New">
+            <summary>
+            新規
+            </summary>
+        </member>
+        <member name="F:SharePointLibrary.Enums.BatchCommandTyps.Save">
+            <summary>
+            更新
+            </summary>
+        </member>
+        <member name="F:SharePointLibrary.Enums.BatchCommandTyps.Delete">
+            <summary>
+            削除
+            </summary>
+        </member>
+        <member name="T:SharePointLibrary.Enums.OnErrorTyps">
+            <summary>
+            OnError の種類
+            </summary>
+        </member>
+        <member name="F:SharePointLibrary.Enums.OnErrorTyps.Return">
+            <summary>
+            最初のエラーが発生した後、以降のメソッドの実行を中止します。これが既定値です。
+            </summary>
+        </member>
+        <member name="F:SharePointLibrary.Enums.OnErrorTyps.Continue">
+            <summary>
+            エラーが発生した後も、以降のメソッドの実行を続行します。
+            </summary>
+        </member>
+        <member name="T:SharePointLibrary.EventReciver.DisabledItemEventsScope">
+            <summary>
+            イベントレシーバーの発生を無効にする using スコープを提供するクラスです。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.EventReciver.DisabledItemEventsScope.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.EventReciver.DisabledItemEventsScope.Dispose">
+            <summary>
+            アンマネージ リソースの解放およびリセットに関連付けられているアプリケーション定義のタスクを実行します。
+            </summary>
+        </member>
+        <member name="T:SharePointLibrary.Extensions.DateTimeExtension">
+            <summary>
+            DateTime を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.DateTimeExtension.ToCamlString(System.DateTime)">
+            <summary>
+            DateTime 値を ISO8601 の DateTime 書式（yyyy-mm-ddThh:mm:ssZ）の文字列に変換します。
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>ISO8601 DateTime 形式の日付と時刻を含む文字列を返します。</returns>
+            <remarks>CAML の検索条件に使用する文字列に変換します。</remarks>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.DateTimeExtension.ToCamlString(System.Nullable{System.DateTime})">
+            <summary>
+            DateTime 値を ISO8601 の DateTime 書式（yyyy-mm-ddThh:mm:ssZ）の文字列に変換します。
+            </summary>
+            <param name="this">DateTime?</param>
+            <returns>ISO8601 DateTime 形式の日付と時刻を含む文字列を返します。</returns>
+            <remarks>CAML の検索条件に使用する文字列に変換します。</remarks>
+        </member>
+        <member name="T:SharePointLibrary.Extensions.IdentifiedListItemExtension">
+            <summary>
+            IdentifiedListItem を拡張メソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.IdentifiedListItemExtension.Add(System.Collections.Generic.List{SharePointLibrary.Model.IdentifiedListItem},System.Int32,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            末尾にオブジェクトを追加します。
+            </summary>
+            <param name="this">IdentifiedListItem のリスト</param>
+            <param name="id">ID</param>
+            <param name="cells">列名と値の連想配列</param>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.IdentifiedListItemExtension.Add(System.Collections.Generic.List{SharePointLibrary.Model.IdentifiedListItem},System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            末尾にオブジェクトを追加します。
+            </summary>
+            <param name="this">IdentifiedListItem のリスト</param>
+            <param name="cells">列名と値の連想配列</param>
+        </member>
+        <member name="T:SharePointLibrary.Extensions.SPListExtension">
+            <summary>
+            SPList を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.AddItem(Microsoft.SharePoint.SPList,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            列名と値の連想配列を指定して、
+            リストにアイテムを追加します。
+            </summary>
+            <param name="this">SPList</param>
+            <param name="item">列名と値の連想配列</param>
+            <returns>SPList のインスタンスを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.AddItemsOneByOne(Microsoft.SharePoint.SPList,System.Collections.Generic.Dictionary{System.String,System.Object}[])">
+            <summary>
+            列名と値の連想配列を指定して、
+            リストにアイテムを 1 件ずつ追加します。
+            </summary>
+            <param name="list">SPList</param>
+            <param name="items">列名と値の連想配列</param>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.AddItemsByBatch(Microsoft.SharePoint.SPList,System.Collections.Generic.Dictionary{System.String,System.Object}[])">
+            <summary>
+            列名と値の連想配列を指定して、
+            リストにアイテムを追加します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="items">列名と値の連想配列</param>
+            <returns>処理の結果を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.UpdateItem(Microsoft.SharePoint.SPList,SharePointLibrary.Model.IdentifiedListItem)">
+            <summary>
+            アイテム情報を指定して、
+            リストのアイテムを更新します。
+            </summary>
+            <param name="this">SPList</param>
+            <param name="item">アイテム情報</param>
+            <returns>SPList のインスタンスを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.UpdateItemsOneByOne(Microsoft.SharePoint.SPList,SharePointLibrary.Model.IdentifiedListItem[])">
+            <summary>
+            列名と値の連想配列を指定して、
+            リストにアイテムを 1 件ずつ追加します。
+            </summary>
+            <param name="list">SPList</param>
+            <param name="items">列名と値の連想配列</param>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.UpdateItemsByBatch(Microsoft.SharePoint.SPList,SharePointLibrary.Model.IdentifiedListItem[])">
+            <summary>
+            列名と値の連想配列を指定して、
+            リストのアイテムを更新します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="items">リストアイテムの配列</param>
+            <returns>結果を含む文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.UpdateItemsByBatch(Microsoft.SharePoint.SPList,Microsoft.SharePoint.SPQuery,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            指定した条件で抽出した
+            リストのアイテムを共通の値に更新します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="query"></param>
+            <param name="cels">共通の変更値</param>
+            <returns>結果を含む文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.UpdateAllItemsByBatch(Microsoft.SharePoint.SPList,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            全てのリストのアイテムを共通の値に更新します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="cels">共通の変更値</param>
+            <returns>結果を含む文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.DeleteByBatch(Microsoft.SharePoint.SPList,System.Int32[])">
+            <summary>
+            削除対象のアイテムIDの配列を指定して、
+            リストのアイテムを削除します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="itemIds">アイテムIDの配列</param>
+            <returns>結果を含む文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.DeleteByBatch(Microsoft.SharePoint.SPList,Microsoft.SharePoint.SPQuery,System.Boolean)">
+            <summary>
+            条件を指定して、
+            リストのアイテムを削除します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="query">条件</param>
+            <param name="withRecycleBin">ゴミ箱を空にするかどうか</param>
+            <returns>結果を含む文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.DeleteAllByBatch(Microsoft.SharePoint.SPList,System.Boolean)">
+            <summary>
+            リストの全てのアイテムを削除します。(バッチ処理)
+            </summary>
+            <param name="list">SPList</param>
+            <param name="withRecycleBin">ゴミ箱を空にするかどうか</param>
+            <returns>結果を含む文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.GetListItems(Microsoft.SharePoint.SPList,Microsoft.SharePoint.SPQuery)">
+            <summary>
+            条件を指定して、
+            リストアイテムのコレクションを取得します。
+            </summary>
+            <param name="list">SPList</param>
+            <param name="query">条件</param>
+            <returns>リストアイテムのコレクションを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.GetListItems(Microsoft.SharePoint.SPList,System.String[])">
+            <summary>
+            取得するフィールドを指定して、
+            リストアイテムのコレクションを取得します。
+            </summary>
+            <param name="list">SPList</param>
+            <param name="fields">取得するフィールド</param>
+            <returns>リストアイテムのコレクションを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.GetItemIds(Microsoft.SharePoint.SPList)">
+            <summary>
+            リストアイテムのIDのコレクションを取得します。
+            </summary>
+            <param name="list">SPList</param>
+            <returns>リストアイテムのIDのコレクションを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.GetItemIds(Microsoft.SharePoint.SPList,Microsoft.SharePoint.SPQuery)">
+            <summary>
+            条件を指定して、
+            リストアイテムのIDのコレクションを取得します。
+            </summary>
+            <param name="list">SPList</param>
+            <param name="query">条件</param>
+            <returns>リストアイテムのIDのコレクションを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListExtension.GetChoices(Microsoft.SharePoint.SPList,System.String,System.Boolean)">
+            <summary>
+            リスト列(選択肢)の内部名を指定して、
+            選択肢の項目を取得します。
+            </summary>
+            <param name="this">SPList</param>
+            <param name="name">列の内部名</param>
+            <param name="blank">先頭に空白アイテムを挿入するかどうか</param>
+            <returns>選択肢の項目のリストを返します。</returns>
+        </member>
+        <member name="T:SharePointLibrary.Extensions.SPListItemExtension">
+            <summary>
+            SPListItem を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListItemExtension.GetFieldText(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>
+            内部名を指定して、フィールドの値を文字列として取得します。
+            </summary>
+            <param name="this">SPListItem</param>
+            <param name="name">フィールドの内部名</param>
+            <returns>フィールドの値を文字列を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListItemExtension.GetFieldValue(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>
+            内部名を指定して、フィールドの値を取得します。
+            </summary>
+            <param name="this">SPListItem</param>
+            <param name="name">フィールドの内部名</param>
+            <returns>フィールドの値を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListItemExtension.GetFieldNumber(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>
+            内部名を指定して、フィールドの数値を取得します。
+            </summary>
+            <param name="this">SPListItem</param>
+            <param name="name">フィールドの内部名</param>
+            <returns>フィールドの数値を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListItemExtension.GetFieldBoolean(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>
+            内部名を指定して、フィールドの bool 値を取得します。
+            </summary>
+            <param name="this">SPListItem</param>
+            <param name="name">フィールドの内部名</param>
+            <returns>フィールドの bool 値を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListItemExtension.GetFieldDateTime(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>
+            内部名を指定して、フィールドの DateTime 値を取得します。
+            </summary>
+            <param name="this">SPListItem</param>
+            <param name="name">フィールドの内部名</param>
+            <returns>フィールドの DateTime 値を返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPListItemExtension.Update(Microsoft.SharePoint.SPListItem,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            列名と値の連想配列を指定して、
+            リスト項目に加えられた変更をデータベースに更新します。
+            </summary>
+            <param name="this">SPListItem</param>
+            <param name="item">列名と値の連想配列</param>
+            <returns>SPListItem のインスタンスを返します。</returns>
+        </member>
+        <member name="T:SharePointLibrary.Extensions.SPWebExtension">
+            <summary>
+            SPWeb を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPWebExtension.GetListByInternalName(Microsoft.SharePoint.SPWeb,System.String)">
+            <summary>
+            リストの内部名を指定して、
+            リストを取得します。
+            </summary>
+            <param name="this">SPWeb</param>
+            <param name="internalName">リストの内部名</param>
+            <returns>SPList のインスタンスを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPWebExtension.GetListByUri(Microsoft.SharePoint.SPWeb,System.Uri)">
+            <summary>
+            リストの URI を指定して、
+            リストを取得します。
+            </summary>
+            <param name="this">SPWeb</param>
+            <param name="uri">URI</param>
+            <returns>SPList のインスタンスを返します。</returns>
+        </member>
+        <member name="M:SharePointLibrary.Extensions.SPWebExtension.GetListUrl(Microsoft.SharePoint.SPWeb,System.String)">
+            <summary>
+            リストの URL を取得します。
+            </summary>
+            <param name="this">SPWeb</param>
+            <param name="internalName">リストの内部名</param>
+            <returns>リストの URL を返します。</returns>
+        </member>
+        <member name="T:SharePointLibrary.Helper.DeleteBatch">
+            <summary>
+            削除用のバッチ文字列を作成するクラスです。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Helper.DeleteBatch.#ctor(System.Guid,System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="listGuid">リストGUID</param>
+            <param name="itemIds">アイテムIDのコレクション</param>
+        </member>
+        <member name="T:SharePointLibrary.Helper.InsertBatch">
+            <summary>
+            挿入用のバッチ文字列を作成するクラスです。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Helper.InsertBatch.#ctor(System.Guid,System.Collections.Generic.Dictionary{System.String,System.Object}[])">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="listGuid">リストGUID</param>
+            <param name="items">アイテムの列名と値がセットになった連想配列のコレクション</param>
+        </member>
+        <member name="T:SharePointLibrary.Helper.Primitive.BaseBatchData">
+            <summary>
+            バッチ処理の文字列を作成する抽象クラスです。
+            </summary>
+        </member>
+        <member name="P:SharePointLibrary.Helper.Primitive.BaseBatchData.Methods">
+            <summary>
+            処理を行うメソッドの文字列を格納します。
+            </summary>
+        </member>
+        <member name="P:SharePointLibrary.Helper.Primitive.BaseBatchData.OnError">
+            <summary>
+            エラー時の処理タイプ
+            </summary>
+        </member>
+        <member name="P:SharePointLibrary.Helper.Primitive.BaseBatchData.ListGuid">
+            <summary>
+            リストGUID
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Helper.Primitive.BaseBatchData.#ctor(System.Guid)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="listGuid">リストGUID</param>
+        </member>
+        <member name="M:SharePointLibrary.Helper.Primitive.BaseBatchData.ToString">
+            <summary>
+            バッチ処理の文字列に変換します。 (オーバーライド)
+            </summary>
+            <returns>バッチ処理の文字列を返します。</returns>
+        </member>
+        <member name="T:SharePointLibrary.Helper.UpdateBatch">
+            <summary>
+            更新用のバッチ文字列を作成するクラスです。
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Helper.UpdateBatch.#ctor(System.Guid,System.Collections.Generic.IEnumerable{SharePointLibrary.Model.IdentifiedListItem})">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="listGuid">リストGUID</param>
+            <param name="items">アイテムの列名と値がセットになった連想配列のコレクション</param>
+        </member>
+        <member name="T:SharePointLibrary.Model.IdentifiedListItem">
+            <summary>
+            ID で管理されるリストのアイテムクラス
+            </summary>
+        </member>
+        <member name="M:SharePointLibrary.Model.IdentifiedListItem.#ctor(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="cells">列名と値の連想配列</param>
+        </member>
+        <member name="M:SharePointLibrary.Model.IdentifiedListItem.#ctor(System.Nullable{System.Int32},System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="id">ID</param>
+            <param name="cells">列名と値の連想配列</param>
+        </member>
+        <member name="P:SharePointLibrary.Model.IdentifiedListItem.ID">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="P:SharePointLibrary.Model.IdentifiedListItem.Cells">
+            <summary>
+            列名と値の連想配列
+            </summary>
+        </member>
+    </members>
+</doc>

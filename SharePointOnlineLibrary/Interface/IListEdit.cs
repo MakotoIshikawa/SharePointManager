@@ -2,7 +2,7 @@
 	/// <summary>
 	/// リストの編集に関するインターフェイスです。
 	/// </summary>
-	public interface IListEdit : ISignInInfo {
+	public interface IListEdit {
 		#region プロパティ
 
 		/// <summary>

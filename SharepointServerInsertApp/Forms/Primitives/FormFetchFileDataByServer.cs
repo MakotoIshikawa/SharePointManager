@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CommonFeaturesLibrary;
 using ExtensionsLibrary.Extensions;
-using ObjectAnalysisProject.Extensions;
+using SharePointOnlineLibrary.Interface;
 using WindowsFormsLibrary.Extensions;
 using WindowsFormsLibrary.Forms.Primitives;
-using SharePointOnlineLibrary.Interface;
 
-namespace SharePointOnlineLibrary.Forms.Primitives {
+namespace SharepointServerInsertApp.Forms.Primitives {
 	/// <summary>
 	/// フォーム
 	/// </summary>
-	public partial class FormDirectoryBase : FormEditText, IListEdit, ISignInInfo {
+	public partial class FormFetchFileDataByServer : FormEditText, IListEdit, ISiteUrl {
 		#region フィールド
 
 		/// <summary>ログ出力</summary>
@@ -27,7 +27,7 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		protected FormDirectoryBase() {
+		protected FormFetchFileDataByServer() {
 			this.InitializeComponent();
 		}
 
@@ -44,23 +44,7 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 		}
 
 		/// <summary>
-		/// ユーザー
-		/// </summary>
-		public string UserName {
-			get { return this.textBoxUser.Text.Trim(); }
-			set { this.textBoxUser.Text = value; }
-		}
-
-		/// <summary>
-		/// パスワード
-		/// </summary>
-		public string Password {
-			get { return this.textBoxPassword.Text.Trim(); }
-			set { this.textBoxPassword.Text = value; }
-		}
-
-		/// <summary>
-		/// リストパス
+		/// リスト名
 		/// </summary>
 		public string ListName {
 			get { return this.textBoxListName.Text.Trim(); }
@@ -73,9 +57,10 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 		public int LogRowLimit { get; protected set; }
 
 		/// <summary>
-		/// 選択中の行コレクションを取得します。
+		/// テーブルデータを取得します。
 		/// </summary>
-		public IEnumerable<DataGridViewRow> SelectedRows => this.gridDirectories.GetSelectedRows();
+		public DataTable TableData
+			=> this.gridCsv.ToDataTable();
 
 		#endregion
 
@@ -98,10 +83,9 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 		/// <param name="sender">送信元</param>
 		/// <param name="e">イベントデータ</param>
 		private void buttonReference_Click(object sender, EventArgs e) {
-			var dlg = this.folderBrowserDialog;
-			switch (dlg.ShowDialog()) {
+			switch (this.openFileDialog.ShowDialog()) {
 			case DialogResult.OK:
-				this.textBoxFilePath.Text = dlg.SelectedPath;
+				this.textBoxFilePath.Text = openFileDialog.FileName;
 				break;
 			default:
 				break;
@@ -151,24 +135,12 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 			}
 
 			try {
-				var directory = new DirectoryInfo(tb.Text);
-				this.buttonRun.Enabled = directory.Exists;
-
-				var table = (
-					from d in directory.EnumerateDirectories()
-					let files = d.GetFileInfos(true)
-					let cnt = files.Count()
-					where files.Any()
-					select new {
-						Name = d.Name,
-						FullName = d.FullName,
-						FileCount = cnt
-					}
-				).ToDataTable();
-
-				this.gridDirectories.DataSource = table;
+				var file = new FileInfo(tb.Text);
+				this.buttonRun.Enabled = file.Exists;
+				var table = file.GetCsvTable();
+				this.gridCsv.DataSource = table;
 			} catch (Exception ex) {
-				this.gridDirectories.DataSource = null;
+				this.gridCsv.DataSource = null;
 
 				this.WriteLineMessage(ex.Message);
 			}
@@ -188,7 +160,7 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 				// ドラッグ中のファイルやディレクトリの取得
 				var infos = e.Data.GetDirectories();
 				if (!infos.Any()) {
-					throw new DirectoryNotFoundException();
+					throw new FileNotFoundException();
 				}
 
 				e.Effect = DragDropEffects.Copy;
@@ -204,7 +176,7 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 		/// <param name="e">イベントデータ</param>
 		private void obj_DragDrop(object sender, DragEventArgs e) {
 			// ドラッグ中のファイルやディレクトリの取得
-			var infos = e.Data.GetDirectories();
+			var infos = e.Data.GetFiles();
 			this.textBoxFilePath.Text = infos.Any() ? infos.First().FullName : string.Empty;
 		}
 
@@ -239,14 +211,6 @@ namespace SharePointOnlineLibrary.Forms.Primitives {
 		protected virtual void ValidationCheck() {
 			if (this.Url.IsEmpty()) {
 				throw new ApplicationException("URL を入力して下さい。");
-			}
-
-			if (this.UserName.IsEmpty()) {
-				throw new ApplicationException("ユーザー名を入力して下さい。");
-			}
-
-			if (this.Password.IsEmpty()) {
-				throw new ApplicationException("パスワードを入力して下さい。");
 			}
 
 			if (this.ListName.IsEmpty()) {

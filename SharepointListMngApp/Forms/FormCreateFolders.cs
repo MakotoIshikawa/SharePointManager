@@ -15,7 +15,7 @@ namespace SharepointListMngApp.Forms {
 	/// <summary>
 	/// フォルダー追加処理用のフォームです。
 	/// </summary>
-	public partial class FormCreateFolders : FormEditText, IListEdit {
+	public partial class FormCreateFolders : FormEditText, IListEdit, ISignInInfo {
 		#region コンストラクタ
 
 		/// <summary>

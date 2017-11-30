@@ -16,7 +16,7 @@ namespace SharepointListMngApp.Forms {
 	/// <summary>
 	/// フォーム
 	/// </summary>
-	public partial class FormCreateFields : FormEditText, IListEdit {
+	public partial class FormCreateFields : FormEditText, IListEdit, ISignInInfo {
 		#region コンストラクタ
 
 		/// <summary>
