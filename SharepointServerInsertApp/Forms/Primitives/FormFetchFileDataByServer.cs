@@ -61,6 +61,82 @@ namespace SharepointServerInsertApp.Forms.Primitives {
 		public DataTable TableData
 			=> this.gridCsv.ToDataTable();
 
+		#region コントロール参照
+
+		/// <summary>
+		/// ボタン
+		/// </summary>
+		protected Button ButtonReference {
+			get { return this.buttonReference; }
+			set { this.buttonReference = value; }
+		}
+
+		/// <summary>
+		/// ボタン
+		/// </summary>
+		protected Button ButtonRun {
+			get { return this.buttonRun; }
+			set { this.buttonRun = value; }
+		}
+
+		/// <summary>
+		/// ラベル
+		/// </summary>
+		protected Label LabelUrl {
+			get { return this.labelUrl; }
+			set { this.labelUrl = value; }
+		}
+
+		/// <summary>
+		/// ラベル
+		/// </summary>
+		protected Label LabelListName {
+			get { return this.labelListName; }
+			set { this.labelListName = value; }
+		}
+
+		/// <summary>
+		/// テキストボックス
+		/// </summary>
+		protected TextBox TextBoxFilePath {
+			get { return this.textBoxFilePath; }
+			set { this.textBoxFilePath = value; }
+		}
+
+		/// <summary>
+		/// テキストボックス
+		/// </summary>
+		protected TextBox TextBoxUrl {
+			get { return this.textBoxUrl; }
+			set { this.textBoxUrl = value; }
+		}
+
+		/// <summary>
+		/// テキストボックス
+		/// </summary>
+		protected TextBox TextBoxListName {
+			get { return this.textBoxListName; }
+			set { this.textBoxListName = value; }
+		}
+
+		/// <summary>
+		/// グリッド
+		/// </summary>
+		protected DataGridView GridCsv {
+			get { return this.gridCsv; }
+			set { this.gridCsv = value; }
+		}
+
+		/// <summary>
+		/// リストボックス
+		/// </summary>
+		protected ListBox ListBoxMessage {
+			get { return this.listBoxMessage; }
+			set { this.listBoxMessage = value; }
+		}
+
+		#endregion
+
 		#endregion
 
 		#region イベントハンドラ
