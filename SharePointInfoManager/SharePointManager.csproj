@@ -101,7 +101,15 @@
   <ItemGroup>
     <Compile Include="Extensions\AttachmentExtension.cs" />
     <Compile Include="Extensions\GroupCollectionExtension.cs" />
+    <Compile Include="Forms\FormDirectoryBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDirectoryBase.Designer.cs">
+      <DependentUpon>FormDirectoryBase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interface\IClientSideObjectModel.cs" />
+    <Compile Include="Interface\IListEdit.cs" />
+    <Compile Include="Interface\ISignInInfo.cs" />
     <Compile Include="Manager\AbstractInfoManager.cs" />
     <Compile Include="Extensions\ClientContextExtension.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
@@ -124,6 +132,9 @@
     <Compile Include="Manager\TermStore\TermInfo.cs" />
     <Compile Include="Manager\TermStore\TermSetInfo.cs" />
     <Compile Include="Manager\TermStore\TermStoreManager.cs" />
+    <EmbeddedResource Include="Forms\FormDirectoryBase.resx">
+      <DependentUpon>FormDirectoryBase.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
