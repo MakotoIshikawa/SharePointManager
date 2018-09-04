@@ -50,7 +50,7 @@ namespace TermStoreMngApp {
 		private void buttonReference_Click(object sender, EventArgs e) {
 			switch (this.openFileDialog.ShowDialog()) {
 			case DialogResult.OK:
-				this.textBoxFilePath.Text = openFileDialog.FileName;
+				this.textBoxFilePath.Text = this.openFileDialog.FileName;
 				break;
 			default:
 				break;

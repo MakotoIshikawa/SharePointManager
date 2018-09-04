@@ -34,8 +34,6 @@
 		}
 
 		#endregion
-
-		private System.Windows.Forms.NotifyIcon notifyIcon;
 	}
 }
 

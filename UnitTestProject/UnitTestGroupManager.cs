@@ -22,7 +22,7 @@ namespace UnitTestProject {
 		[TestCategory("正常系")]
 		[Priority(1)]
 		public void サイトグループ情報取得() {
-			var m = new GroupManager(_rootUrl, _user, _password);
+			var m = new GroupManager(this._rootUrl, this._user, this._password);
 
 			Assert.IsTrue(m.SiteGroups.Any());
 		}

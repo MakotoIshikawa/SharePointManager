@@ -5,11 +5,11 @@ using System.Windows.Forms;
 using CommonFeaturesLibrary.Extensions;
 using ExtensionsLibrary.Extensions;
 using ObjectAnalysisProject.Extensions;
+using SharePointManager.Interface;
 using SharePointManager.Manager.Extensions;
 using SharePointManager.Manager.Lists;
 using WindowsFormsLibrary.Extensions;
 using WindowsFormsLibrary.Forms.Primitives;
-using WindowsFormsLibrary.Interface;
 
 namespace SharepointListMngApp.Forms {
 	/// <summary>
@@ -94,7 +94,7 @@ namespace SharepointListMngApp.Forms {
 		private void buttonReference_Click(object sender, EventArgs e) {
 			switch (this.openFileDialog.ShowDialog()) {
 			case DialogResult.OK:
-				this.textBoxFilePath.Text = openFileDialog.FileName;
+				this.textBoxFilePath.Text = this.openFileDialog.FileName;
 				break;
 			default:
 				break;
