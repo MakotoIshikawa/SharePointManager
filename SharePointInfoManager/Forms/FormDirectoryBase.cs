@@ -13,9 +13,8 @@ using WindowsFormsLibrary.Forms.Primitives;
 
 namespace SharePointManager.Forms {
 	/// <summary>
-	/// <see cref="FormDirectoryBase"/> クラスの新しいインスタンスを初期化します。
+	/// <see cref="FormEditText"/> クラスを継承した、ディレクトリ編集フォームクラスです。
 	/// </summary>
-	/// <remarks>継承クラスのみ呼び出すことができます。</remarks>
 	public partial class FormDirectoryBase : FormEditText, IListEdit, ISignInInfo {
 		#region フィールド
 
@@ -27,7 +26,7 @@ namespace SharePointManager.Forms {
 		#region コンストラクタ
 
 		/// <summary>
-		/// コンストラクタ
+		/// <see cref="FormDirectoryBase"/> クラスの新しいインスタンスを初期化します。
 		/// </summary>
 		/// <remarks>継承クラスのみ呼び出すことができます。</remarks>
 		protected FormDirectoryBase() : base() {
