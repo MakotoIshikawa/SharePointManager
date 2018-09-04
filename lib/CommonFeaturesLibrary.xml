@@ -306,7 +306,7 @@
         </member>
         <member name="T:CommonFeaturesLibrary.Providers.Access.AccessConnection">
             <summary>
-            Excel ファイル用のデータベースの Connection を提供するクラスです。
+            Access ファイル用のデータベースの Connection を提供するクラスです。
             </summary>
         </member>
         <member name="M:CommonFeaturesLibrary.Providers.Access.AccessConnection.#ctor(System.String)">

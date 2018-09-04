@@ -33,6 +33,22 @@
             <param name="obj">ハッシュ コードが返される対象のオブジェクト</param>
             <returns>指定したオブジェクトのハッシュ コード</returns>
         </member>
+        <member name="T:ExtensionsLibrary.Extensions.AttributeExtension">
+            <summary>
+            Attribute を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.AttributeExtension.IsDefined``1(System.Reflection.MemberInfo)">
+            <summary>
+            カスタム属性が型のメンバーに適用されているかどうかを判断します。
+            </summary>
+            <typeparam name="TAttribute">Attribute を継承しているクラス</typeparam>
+            <param name="this">MemberInfo</param>
+            <returns>
+            カスタム属性が型のメンバーに適用されていれば true
+            それ以外は、false を返します。
+            </returns>
+        </member>
         <member name="T:ExtensionsLibrary.Extensions.DataTableExtension">
             <summary>
             DataTable を拡張するメソッドを提供します。
@@ -60,6 +76,13 @@
             <param name="this">DataTable</param>
             <returns>列データのコレクションを返します。</returns>
         </member>
+        <member name="M:ExtensionsLibrary.Extensions.DataTableExtension.AnyRows(System.Data.DataTable)">
+            <summary>
+            行コレクションにデータがあるかどうかを取得します。
+            </summary>
+            <param name="this">DataTable</param>
+            <returns>行コレクションにに要素が含まれている場合は true。それ以外の場合は false を返します。</returns>
+        </member>
         <member name="T:ExtensionsLibrary.Extensions.DateTimeExtension">
             <summary>
             DateTime を拡張するメソッドを提供します。
@@ -78,6 +101,86 @@
             </summary>
             <param name="this">DateTime</param>
             <returns>ミリ秒まで表示する時刻文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.DaysInMonth(System.DateTime)">
+            <summary>
+            該当年月の日数を取得します。
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>該当年月の日数を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.GetBeginOfMonth(System.DateTime)">
+            <summary>
+            月初日を返す
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>月初の日付を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.GetEndOfMonth(System.DateTime)">
+            <summary>
+            月末の日付を取得します。
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>月末の日付を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.StripTime(System.DateTime)">
+            <summary>
+            時刻を落として日付のみにする
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>日付のみの DateTime を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.StripDate(System.DateTime,System.Nullable{System.DateTime})">
+            <summary>
+            日付を落として時刻のみにする
+            </summary>
+            <param name="this">DateTime</param>
+            <param name="base_date">基準日</param>
+            <returns>時刻のみの DateTime を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.GetFiscalYear(System.DateTime,System.Int32)">
+            <summary>
+            該当日付の年度を取得する。
+            </summary>
+            <param name="this">DateTime</param>
+            <param name="startingMonth">年度の開始月</param>
+            <returns>該当日付の年度を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.RoundUpAtMinute(System.DateTime,System.Double)">
+            <summary>
+            指定した間隔(分)で、
+            DateTime 値を切り上げます。
+            </summary>
+            <param name="this">DateTime</param>
+            <param name="interval">間隔(分)</param>
+            <returns>切り上げた値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.RoundUp(System.DateTime,System.TimeSpan)">
+            <summary>
+            指定した間隔で、
+            DateTime 値を切り上げます。
+            </summary>
+            <param name="this">DateTime</param>
+            <param name="interval">間隔</param>
+            <returns>切り上げた値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.RoundDownAtMinute(System.DateTime,System.Double)">
+            <summary>
+            指定した間隔(分)で、
+            DateTime 値を切り捨てます。
+            </summary>
+            <param name="this">DateTime</param>
+            <param name="interval">間隔(分)</param>
+            <returns>切り捨てた値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.RoundDown(System.DateTime,System.TimeSpan)">
+            <summary>
+            指定した間隔で、
+            DateTime 値を切り捨てます。
+            </summary>
+            <param name="this">DateTime</param>
+            <param name="interval">間隔</param>
+            <returns>切り捨てた値を返します。</returns>
         </member>
         <member name="T:ExtensionsLibrary.Extensions.DictionaryExtension">
             <summary>
@@ -401,6 +504,16 @@
             <param name="tableName">テーブル名</param>
             <returns>データテーブルを返します。</returns>
         </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MaxBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            最大値を持つ最初の要素を取得します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <returns>最大値を持つ最初の要素を返します。</returns>
+        </member>
         <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MaxElementsBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
             <summary>
             最大値を持つ要素を取得します。
@@ -410,6 +523,16 @@
             <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
             <param name="selector">各要素に適用する変換関数</param>
             <returns>最大値を持つ要素を全て返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MinBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            最大値を持つ最初の要素を取得します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <returns>最大値を持つ最初の要素を返します。</returns>
         </member>
         <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MinElementsBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
             <summary>
@@ -431,6 +554,153 @@
             <para>2 つのオブジェクトが等しい場合は true</para>
             <para>それ以外の場合は false</para>
             </returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MakeChunksPerSize``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            サイズを指定して、
+            サイズ毎に分割して塊を作成します。
+            </summary>
+            <typeparam name="T">要素の型</typeparam>
+            <param name="this">IEnumerable</param>
+            <param name="size">サイズ</param>
+            <returns></returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.EnumExtension">
+            <summary>
+            Enum を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToEnum``1(System.String,System.Nullable{``0})">
+            <summary>
+            文字列を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">文字列</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToEnum``1(System.String,System.Boolean,System.Nullable{``0})">
+            <summary>
+            文字列を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">文字列</param>
+            <param name="ignoreCase">大文字と小文字を区別しない場合は true。大文字と小文字を区別する場合は false。</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToEnum``1(System.Byte)">
+            <summary>
+            数値(byte)を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(byte)</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToEnum``1(System.Int16)">
+            <summary>
+            数値(short)を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(short)</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToEnum``1(System.Int32)">
+            <summary>
+            数値(int)を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(int)</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToEnum``1(System.Int64)">
+            <summary>
+            数値(long)を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(long)</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToInt16``1(``0)">
+            <summary>
+            16 ビット符号付き整数に変換します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <param name="this">列挙体</param>
+            <returns>16 ビット符号付き整数を返します。値が null の場合は 0 を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToInt32``1(``0)">
+            <summary>
+            32 ビット符号付き整数に変換します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <param name="this">列挙体</param>
+            <returns>32 ビット符号付き整数を返します。値が null の場合は 0 を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToInt64``1(``0)">
+            <summary>
+            64 ビット符号付き整数に変換します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <param name="this">列挙体</param>
+            <returns>64 ビット符号付き整数を返します。値が null の場合は 0 を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.ToDictionary``1">
+            <summary>
+            Dictionary に変換します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <returns>Dictionary を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumExtension.GetEnumValues``1">
+            <summary>
+            列挙体に含まれている定数の値の配列を取得します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <returns>定数の値を格納する配列を取得します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.ExpressionExtension">
+            <summary>
+            Expression を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ExpressionExtension.GetMemberInfo``2(``0,System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            メンバーを抽出する式木を指定して、
+            メンバー情報を取得します。
+            </summary>
+            <typeparam name="T">メンバーを抽出するオブジェクトの型</typeparam>
+            <typeparam name="TMember">抽出するメンバーの型</typeparam>
+            <param name="this">T</param>
+            <param name="fetchMember">メンバーを抽出する式木</param>
+            <returns>メンバー情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ExpressionExtension.GetMember``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            メンバー情報を取得します。
+            </summary>
+            <typeparam name="T">メンバーを抽出するオブジェクトの型</typeparam>
+            <typeparam name="TMember">抽出するメンバーの型</typeparam>
+            <param name="this">Expression</param>
+            <returns>メンバー情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ExpressionExtension.GetMemberName``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            メンバーの名前を取得します。
+            </summary>
+            <typeparam name="T">メンバーを抽出するオブジェクトの型</typeparam>
+            <typeparam name="TMember">抽出するメンバーの型</typeparam>
+            <param name="this">Expression</param>
+            <returns>メンバー名を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ExpressionExtension.GetExpression``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            フィールドまたはプロパティのコンテナーオブジェクトを取得します。
+            </summary>
+            <typeparam name="T">メンバーを抽出するオブジェクトの型</typeparam>
+            <typeparam name="TMember">抽出するメンバーの型</typeparam>
+            <param name="this">Expression</param>
+            <returns>コンテナーオブジェクトを返します。</returns>
         </member>
         <member name="T:ExtensionsLibrary.Extensions.FileInfoExtension">
             <summary>
@@ -633,12 +903,13 @@
             <param name="properties">プロパティ名と値の KeyValuePair のコレクション</param>
             <returns>プロパティを設定した値を返します。</returns>
         </member>
-        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ToPropertyDictionary``1(``0)">
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ToPropertyDictionary``1(``0,System.Func{System.Reflection.PropertyInfo,System.Boolean})">
             <summary>
             プロパティの Dictionary に変換します。
             </summary>
             <typeparam name="T">インスタンスの型</typeparam>
             <param name="this">対象のインスタンス</param>
+            <param name="predicate">フィルターする条件</param>
             <returns>Dictionary を返します。</returns>
         </member>
         <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetPropertiesString``1(``0,System.Boolean)">
@@ -695,12 +966,13 @@
             <param name="fields">フィールド名と値の KeyValuePair のコレクション</param>
             <returns>フィールドを設定した値を返します。</returns>
         </member>
-        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ToFieldDictionary``1(``0)">
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ToFieldDictionary``1(``0,System.Func{System.Reflection.FieldInfo,System.Boolean})">
             <summary>
             フィールドの Dictionary に変換します。
             </summary>
             <typeparam name="T">インスタンスの型</typeparam>
             <param name="this">対象のインスタンス</param>
+            <param name="predicate">フィルターする条件</param>
             <returns>Dictionary を返します。</returns>
         </member>
         <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetFieldsString``1(``0,System.Boolean)">
@@ -838,6 +1110,21 @@
             <param name="this">リスト</param>
             <param name="item">要素</param>
         </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListExtension.ToListWithTrim(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            文字列のコレクションの要素を Trim してリストに変換します。
+            </summary>
+            <param name="this"></param>
+            <returns>変換したリストを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListExtension.ToArray(System.Collections.Generic.IEnumerable{System.String},System.Boolean)">
+            <summary>
+            空の文字列を削除するかどうかを指定して、配列に変換します。
+            </summary>
+            <param name="this">string のコレクション</param>
+            <param name="removeEmptyEntries">空の文字列を削除するかどうか</param>
+            <returns>変換した配列を返します。</returns>
+        </member>
         <member name="T:ExtensionsLibrary.Extensions.MathExtension">
             <summary>
             数値関数の拡張メソッドを提供します。
@@ -924,67 +1211,88 @@
             <param name="max">上限値</param>
             <returns>範囲内の値を返します。</returns>
         </member>
+        <member name="T:ExtensionsLibrary.Extensions.NullableExtension">
+            <summary>
+            Nullable 型を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullable``2(``0,System.Func{``0,``1})">
+            <summary>
+            オブジェクトのインスタンスを Nullable 型に変換します。
+            </summary>
+            <typeparam name="T">元となるオブジェクトの型</typeparam>
+            <typeparam name="TResult">変換する Nullable 値の型</typeparam>
+            <param name="this">object</param>
+            <param name="convert">変換関数</param>
+            <returns>Nullable 値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableShort(System.String)">
+            <summary>
+            short? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableInt(System.String)">
+            <summary>
+            int? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableLong(System.String)">
+            <summary>
+            long? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableUint(System.String)">
+            <summary>
+            uint? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableFloat(System.String)">
+            <summary>
+            float? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableDouble(System.String)">
+            <summary>
+            double? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableDecimal(System.String)">
+            <summary>
+            decimal? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.NullableExtension.ToNullableBool(System.String)">
+            <summary>
+            bool? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
         <member name="T:ExtensionsLibrary.Extensions.ObjectExtension">
             <summary>
             Object を拡張するメソッドを提供します。
             </summary>
         </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToBoolean(System.Object)">
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToBoolean``1(``0)">
             <summary>
             Boolean 型に変換します。
             </summary>
             <param name="this">object</param>
             <returns>変換した Boolean 値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.String,System.Nullable{``0})">
-            <summary>
-            文字列を列挙型に変換します。
-            </summary>
-            <typeparam name="TResult">列挙型</typeparam>
-            <param name="this">文字列</param>
-            <param name="defaultValue">デフォルト値</param>
-            <returns>列挙型を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.Int32,System.Nullable{``0})">
-            <summary>
-            文字列を列挙型に変換します。
-            </summary>
-            <typeparam name="TResult">列挙型</typeparam>
-            <param name="this">数値(int)</param>
-            <param name="defaultValue">デフォルト値</param>
-            <returns>列挙型を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.Int16,System.Nullable{``0})">
-            <summary>
-            文字列を列挙型に変換します。
-            </summary>
-            <typeparam name="TResult">列挙型</typeparam>
-            <param name="this">数値(short)</param>
-            <param name="defaultValue">デフォルト値</param>
-            <returns>列挙型を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.Byte,System.Nullable{``0})">
-            <summary>
-            文字列を列挙型に変換します。
-            </summary>
-            <typeparam name="TResult">列挙型</typeparam>
-            <param name="this">数値(byte)</param>
-            <param name="defaultValue">デフォルト値</param>
-            <returns>列挙型を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToDictionary``1">
-            <summary>
-            Dictionary に変換します。
-            </summary>
-            <typeparam name="TEnum">列挙体の型</typeparam>
-            <returns>Dictionary を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.GetEnumValues``1">
-            <summary>
-            列挙体に含まれている定数の値の配列を取得します。
-            </summary>
-            <typeparam name="TEnum">列挙体の型</typeparam>
-            <returns>定数の値を格納する配列を取得します。</returns>
         </member>
         <member name="T:ExtensionsLibrary.Extensions.StringExtension">
             <summary>
@@ -1023,62 +1331,6 @@
             <param name="this">対象文字列</param>
             <param name="sign">記号</param>
             <returns>コメントアウトされた文字列を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableShort(System.String)">
-            <summary>
-            short? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableInt(System.String)">
-            <summary>
-            int? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableLong(System.String)">
-            <summary>
-            long? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableUint(System.String)">
-            <summary>
-            uint? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableFloat(System.String)">
-            <summary>
-            float? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableDouble(System.String)">
-            <summary>
-            double? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableDecimal(System.String)">
-            <summary>
-            decimal? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
-        </member>
-        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableBool(System.String)">
-            <summary>
-            bool? 型に変換します。
-            </summary>
-            <param name="this">文字列</param>
-            <returns>Nullable 値に変換した値を返します。</returns>
         </member>
         <member name="M:ExtensionsLibrary.Extensions.StringExtension.Repeat(System.String,System.Int32)">
             <summary>
@@ -1208,6 +1460,14 @@
             <param name="format">書式</param>
             <returns>DateTime を返します。</returns>
         </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToTimeSpan(System.String,System.String)">
+            <summary>
+            文字列を TimeSpan に変換します。
+            </summary>
+            <param name="this">string</param>
+            <param name="format">書式</param>
+            <returns>TimeSpan を返します。</returns>
+        </member>
         <member name="M:ExtensionsLibrary.Extensions.StringExtension.ContainsAtExtension(System.String,System.String[])">
             <summary>
             指定したファイルパス文字列の
@@ -1228,6 +1488,85 @@
             <param name="separator">この文字列から部分文字列を取り出すために区切り文字として使用する文字列配列。
             <para>区切り文字が含まれていない空の配列。または null。</para></param>
             <returns>この文字列を、separator 配列のいずれかまたは複数の要素 (文字列) で区切ることによって取り出された部分文字列を格納する配列。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.OmitGreaterThan(System.String,System.Int32,System.String)">
+            <summary>
+            指定した桁数を超える場合に、文字列を省略します。
+            </summary>
+            <param name="this">string</param>
+            <param name="digits">桁数</param>
+            <param name="suffixes">接尾辞</param>
+            <returns>省略した文字列を返します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.TimeSpanExtension">
+            <summary>
+            TimeSpan を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.GetHours(System.TimeSpan)">
+            <summary>
+            日数も考慮し、
+            時分 (HH:mm) の[時]部分の値を取得します。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <returns>[時]部分の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.ToHourAndMinString(System.TimeSpan)">
+            <summary>
+            時分 (HH:mm) 文字列に変換します。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <returns>時分 (HH:mm) 文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.ToSecondString(System.TimeSpan)">
+            <summary>
+            秒まで表示する時刻文字列に変換します。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <returns>秒まで表示する時刻文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.ToMilliSecondString(System.TimeSpan)">
+            <summary>
+            ミリ秒まで表示する時刻文字列に変換します。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <returns>ミリ秒まで表示する時刻文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.RoundUpAtMinute(System.TimeSpan,System.Double)">
+            <summary>
+            指定した間隔(分)で、
+            TimeSpan 値を切り上げます。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <param name="interval">間隔(分)</param>
+            <returns>切り上げた値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.RoundUp(System.TimeSpan,System.TimeSpan)">
+            <summary>
+            指定した間隔で、
+            TimeSpan 値を切り上げます。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <param name="interval">間隔</param>
+            <returns>切り上げた値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.RoundDownAtMinute(System.TimeSpan,System.Double)">
+            <summary>
+            指定した間隔(分)で、
+            TimeSpan 値を切り捨てます。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <param name="interval">間隔(分)</param>
+            <returns>切り捨てた値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TimeSpanExtension.RoundDown(System.TimeSpan,System.TimeSpan)">
+            <summary>
+            指定した間隔で、
+            TimeSpan 値を切り捨てます。
+            </summary>
+            <param name="this">TimeSpan</param>
+            <param name="interval">間隔</param>
+            <returns>切り捨てた値を返します。</returns>
         </member>
         <member name="T:ExtensionsLibrary.Extensions.TupleExtension">
             <summary>
