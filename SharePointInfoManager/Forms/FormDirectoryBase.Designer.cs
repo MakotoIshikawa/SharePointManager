@@ -62,6 +62,7 @@ namespace SharePointManager.Forms {
 			this.buttonRun.TabIndex = 0;
 			this.buttonRun.Text = "実行";
 			this.buttonRun.UseVisualStyleBackColor = true;
+			this.buttonRun.Click += new System.EventHandler(this.buttonRun_Click);
 			// 
 			// textBoxFilePath
 			// 
@@ -72,6 +73,9 @@ namespace SharePointManager.Forms {
 			this.textBoxFilePath.Name = "textBoxFilePath";
 			this.textBoxFilePath.Size = new System.Drawing.Size(493, 19);
 			this.textBoxFilePath.TabIndex = 1;
+			this.textBoxFilePath.TextChanged += new System.EventHandler(this.textBoxFilePath_TextChanged);
+			this.textBoxFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.obj_DragDrop);
+			this.textBoxFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.obj_DragEnter);
 			// 
 			// buttonReference
 			// 
@@ -83,6 +87,7 @@ namespace SharePointManager.Forms {
 			this.buttonReference.TabIndex = 2;
 			this.buttonReference.Text = "参照";
 			this.buttonReference.UseVisualStyleBackColor = true;
+			this.buttonReference.Click += new System.EventHandler(this.buttonReference_Click);
 			// 
 			// textBoxUrl
 			// 
@@ -208,6 +213,7 @@ namespace SharePointManager.Forms {
 			this.listBoxMessage.Name = "listBoxMessage";
 			this.listBoxMessage.Size = new System.Drawing.Size(540, 139);
 			this.listBoxMessage.TabIndex = 22;
+			this.listBoxMessage.DoubleClick += new System.EventHandler(this.listBoxMessage_DoubleClick);
 			// 
 			// notifyIcon
 			// 
@@ -234,6 +240,8 @@ namespace SharePointManager.Forms {
 			this.Controls.Add(this.buttonRun);
 			this.Name = "FormDirectoryBase";
 			this.Text = "ディレクトリ管理";
+			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.obj_DragDrop);
+			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.obj_DragEnter);
 			((System.ComponentModel.ISupportInitialize)(this.gridDirectories)).EndInit();
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
